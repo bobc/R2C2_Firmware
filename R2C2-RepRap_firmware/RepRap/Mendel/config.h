@@ -32,7 +32,6 @@
 
 #include "stdint.h"
 
-
 #define MM_REPRAP_MENDEL  0
 #define MM_RAPMAN         1
 
@@ -69,9 +68,9 @@ struct configuration
   int32_t home_direction_z;
   
   // position at home
-  double home_pos_x;
-  double home_pos_y;
-  double home_pos_z;
+  int32_t home_pos_x;
+  int32_t home_pos_y;
+  int32_t home_pos_z;
 
   // printable volume size
   // TODO: Need to define origin?
@@ -108,6 +107,5 @@ extern struct configuration config;
 
 void read_config (void);
 void print_config (void);
-void write_config (void);
 
 #endif /* CONFIG_H */
