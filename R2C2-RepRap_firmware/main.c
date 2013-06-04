@@ -27,19 +27,73 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "rtos_api.h"
+
+#include "lpc17xx_nvic.h"
+
+/* Application includes */
+#include "lw_io.h"
 #include "r2c2.h"
+#include "uart.h"
+#include "soundplay.h"
+
+//TODO:
+#ifdef debug
+#define DBG_INIT()   uart_init()
+#define DBGF(s)   uart3_writestr(s)
+#else
+#define DBG_INIT()
+#define DBGF(s)
+#endif
 
 #define USER_FLASH_START 0x10000 /* For USB bootloader */
 //#define USER_FLASH_START 0x0 /* No USB bootloader */
 
 extern int app_main (void);
 
+/**********************************************************************/
 void startup_delay(void)
 {
   for (volatile unsigned long i = 0; i < 500000; i++) { ; }
 }
 
-/*********************************************************************//**
+void fatal_error (void)
+{
+  for( ;; )
+  {
+    buzzer_play_sync (FREQ_B4, 1000);
+    buzzer_play_sync (FREQ_A4, 1000);
+  }
+}
+
+#ifdef USE_FREERTOS
+/**********************************************************************/
+/* Called from every tick interrupt */
+void vApplicationTickHook( void )
+{
+  static unsigned long ulTicksSinceLastDisplay = 0;
+
+  ulTicksSinceLastDisplay++;
+
+  r2c2_SysTick();
+}
+
+/**********************************************************************/
+void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName )
+{
+  /* This function will get called if a task overflows its stack. */
+
+  ( void ) pxTask;
+  ( void ) pcTaskName;
+
+  //DBGF ("stkov\n");
+
+  fatal_error();
+}
+
+#endif
+
+/**********************************************************************
  * @brief	Main sub-routine
  **********************************************************************/
 int main(void)
@@ -53,20 +107,26 @@ int main(void)
    * Since the Number of Bits used for Priority Levels is five (5), so the
    * actual bit number of sub-priority is three (3)
    */
-  NVIC_SetPriorityGrouping(0x05);
+   // FreeRTOS requires 0 it seems
+  NVIC_SetPriorityGrouping(0x0);
 
   /* Change the Vector Table to the USER_FLASH_START
   in case the user application uses interrupts */
   SCB->VTOR = (USER_FLASH_START & 0x1FFFFF80);
 
-  // Initialize USB<->Serial
-  serial_init();
-  
-  SysTickTimer_Init(); // Initialize the timer for millis()
+  DBG_INIT();
+  DBGF ("init\n");
 
+#if !defined(USE_FREERTOS)
+  SysTickTimer_Init(); // Initialize the timer for millis()
+#endif
+
+
+  // enter the application
   app_main ();
 
   /* should never get here */
+  DBGF ("main:err\n");
+  fatal_error();
   while(1) ;
 }
-

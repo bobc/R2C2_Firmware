@@ -30,7 +30,7 @@
 
 #include        "sersendf.h"
 #include        <stdarg.h>
-#include        "serial.h"
+#include        "lw_io.h"
 #include        "sermsg.h"
 
 char   str_ox[] = "0x";
@@ -64,13 +64,13 @@ void sersendf(char *format, ...) {
 
                                 /* print a double in normal notation */
                                 case 'g':
-                                serwrite_double(va_arg(args, double));
-                                j = 0;
+										serwrite_double(va_arg(args, double));
+										j = 0;
                                 break;
 
                                 case 'p':
                                 case 'x':
-                                        serial_writestr(str_ox);
+                                        lw_puts(str_ox);
                                         if (j == 4)
                                                 serwrite_hex32(va_arg(args, unsigned int));
                                         else
@@ -78,13 +78,19 @@ void sersendf(char *format, ...) {
                                         j = 0;
                                         break;
                                 case 'c':
-                                        serial_writechar(va_arg(args, unsigned int));
+                                        lw_putchar(va_arg(args, unsigned int));
                                         j = 0;
                                         break;
                                 case 's':
-                                        serial_writestr(va_arg(args, char *));
+                                        lw_puts(va_arg(args, char *));
                                         j = 0;
                                         break;
+										
+								/* escape % char */
+								case '%':
+										lw_putchar('%');
+										j = 0;
+										break;
                                 default:
                                         j = 0;
                                         break;
@@ -95,7 +101,7 @@ void sersendf(char *format, ...) {
                                 j = 2;
                         }
                         else {
-                                serial_writechar(c);
+                                lw_putchar(c);
                         }
                 }
         }

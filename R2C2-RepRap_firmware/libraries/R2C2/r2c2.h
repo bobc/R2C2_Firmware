@@ -30,19 +30,10 @@
 #ifndef _R2C2_H
 #define _R2C2_H
 
-#include "lpc17xx.h"
-#include "lpc17xx_nvic.h"
-#include "lpc17xx_pinsel.h"
-#include "lpc17xx_gpio.h"
-#include "lpc17xx_pwm.h"
-
 #include "adc.h"
 #include "buzzer.h"
 #include "ios.h"
 #include "sdcard.h"
-#include "serial.h"
-#include "sermsg.h"
-#include "sersendf.h"
 #include "spi.h"
 #include "timer.h"
 

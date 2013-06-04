@@ -131,63 +131,75 @@ OUTDIR = $(RUN_MODE)
 # Target file name (without extension).
 TARGET = project
 
+# FreeRTOS paths
+FREERTOS_PATH = libraries/FreeRTOS
+#FREERTOS_DEMO_DIR = $(FREERTOS_PATH)/Demo/Common
+#FREERTOS_DEMO_TYPE_DIR = $(FREERTOS_DEMO_DIR)/Minimal
+FREERTOS_SOURCE_DIR = $(FREERTOS_PATH)/Source
+FREERTOS_PORT_DIR = $(FREERTOS_SOURCE_DIR)/portable/GCC/ARM_CM3
+
 # application dir and source
-APPDIR = RepRap/Mendel
+APPDIR = app
 APPSRC = \
 	$(APPDIR)/gcode_parse.c \
 	$(APPDIR)/gcode_process.c \
+	$(APPDIR)/packed_gcode.c \
 	$(APPDIR)/mendel.c \
 	$(APPDIR)/temp.c \
-	$(APPDIR)/config.c \
+	$(APPDIR)/app_config.c \
 	$(APPDIR)/endstops.c \
+	$(APPDIR)/pin_control.c \
 	$(APPDIR)/geometry.c \
-	app/grbl/planner.c \
-	app/grbl/stepper.c
+	$(APPDIR)/alerter.c \
+	$(APPDIR)/uart_shell_task.c \
+	$(APPDIR)/usb_shell_task.c \
+	$(APPDIR)/eth_shell_task.c \
+	$(APPDIR)/ui_menu.c \
+	$(APPDIR)/keypad_gen4_mb.c \
+	$(APPDIR)/gcode_task.c \
+	$(APPDIR)/planner.c \
+	$(APPDIR)/stepper.c \
+	$(APPDIR)/ui_task.c
 
-#	app/grbl/print.c \
-#	app/grbl/eeprom.c \
-#	app/grbl/settings.c \
-# $(APPDIR)/dda_queue.c \
-#	$(APPDIR)/dda.c \
-
-
+# 
 #APPDIR = sample
 #APPSRC = $(APPDIR)/sample_app.c
 
-# Utility variables
+# 
 APPLIBDIR    = libraries
-INCLUDES = $(APPLIBDIR)/CMSISv1p30_LPC17xx/inc \
+INCLUDES = arch/lpc17xx/CMSISv1p30/inc \
+	arch/lpc17xx/drivers/include \
 	 $(APPLIBDIR)/LPCUSB/inc \
-	 $(APPLIBDIR)/NXP/Drivers/include \
 	 $(APPLIBDIR)/FatFs/src \
 	 $(APPLIBDIR)/R2C2/ \
+	 $(APPLIBDIR)/ethernet/ \
+	 $(APPLIBDIR)/lwip/src/include/ \
+	 $(APPLIBDIR)/lwip/src/include/ipv4/ \
+	 $(APPLIBDIR)/lwip/ports/r2c2/include/ \
+	 $(FREERTOS_SOURCE_DIR)/include \
+	 $(FREERTOS_PORT_DIR)/ \
 	 app/grbl/ \
 	 $(APPDIR)
+
+FREERTOS_SRC = $(FREERTOS_SOURCE_DIR)/list.c \
+	$(FREERTOS_SOURCE_DIR)/queue.c \
+	$(FREERTOS_SOURCE_DIR)/tasks.c \
+	$(FREERTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
+	$(FREERTOS_PORT_DIR)/port.c \
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
 SRC = \
 	$(wildcard $(APPLIBDIR)/LPCUSB/src/*.c) \
-	$(APPLIBDIR)/CMSISv1p30_LPC17xx/src/system_LPC17xx.c \
-	$(wildcard $(APPLIBDIR)/NXP/Drivers/source/lpc17xx_*.c) \
-	$(APPLIBDIR)/FatFs/src/ff.c \
-	$(APPLIBDIR)/FatFs/src/diskio.c \
-	$(APPLIBDIR)/FatFs/src/fattime.c \
-	$(APPLIBDIR)/R2C2/ios.c \
-	$(APPLIBDIR)/R2C2/usb.c \
-	$(APPLIBDIR)/R2C2/serial_fifo.c \
-	$(APPLIBDIR)/R2C2/serial.c \
-	$(APPLIBDIR)/R2C2/sermsg.c \
-	$(APPLIBDIR)/R2C2/sersendf.c \
-	$(APPLIBDIR)/R2C2/timer.c \
-	$(APPLIBDIR)/R2C2/adc.c \
-	$(APPLIBDIR)/R2C2/spi.c \
-	$(APPLIBDIR)/R2C2/sdcard.c \
-	$(APPLIBDIR)/R2C2/buzzer.c \
-	$(APPLIBDIR)/R2C2/uart.c \
+	arch/lpc17xx//CMSISv1p30/src/system_LPC17xx.c \
+	$(wildcard arch/lpc17xx/Drivers/source/lpc17xx_*.c) \
+	$(wildcard $(APPLIBDIR)/FatFs/src/*.c) \
+	$(filter-out $(APPLIBDIR)/R2C2/lw_rtos.c, $(wildcard $(APPLIBDIR)/R2C2/*.c)) \
+	$(wildcard $(APPLIBDIR)/ethernet/*.c) \
+	$(FREERTOS_SRC) \
 	$(APPSRC) \
 	main.c
-	
+
 	
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files

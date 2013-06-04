@@ -30,12 +30,13 @@
 #ifndef	_DEBUG_H
 #define	_DEBUG_H
 
-#include "sersendf.h"
-#include "uart.h"
+#define debug(format, ...) dbg_printf(format, ## __VA_ARGS__)
 
-// select one of sersendf (USB) or UART function for debug 
-#define debug sersendf
+void dbg_init();
 
-//#define debug uart_writestr
+void dbg_printf (char *format, ...);
+
+void dbg_direct (char *s);
+
 
 #endif	/* _DEBUG_H */

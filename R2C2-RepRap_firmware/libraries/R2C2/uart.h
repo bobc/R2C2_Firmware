@@ -30,11 +30,54 @@
 #ifndef	_UART_H
 #define	_UART_H
 
-void uart_init(void);
-char uart_data_available(void);
-char uart_receive(void);
-void uart_send(char byte);
+typedef enum {
+  parity_none,
+  parity_even,
+  parity_odd,
+  parity_always1,
+  parity_always0} tParity;
+
+typedef struct {
+  uint32_t  baud_rate;
+  uint8_t   data_bits;
+  tParity   parity;
+  uint8_t   stop_bits;
+} tPortSettings;
+
+void uart_init(int uart_num);
+bool uart_configure(int uart_num, tPortSettings *port_settings_p);
+int  uart_data_available(int uart_num);
+char uart_receive(int uart_num);
+void uart_send(int uart_num, char byte);
+
+#if 0
 void uart_writestr(char *data);
+#endif
+
+void uart0_init(void);
+int  uart0_data_available(void);
+char uart0_receive(void);
+void uart0_send(char byte);
+
+//void uart0_writestr(char *data);
+
+void uart1_init(void);
+int  uart1_data_available(void);
+char uart1_receive(void);
+void uart1_send(char byte);
+
+void uart2_init(void);
+int  uart2_data_available(void);
+char uart2_receive(void);
+void uart2_send(char byte);
+
+void uart3_init(void);
+int  uart3_data_available(void);
+char uart3_receive(void);
+void uart3_send(char byte);
+
+void uart3_writestr(char *data);
+
 
 // #define serial_writechar(x) uart_send(x)
 
