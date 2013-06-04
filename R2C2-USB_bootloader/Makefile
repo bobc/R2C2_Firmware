@@ -132,10 +132,11 @@ OUTDIR = $(RUN_MODE)
 TARGET = project
 
 # Utility variables
-APPLIBDIR    = libraries
-INCLUDES = $(APPLIBDIR)/CMSISv1p30_LPC17xx/inc \
+APPLIBDIR    = ../R2C2-RepRap_firmware/libraries
+ARCH_DIR    = ../R2C2-RepRap_firmware/arch/lpc17xx
+INCLUDES = $(ARCH_DIR)/CMSISv1p30/inc \
 	 $(APPLIBDIR)/LPCUSB/inc \
-	 $(APPLIBDIR)/NXP/Drivers/include \
+	 $(ARCH_DIR)/Drivers/include \
 	 $(APPLIBDIR)/FatFs/src \
 	 inc \
 
@@ -145,14 +146,14 @@ SRC =	$(APPLIBDIR)/LPCUSB/src/usbcontrol.c \
 	$(APPLIBDIR)/LPCUSB/src/usbhw_lpc.c \
 	$(APPLIBDIR)/LPCUSB/src/usbinit.c \
 	$(APPLIBDIR)/LPCUSB/src/usbstdreq.c \
-	$(APPLIBDIR)/CMSISv1p30_LPC17xx/src/system_LPC17xx.c \
-	$(APPLIBDIR)/CMSISv1p30_LPC17xx/src/core_cm3.c \
-	$(APPLIBDIR)/NXP/Drivers/source/lpc17xx_nvic.c \
-	$(APPLIBDIR)/NXP/Drivers/source/lpc17xx_pinsel.c \
-	$(APPLIBDIR)/NXP/Drivers/source/lpc17xx_gpio.c \
-	$(APPLIBDIR)/NXP/Drivers/source/lpc17xx_uart.c \
-	$(APPLIBDIR)/NXP/Drivers/source/lpc17xx_clkpwr.c \
-	$(APPLIBDIR)/NXP/Drivers/source/lpc17xx_ssp.c \
+	$(ARCH_DIR)/CMSISv1p30/src/system_LPC17xx.c \
+	$(ARCH_DIR)/CMSISv1p30/src/core_cm3.c \
+	$(ARCH_DIR)/Drivers/source/lpc17xx_nvic.c \
+	$(ARCH_DIR)/Drivers/source/lpc17xx_pinsel.c \
+	$(ARCH_DIR)/Drivers/source/lpc17xx_gpio.c \
+	$(ARCH_DIR)/Drivers/source/lpc17xx_uart.c \
+	$(ARCH_DIR)/Drivers/source/lpc17xx_clkpwr.c \
+	$(ARCH_DIR)/Drivers/source/lpc17xx_ssp.c \
 	$(APPLIBDIR)/FatFs/src/ff.c \
 	$(APPLIBDIR)/FatFs/src/fattime.c \
 	main.c	\
@@ -610,7 +611,7 @@ $(foreach src, $(ASRCARM), $(eval $(call ASSEMBLE_ARM_TEMPLATE, $(src))))
 define COMPILE_C_TEMPLATE
 $(OUTDIR)/$(notdir $(basename $(1))).o : $(1) $(BUILDONCHANGE)
 	@echo "  CC    " $$@
-	@$(CC) -c $(THUMB) $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@
+	$(CC) -c $(THUMB) $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@
 endef
 $(foreach src, $(SRC), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
 
