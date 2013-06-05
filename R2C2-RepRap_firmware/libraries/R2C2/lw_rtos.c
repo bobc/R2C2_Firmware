@@ -2,6 +2,16 @@
 #include "rtos_api.h"
 
 
+void vPortFree( void *pv )
+{
+}
+
+void *pvPortMalloc( size_t xSize )
+{
+    return NULL;
+}
+
+
 
 portBASE_TYPE xTaskCreate(
 							  pdTASK_CODE pvTaskCode,

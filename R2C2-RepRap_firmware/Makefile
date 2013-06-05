@@ -146,6 +146,7 @@ APPSRC = \
 	$(APPDIR)/packed_gcode.c \
 	$(APPDIR)/mendel.c \
 	$(APPDIR)/temp.c \
+	$(APPDIR)/temp_controller.c \
 	$(APPDIR)/app_config.c \
 	$(APPDIR)/endstops.c \
 	$(APPDIR)/pin_control.c \
@@ -190,16 +191,17 @@ FREERTOS_SRC = $(FREERTOS_SOURCE_DIR)/list.c \
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
 SRC = \
-	$(wildcard $(APPLIBDIR)/LPCUSB/src/*.c) \
-	arch/lpc17xx//CMSISv1p30/src/system_LPC17xx.c \
+	arch/lpc17xx/CMSISv1p30/src/system_LPC17xx.c \
 	$(wildcard arch/lpc17xx/Drivers/source/lpc17xx_*.c) \
+	$(wildcard $(APPLIBDIR)/LPCUSB/src/*.c) \
 	$(wildcard $(APPLIBDIR)/FatFs/src/*.c) \
-	$(filter-out $(APPLIBDIR)/R2C2/lw_rtos.c, $(wildcard $(APPLIBDIR)/R2C2/*.c)) \
+	$(wildcard $(APPLIBDIR)/R2C2/*.c) \
 	$(wildcard $(APPLIBDIR)/ethernet/*.c) \
-	$(FREERTOS_SRC) \
 	$(APPSRC) \
 	main.c
 
+##	$(FREERTOS_SRC) \
+##	$(filter-out $(APPLIBDIR)/R2C2/lw_rtos.c, $(wildcard $(APPLIBDIR)/R2C2/*.c)) \
 	
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files

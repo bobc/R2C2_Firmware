@@ -42,6 +42,6 @@
 //#define USE_BOOT_BUTTON
 
 
-#define USE_FREERTOS
+//#define USE_FREERTOS
 
 #endif	/* _MACHINE_H */  

@@ -48,6 +48,7 @@
   #include "queue.h"
 #else
   
+#include <stddef.h>  
   
 // --------------------------------------------------------------------------
 // Defines
@@ -87,6 +88,8 @@ typedef unsigned long portTickType;
 // Public functions
 // --------------------------------------------------------------------------
 
+// Task
+
 portBASE_TYPE xTaskCreate(
 							  pdTASK_CODE pvTaskCode,
 							  const char * const pcName,
@@ -100,7 +103,7 @@ void vTaskDelete( xTaskHandle pxTask );
 
 void vTaskStartScheduler( void );
 
-
+// message queue
 xQueueHandle xQueueCreate( unsigned portBASE_TYPE uxQueueLength, unsigned portBASE_TYPE uxItemSize );
 
 unsigned portBASE_TYPE uxQueueMessagesWaiting( const xQueueHandle xQueue );
@@ -113,6 +116,11 @@ signed portBASE_TYPE xQueueSend( xQueueHandle xQueue, const void * const pvItemT
 signed portBASE_TYPE xQueueGenericReceive( xQueueHandle xQueue, void * const pvBuffer, portTickType xTicksToWait, portBASE_TYPE xJustPeek );
 
 signed portBASE_TYPE xQueueGenericSend( xQueueHandle xQueue, const void * const pvItemToQueue, portTickType xTicksToWait, portBASE_TYPE xCopyPosition );
+
+// heap memory
+
+void vPortFree( void *pv );
+void *pvPortMalloc( size_t xSize );
 
 #endif
 
