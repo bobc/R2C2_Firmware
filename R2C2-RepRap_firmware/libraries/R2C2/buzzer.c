@@ -134,7 +134,7 @@ void buzzer_wait(void)
   
 }
 
-void buzzer_play_sync (float frequency, uint32_t duration)
+void buzzer_play_sync (uint16_t frequency, uint32_t duration)
 {
   buzzer_pwm_set_frequency(frequency);
   buzzer_pwm_start();
