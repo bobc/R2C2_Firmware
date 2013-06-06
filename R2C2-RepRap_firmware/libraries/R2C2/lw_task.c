@@ -45,9 +45,34 @@
 // Local defines
 // --------------------------------------------------------------------------
 
+#define MAX_TASKS       8
+
+//
+#define TASK_NAME_LEN   6
+
 // --------------------------------------------------------------------------
 // Types
 // --------------------------------------------------------------------------
+
+typedef enum {
+    TS_DEAD,    // marks free slots in task table
+    TS_INIT,    // 
+    TS_RUNNING 
+    } tTaskState;
+
+typedef struct {
+    tTaskState  State;
+    fpTaskInit  fInit;
+    fpTaskPoll  fPoll;
+    void        *pTaskParameters;
+    uint16_t    StackSize;
+    uint16_t    Priority;
+    // char Name [TASK_NAME_LEN];
+    //
+    uint16_t    WakeupCounter;
+} tTaskDef;
+
+typedef tTaskDef *priv_tTaskHandle;
 
 // --------------------------------------------------------------------------
 // Variables
@@ -60,6 +85,9 @@
 // --------------------------------------------------------------------------
 // Private Variables
 // --------------------------------------------------------------------------
+
+static tTaskDef Tasks[MAX_TASKS];
+static uint16_t NumTasks; 
 
 // --------------------------------------------------------------------------
 // Function prototypes
@@ -78,130 +106,113 @@
 // --------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
-//! @brief
+//! @brief  Create a task
 //! @param[in]
 //! @param[out]
 //! @return
 // --------------------------------------------------------------------------
 
+LW_RTOS_RESULT lw_TaskCreate (  fpTaskPoll    TaskPoll,
+                                fpTaskInit    TaskInit,
+                              const char * const pName,
+                              uint16_t       StackSize,
+                              void           *pvParameters,
+                              uint16_t       uPriority,
+                              tTaskHandle    *pTaskId)
 
-void lw_mem_free ( void *pv )
 {
+    if (NumTasks < MAX_TASKS)
+    {
+        //TODO look for empty task slots
+        priv_tTaskHandle pCurTask = &Tasks[NumTasks];
+        NumTasks++;
+        
+        pCurTask->fInit = TaskInit;
+        pCurTask->fPoll = TaskPoll;
+        pCurTask->pTaskParameters = pvParameters;
+        pCurTask->Priority = uPriority;
+        pCurTask->StackSize = StackSize;
+
+        // strncpy (pCurTask->Name, pName, sizeof(pCurTask->Name));      
+        pCurTask->State = TS_INIT;
+        
+        if (pTaskId != NULL)
+            *pTaskId = pCurTask;
+        
+        return LWR_OK;
+    }
+    else
+        return LWR_ERROR;
 }
 
-void *lw_mem_malloc( size_t xSize )
+// --------------------------------------------------------------------------
+//! @brief  Delete a task
+//! @param[in]
+//! @param[out]
+//! @return
+// --------------------------------------------------------------------------
+
+LW_RTOS_RESULT lw_TaskDelete (tTaskHandle TaskId)
 {
-    return NULL;
+    priv_tTaskHandle pTask = TaskId; 
+
+    if (pTask != NULL)
+    {
+        pTask->State = TS_DEAD;
+        NumTasks --;
+        
+        return LWR_OK;
+    }
+    else
+        return LWR_ERROR;
 }
 
+// --------------------------------------------------------------------------
+//! @brief  Run the task scheduler.
+//! @param[in]
+//! @param[out]
+//! @return
+// --------------------------------------------------------------------------
 
-
-
-
-
-tQueueHandle lw_QueueCreate (uint16_t uQueueLength, uint16_t ItemSize)
+LW_RTOS_RESULT lw_TaskScheduler (void)
 {
-    return NULL;
-}
+    uint16_t            taskIndex;
+    priv_tTaskHandle     pCurTask;
+    
+    
+    taskIndex = 0;
+    
+    for (;;)
+    {
+        pCurTask = &Tasks[taskIndex];
+    
+        switch (pCurTask->State)
+        {
+        case TS_DEAD: break;
+        
+        case TS_INIT:
+            pCurTask->fInit (pCurTask->pTaskParameters);
+            //TODO check result?
+            pCurTask->State = TS_RUNNING;
+            pCurTask->WakeupCounter = pCurTask->Priority;
+            break;
 
-
-uint16_t lw_QueueMessagesWaiting (const tQueueHandle QueueId)
-{
-    return 0;
-}
-
-
-LW_RTOS_RESULT lw_QueueGet (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout)
-{
+        case TS_RUNNING:
+        
+            if (pCurTask->WakeupCounter == 0)
+            {
+                pCurTask->fPoll (pCurTask->pTaskParameters);
+                pCurTask->WakeupCounter = pCurTask->Priority;
+            }
+            else
+                pCurTask->WakeupCounter--;
+            break;    
+        }
+        
+        taskIndex++;
+        if (taskIndex == MAX_TASKS) // ***
+            taskIndex = 0;                
+    }
+    
     return LWR_ERROR;
 }
-
-
-LW_RTOS_RESULT lw_QueuePeek (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout)
-{
-    return LWR_ERROR;
-}
-
-
-LW_RTOS_RESULT lw_QueuePut (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout)
-{
-    return LWR_ERROR;
-}
-
-
-// --------------------------------------------------------------------------
-//
-// --------------------------------------------------------------------------
-
-#if 0
-void vPortFree( void *pv )
-{
-}
-
-void *pvPortMalloc( size_t xSize )
-{
-    return NULL;
-}
-
-
-
-portBASE_TYPE xTaskCreate(
-                              pdTASK_CODE pvTaskCode,
-                              const char * const pcName,
-                              unsigned short usStackDepth,
-                              void *pvParameters,
-                              unsigned portBASE_TYPE uxPriority,
-                              xTaskHandle *pvCreatedTask
-                          )
-{
-  return pdPASS;
-}
-
-void vTaskDelete( xTaskHandle pxTask )
-{
-}
-
-void vTaskStartScheduler( void )
-{
-}
-
-
-
-xQueueHandle xQueueCreate( unsigned portBASE_TYPE uxQueueLength, unsigned portBASE_TYPE uxItemSize )
-{
-  return 0;
-}
-
-
-unsigned portBASE_TYPE uxQueueMessagesWaiting( const xQueueHandle xQueue )
-{
-  return 0;
-}
-
-signed portBASE_TYPE xQueueReceive( xQueueHandle xQueue, void * const pvBuffer, portTickType xTicksToWait )
-{
-  return pdTRUE;
-}
-
-
-signed portBASE_TYPE xQueueSend( xQueueHandle xQueue, const void * const pvItemToQueue, portTickType xTicksToWait)
-{
-  return pdTRUE;
-}
-
-
-
-signed portBASE_TYPE xQueueGenericReceive( xQueueHandle xQueue, void * const pvBuffer, portTickType xTicksToWait, portBASE_TYPE xJustPeek )
-{
-  return pdTRUE;
-}
-
-
-signed portBASE_TYPE xQueueGenericSend( xQueueHandle xQueue, const void * const pvItemToQueue, portTickType xTicksToWait, portBASE_TYPE xCopyPosition )
-{
-  return pdTRUE;
-}
-#endif
-// --------------------------------------------------------------------------
-//
-// --------------------------------------------------------------------------

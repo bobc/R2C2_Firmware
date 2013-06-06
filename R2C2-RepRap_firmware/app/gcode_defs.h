@@ -185,16 +185,16 @@ typedef enum {GC_ASCII, GC_PACKED} eGcodeMsgType;
 typedef volatile struct 
 {
     // The GCode line
-    tLineBuffer *pLineBuf;
+    tLineBuffer     *pLineBuf;
 
     // the file handle of the source control interface
     // gcode_task will write output to this file via lw_io
     // if NULL, no output generated
-    LW_FILE *out_file;
+    LW_FILE         *out_file;
 
-    eGcodeMsgType type;
-    eParseResult result;
-    bool in_use;
+    eGcodeMsgType   type;
+    eParseResult    result;
+    bool            in_use;
 
 } tGcodeInputMsg;
 

@@ -27,65 +27,51 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 ****************************************************************************/
+
 // **************************************************************************
 // Description:
 //
 // **************************************************************************
 
-#ifndef _RTOS_API_H
-#define _RTOS_API_H
+#ifndef _LW_RTOS_H
+#define _LW_RTOS_H
 
 // --------------------------------------------------------------------------
 // Includes
 // --------------------------------------------------------------------------
 
-#include "app/machine.h"
+#include <stdint.h>
+#include <stddef.h>
 
-#ifdef USE_FREERTOS
-  /* FreeRTOS includes. */
-  #include "FreeRTOS.h"
-  #include "task.h"
-  #include "queue.h"
-
-#else
-  
-#include <stddef.h>  
-
-#include "lw_rtos.h"
-
-#endif
-
-  
-#if 0
 // --------------------------------------------------------------------------
 // Defines
 // --------------------------------------------------------------------------
 
-#define tskIDLE_PRIORITY 0
-
-#define portBASE_TYPE	long
-
-#define portMAX_DELAY 0xffffffff
-
-#define pdTRUE		( 1 )
-#define pdFALSE		( 0 )
-
-#define pdPASS									( 1 )
-#define pdFAIL									( 0 )
-#define errQUEUE_EMPTY							( 0 )
-#define errQUEUE_FULL							( 0 )
+#define LWR_MAX_DELAY 1000 // max waiting time in ticks
 
 // --------------------------------------------------------------------------
 // Types
 // --------------------------------------------------------------------------
 
-typedef void (*pdTASK_CODE)( void * );
-typedef void * xTaskHandle;
+// Note: Handles are pointers
+typedef void* tTaskHandle;
+typedef void* tQueueHandle;
 
+typedef uint32_t tTicks;
 
-typedef unsigned long xQueueHandle ;
+typedef enum {
+    LWR_OK,
+    LWR_ERROR
+    }
+    LW_RTOS_RESULT;
 
-typedef unsigned long portTickType;
+typedef enum {
+    LWR_IDLE_PRIORITY = 0
+    } tTaskPriority;
+
+typedef void (*fpTaskInit) ( void *pvParameters );
+
+typedef void (*fpTaskPoll) ( void *pvParameters );
 
 // --------------------------------------------------------------------------
 // Public Variables
@@ -95,41 +81,37 @@ typedef unsigned long portTickType;
 // Public functions
 // --------------------------------------------------------------------------
 
-// Task
+void lw_mem_free ( void *pv );
 
-portBASE_TYPE xTaskCreate(
-							  pdTASK_CODE pvTaskCode,
-							  const char * const pcName,
-							  unsigned short usStackDepth,
-							  void *pvParameters,
-							  unsigned portBASE_TYPE uxPriority,
-							  xTaskHandle *pvCreatedTask
-						  );
-
-void vTaskDelete( xTaskHandle pxTask );
-
-void vTaskStartScheduler( void );
-
-// message queue
-xQueueHandle xQueueCreate( unsigned portBASE_TYPE uxQueueLength, unsigned portBASE_TYPE uxItemSize );
-
-unsigned portBASE_TYPE uxQueueMessagesWaiting( const xQueueHandle xQueue );
-
-signed portBASE_TYPE xQueueReceive( xQueueHandle xQueue, void * const pvBuffer, portTickType xTicksToWait );
-
-signed portBASE_TYPE xQueueSend( xQueueHandle xQueue, const void * const pvItemToQueue, portTickType xTicksToWait);
+void *lw_mem_malloc( size_t xSize );
 
 
-signed portBASE_TYPE xQueueGenericReceive( xQueueHandle xQueue, void * const pvBuffer, portTickType xTicksToWait, portBASE_TYPE xJustPeek );
+LW_RTOS_RESULT lw_TaskCreate (  fpTaskPoll    TaskPoll,
+                                fpTaskInit    TaskInit,
+                                const char * const pName,
+							    uint16_t       StackSize,
+							    void           *pvParameters,
+							    uint16_t       uPriority,
+							    tTaskHandle    *pTaskId);
 
-signed portBASE_TYPE xQueueGenericSend( xQueueHandle xQueue, const void * const pvItemToQueue, portTickType xTicksToWait, portBASE_TYPE xCopyPosition );
+LW_RTOS_RESULT lw_TaskDelete (tTaskHandle TaskId);
 
-// heap memory
+LW_RTOS_RESULT lw_TaskScheduler (void);
 
-void vPortFree( void *pv );
-void *pvPortMalloc( size_t xSize );
+
+//LW_RTOS_RESULT lw_QueueCreate (uint16_t uQueueLength, uint16_t ItemSize, tQueueHandle *pQueueId);
+
+tQueueHandle lw_QueueCreate (uint16_t uQueueLength, uint16_t ItemSize);
+
+uint16_t lw_QueueMessagesWaiting (const tQueueHandle QueueId);
+
+LW_RTOS_RESULT lw_QueueGet (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout);
+
+LW_RTOS_RESULT lw_QueuePeek (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout);
+
+LW_RTOS_RESULT lw_QueuePut (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout);
+
 
 #endif
+// --------------------------------------------------------------------------
 
-
-#endif // _RTOS_API_H

@@ -34,4 +34,7 @@
 
 void ui_task ( void *pvParameters );
 
+void ui_task_init ( void *pvParameters );
+void ui_task_poll ( void *pvParameters );
+
 #endif

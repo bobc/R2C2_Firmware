@@ -57,6 +57,8 @@ FATFS   fs;       /* Work area (file system object) for logical drive */
 
 tTimer  temperatureTimer;
 
+// printer task
+static  long timer1 = 0;
 
 void io_init(void)
 {
@@ -152,32 +154,33 @@ static void PrinterInit (void)
 
 }
 
-void PrinterTask( void *pvParameters )
+
+
+void printer_task_init ( void *pvParameters )
 {
   tShellParams shell_params;
-  long timer1 = 0;
 
   PrinterInit();
 
   // -- init complete, can now start other tasks --
 
   // GCode engine
-  xTaskCreate( GcodeTask,    (signed char *)"Gcode", 512, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+  lw_TaskCreate( gcode_task_init, gcode_task_poll,         "Gcode", 512, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 
   // GCode control interfaces
-  xTaskCreate( USBShellTask, (signed char *)"USBSh", 128, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+  lw_TaskCreate( usb_shell_task_init, usb_shell_task_poll, "USBSh", 128, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 
   // option
-  xTaskCreate( EthShellTask, (signed char *)"EthSh", 128, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+  lw_TaskCreate( eth_shell_task_init, eth_shell_task_poll, "EthSh", 128, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 
   // option
   // Start a Gcode shell on UART
   shell_params.in_file = lw_fopen ("uart1", "rw");
   shell_params.out_file = shell_params.in_file;
-  xTaskCreate( uart_shell_task, (signed char *)"UartSh", 128, ( void * ) &shell_params, tskIDLE_PRIORITY, NULL );
+  lw_TaskCreate( uart_task_init, uart_task_poll,    "UartSh", 128, ( void * ) &shell_params, LWR_IDLE_PRIORITY, NULL );
 
   // start up user interface
-  xTaskCreate( ui_task, (signed char *)"UiTask", 256, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+  lw_TaskCreate( ui_task_init, ui_task_poll,        "UiTask", 256, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 
   // now to do GCode startup
   exec_gcode_file ("autoexec.g");
@@ -187,10 +190,10 @@ void PrinterTask( void *pvParameters )
   buzzer_play(1500, 100); /* low beep */
   buzzer_wait();
   buzzer_play(2500, 200); /* high beep */
+}
 
-  // loop
-  for (;;)
-  {
+void printer_task_poll( void *pvParameters )
+{
     /* Do every 100ms */
     #define DELAY1 100
     if (timer1 < millis())
@@ -218,8 +221,20 @@ void PrinterTask( void *pvParameters )
     check_boot_request();
 #endif
 
-  }
 }
+
+void PrinterTask( void *pvParameters )
+{
+    // TASK INIT
+    printer_task_init ( (tShellParams *)pvParameters );
+  
+    // TASK BODY
+    for( ;; )
+    {
+        printer_task_poll( (tShellParams *)pvParameters );
+    }
+}
+
 
 /*
   required start sequence:
@@ -247,18 +262,20 @@ void PrinterTask( void *pvParameters )
 
 void app_main (void)
 {
-  portBASE_TYPE res;
+  LW_RTOS_RESULT res;
   /* Create the main system task. 
   *  NB: our system timer tick is called from FreeRTOS timer tick, which only runs after scheduler has started.
   *  Therefore, we start only PrinterTask to do initialisation which requires timer, namely the FatFs/SD code.
   */
   //TODO: Check stack usage
-  res = xTaskCreate( PrinterTask,  (signed char *)"Print", 512, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
-  if (res != pdPASS)
+  
+  
+  res = lw_TaskCreate ( printer_task_init, printer_task_poll,  "Print", 512, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
+  if (res != LWR_OK)
     debug ("error starting PrinterTask\n");
 
   /* Start the scheduler. */
-  vTaskStartScheduler();
+  lw_TaskScheduler();
 
   /* should not get here */
 }

@@ -43,14 +43,8 @@
 static volatile tLineBuffer LineBuf;
 static tGcodeInputMsg GcodeInputMsg;
 
-
-
-void EthShellTask( void *pvParameters )
+void eth_shell_task_init ( void *pvParameters )
 {
-    (void) pvParameters; /* Just to prevent compiler warnings about the unused parameter. */
-    uint8_t c;
-    eParseResult parse_result;
-
     // TASK INIT
     //NetInit();
 
@@ -58,13 +52,29 @@ void EthShellTask( void *pvParameters )
 
     // say hi to host
     //serial_writestr("Start\r\nOK\r\n");
+}
+
+void eth_shell_task_poll ( void *pvParameters )
+{
+    uint8_t c;
+    eParseResult parse_result;
+
+    // no-op
+
+}
+
+void EthShellTask( void *pvParameters )
+{
+    (void) pvParameters; /* Just to prevent compiler warnings about the unused parameter. */
+
+    eth_shell_task_init (pvParameters);
 
     // TASK BODY
 
     // process received data
     for( ;; )
     {
-      //no-op
+        eth_shell_task_poll (pvParameters);
     }
 }
 

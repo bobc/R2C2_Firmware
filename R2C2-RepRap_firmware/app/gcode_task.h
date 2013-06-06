@@ -34,9 +34,12 @@
 //#include "lw_io.h"
 
 
-extern xQueueHandle GcodeRxQueue;
+extern tQueueHandle GcodeRxQueue;
 
-void GcodeTask( void *pvParameters );
+void gcode_task_init ( void *pvParameters );
+void gcode_task_poll ( void *pvParameters );
+
+//void GcodeTask( void *pvParameters );
 
 
 

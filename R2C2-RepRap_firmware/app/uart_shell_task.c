@@ -37,11 +37,11 @@
 #include "uart_shell_task.h"
 
 
-static tLineBuffer LineBuf;
-static tGcodeInputMsg GcodeInputMsg;
-static tShellParams task_params;
+static tLineBuffer      LineBuf;
+static tGcodeInputMsg   GcodeInputMsg;
+//static tShellParams     task_params;
 
-static void _task_init (tShellParams *pParameters)
+void uart_task_init (tShellParams *pParameters)
 {
     GcodeInputMsg.pLineBuf = &LineBuf;
     GcodeInputMsg.out_file = pParameters->out_file;
@@ -52,7 +52,7 @@ static void _task_init (tShellParams *pParameters)
     lw_fprintf(pParameters->out_file, "Start\r\nOK\r\n");
 }
 
-static void _task_poll (tShellParams *pParameters)
+void uart_task_poll (tShellParams *pParameters)
 {
   int num;
   uint8_t c;
@@ -65,7 +65,7 @@ static void _task_poll (tShellParams *pParameters)
         // try again
         GcodeInputMsg.in_use = 1;
         tGcodeInputMsg *p_message = &GcodeInputMsg; 
-        xQueueSend (GcodeRxQueue, &p_message, portMAX_DELAY);
+        lw_QueuePut (GcodeRxQueue, &p_message, LWR_MAX_DELAY);
     }
     else
     {
@@ -84,7 +84,7 @@ static void _task_poll (tShellParams *pParameters)
           {
             GcodeInputMsg.in_use = 1;
             tGcodeInputMsg *p_message = &GcodeInputMsg; 
-            xQueueSend (GcodeRxQueue, &p_message, portMAX_DELAY); // TODO
+            lw_QueuePut (GcodeRxQueue, &p_message, LWR_MAX_DELAY); // TODO
           }
           else
             LineBuf.len = 0;
@@ -98,15 +98,15 @@ static void _task_poll (tShellParams *pParameters)
 void uart_shell_task ( void *pvParameters )
 {
   // TASK INIT
-  task_params = *(tShellParams *)pvParameters;
+  //task_params = *(tShellParams *)pvParameters;
 
-  _task_init(&task_params);
+  uart_task_init ( (tShellParams *)pvParameters );
 
   // TASK BODY
 
   for( ;; )
   {
-    _task_poll(&task_params);
+    uart_task_poll( (tShellParams *)pvParameters );
   }
 }
 

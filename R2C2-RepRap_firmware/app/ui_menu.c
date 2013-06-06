@@ -147,9 +147,9 @@ static void create_list (const item_entry_t items [], int num_items)
   data_size =  index_size + sizeof (item_entry_t) * list_count;
 
   if (item_list != NULL)
-    vPortFree (item_list);
+    lw_mem_free (item_list);
 
-  item_list = pvPortMalloc (data_size);
+  item_list = lw_mem_malloc (data_size);
   item_data = (char *) item_list + index_size;
 
   memcpy (item_data, items, sizeof (item_entry_t) * list_count);
@@ -237,7 +237,7 @@ static void jog (uint8_t key_pressed)
 
   GcodeInputMsg.in_use = 1;
   tGcodeInputMsg *p_message = &GcodeInputMsg; 
-  xQueueSend (GcodeRxQueue, &p_message, portMAX_DELAY);
+  lw_QueuePut (GcodeRxQueue, &p_message, LWR_MAX_DELAY);
 
 }
 
@@ -279,7 +279,7 @@ static void home (uint8_t axis)
 
   GcodeInputMsg.in_use = 1;
   tGcodeInputMsg *p_message = &GcodeInputMsg; 
-  xQueueSend (GcodeRxQueue, &p_message, portMAX_DELAY);
+  lw_QueuePut (GcodeRxQueue, &p_message, LWR_MAX_DELAY);
 
 }
 
@@ -302,7 +302,7 @@ static void start_sd_print  (item_entry_t *pItem)
 
   GcodeInputMsg.in_use = 1;
   tGcodeInputMsg *p_message = &GcodeInputMsg; 
-  xQueueSend (GcodeRxQueue, &p_message, portMAX_DELAY);
+  lw_QueuePut (GcodeRxQueue, &p_message, LWR_MAX_DELAY);
 
   // check result?
 }
@@ -536,10 +536,10 @@ void get_directory_list (void)
   if (sd_dir_count (cur_path, &list_count, &data_size) == FR_OK)
   {
     if (item_list != NULL)
-      vPortFree (item_list);
+      lw_mem_free (item_list);
 
     index_size = sizeof(char *) * list_count;
-    item_list = pvPortMalloc (data_size + index_size);
+    item_list = lw_mem_malloc (data_size + index_size);
 
     item_data = (char *) item_list + index_size;
 

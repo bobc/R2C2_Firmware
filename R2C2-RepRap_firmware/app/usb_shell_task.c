@@ -42,7 +42,9 @@ static tLineBuffer LineBuf;
 static tGcodeInputMsg GcodeInputMsg;
 static tShellParams task_params;
 
-static void _task_init (tShellParams *pParameters)
+#define pParameters ((tShellParams *)pvParameters)
+
+void usb_shell_task_init (void *pvParameters)
 {
     pParameters->in_file = lw_fopen ("usbser", "rw");
     pParameters->out_file = pParameters->in_file;
@@ -56,7 +58,7 @@ static void _task_init (tShellParams *pParameters)
     lw_fprintf(pParameters->out_file, "Start\r\nOK\r\n");
 }
 
-static void _task_poll (tShellParams *pParameters)
+void usb_shell_task_poll (void *pvParameters)
 {
     int num;
     uint8_t c;
@@ -69,7 +71,7 @@ static void _task_poll (tShellParams *pParameters)
         // try again
         GcodeInputMsg.in_use = 1;
         tGcodeInputMsg *p_message = &GcodeInputMsg; 
-        xQueueSend (GcodeRxQueue, &p_message, portMAX_DELAY);
+        lw_QueuePut (GcodeRxQueue, &p_message, LWR_MAX_DELAY);
       }
       else
       {
@@ -88,7 +90,7 @@ static void _task_poll (tShellParams *pParameters)
               {
                 GcodeInputMsg.in_use = 1;
                 tGcodeInputMsg *p_message = &GcodeInputMsg; 
-                xQueueSend (GcodeRxQueue, &p_message, portMAX_DELAY);
+                lw_QueuePut (GcodeRxQueue, &p_message, LWR_MAX_DELAY);
               }
               else
                 LineBuf.len = 0;
@@ -98,21 +100,21 @@ static void _task_poll (tShellParams *pParameters)
     }
 }
 
-void USBShellTask( void *pvParameters )
+void usb_shell_task( void *pvParameters )
 {
   // TASK INIT
   
   if (pvParameters != NULL)
     task_params = *(tShellParams *)pvParameters;
 
-  _task_init(&task_params);
+  usb_shell_task_init (pvParameters);
 
   // TASK BODY
 
   // process received data (USB stuff is done inside interrupt)
   for( ;; )
   {
-    _task_poll(&task_params);
+    usb_shell_task_poll (pvParameters);
   }
 }
 

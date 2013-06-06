@@ -30,6 +30,9 @@
 #ifndef _ETH_SHELL_TASK_H
 #define _ETH_SHELL_TASK_H
 
-void EthShellTask( void *pvParameters );
+//void EthShellTask( void *pvParameters );
+
+void eth_shell_task_init ( void *pvParameters );
+void eth_shell_task_poll ( void *pvParameters );
 
 #endif

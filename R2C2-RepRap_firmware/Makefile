@@ -414,6 +414,7 @@ CFLAGS += -Wall -Wextra
 CFLAGS += -Wimplicit -Wcast-align -Wpointer-arith
 CFLAGS += -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align
 CFLAGS += -Wa,-adhlns=$(addprefix $(OUTDIR)/, $(notdir $(addsuffix .lst, $(basename $<))))
+CFLAGS += -Wno-unused-variable -Wno-unused-parameter
 # Compiler flags to generate dependency files:
 #CFLAGS += -MD -MP -MF $(OUTDIR)/dep/$(@F).d 
 CFLAGS += -MMD -MP -MF $(OUTDIR)/dep/$(@F).d

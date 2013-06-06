@@ -79,7 +79,7 @@ static uint8_t key_event [MAX_BUTTONS];
 // Private functions
 // --------------------------------------------------------------------------
 
-static void _task_init (void *pvParameters)
+void ui_task_init (void *pvParameters)
 {
 
     //
@@ -107,7 +107,7 @@ static void _task_init (void *pvParameters)
     menu_init();
 }
 
-static void _task_poll (void *pvParameters)
+void ui_task_poll (void *pvParameters)
 {
     uint8_t j;
 
@@ -276,14 +276,14 @@ void ui_task ( void *pvParameters )
 {
   // TASK INIT
   
-  _task_init(NULL);
+  ui_task_init(NULL);
 
   // TASK BODY
 
   // process received data (USB stuff is done inside interrupt)
   for( ;; )
   {
-    _task_poll (NULL);
+    ui_task_poll (NULL);
   }
 }
 

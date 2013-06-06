@@ -33,6 +33,9 @@
 
 #include "uart_shell_task.h"
 
-void USBShellTask( void *pvParameters );
+//void USBShellTask( void *pvParameters );
+
+void usb_shell_task_init ( void *pvParameters );
+void usb_shell_task_poll ( void *pvParameters );
 
 #endif

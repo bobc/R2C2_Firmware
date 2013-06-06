@@ -42,7 +42,7 @@
 
 #define QUEUE_LEN 4
 
-xQueueHandle  GcodeRxQueue = NULL;
+tQueueHandle  GcodeRxQueue = NULL;
 
 static tLineBuffer   sd_line_buf;
 
@@ -65,12 +65,11 @@ tGcodeInputMsg file_input_msg;
 //
 // --------------------------------------------------------------------------
 
-void GcodeTask( void *pvParameters )
+// TASK INIT
+void gcode_task_init ( void *pvParameters )
 {
-    (void) pvParameters; /* Just to prevent compiler warnings about the unused parameter. */
-    eParseResult parse_result;
+    (void) pvParameters; // not used
 
-    // TASK INIT
     /* Initialize Gcode parse variables */
     gcode_parse_init();
 
@@ -81,66 +80,85 @@ void GcodeTask( void *pvParameters )
     st_init();
 
 
-    GcodeRxQueue = xQueueCreate( QUEUE_LEN, sizeof(tGcodeInputMsg *) );
+    GcodeRxQueue = lw_QueueCreate( QUEUE_LEN, sizeof(tGcodeInputMsg *) );
     if( GcodeRxQueue == NULL )
     {
         /* Not enough heap available to create the buffer queues, can't do
            anything so just delete ourselves. */
-        vTaskDelete( NULL );
+        lw_TaskDelete( NULL );
     }
 
     file_input_msg.pLineBuf = &sd_line_buf;
     file_input_msg.out_file = NULL; // should be directed to interface that initiated SD command
 
-    // TASK BODY
-
-    // process received data
-    for( ;; )
-    {
-        if (uxQueueMessagesWaiting(GcodeRxQueue) > 0)
-        {
-            if (xQueueReceive (GcodeRxQueue, &pGcodeInputMsg, portMAX_DELAY))
-            {
-#ifdef WAIT
-                // if queue is full, we wait
-                while (plan_queue_full())
-                    /* wait */ ;
-#endif
-                parse_result = gcode_parse_line (pGcodeInputMsg);
-
-                pGcodeInputMsg->result = parse_result;
-                if (parse_result != PR_BUSY)
-                  pGcodeInputMsg->pLineBuf->len = 0;
-                pGcodeInputMsg->in_use = false;
-            }
-        }
-
-        // process SD file
-        if (sd_printing)
-        {
-            if (file_input_msg.result == PR_BUSY)
-            {
-              // try again
-              parse_result = gcode_parse_line (&file_input_msg);
-              file_input_msg.result = parse_result;
-            }
-            else
-            {
-              if (sd_read_file (&sd_line_buf))
-              {
-                  parse_result = gcode_parse_line (&file_input_msg);
-                  file_input_msg.result = parse_result;
-                  // regardless of result, let the task continue and read message queue
-              } 
-              else
-              {
-                // end of file reached, stop printing
-                sd_printing = false;
-                lw_fputs ("Done printing file\r\n", file_input_msg.out_file);
-              }
-            }
-        }
-
-    } // for ()
 }
 
+// TASK BODY
+void gcode_task_poll (void *pvParameters)
+{
+    eParseResult parse_result;
+
+    // process received data
+    if (lw_QueueMessagesWaiting(GcodeRxQueue) > 0)
+    {
+        if (lw_QueueGet (GcodeRxQueue, &pGcodeInputMsg, LWR_MAX_DELAY))
+        {
+#ifdef WAIT
+            // if queue is full, we wait
+            while (plan_queue_full())
+                /* wait */ ;
+#endif
+            parse_result = gcode_parse_line (pGcodeInputMsg);
+
+            pGcodeInputMsg->result = parse_result;
+            if (parse_result != PR_BUSY)
+              pGcodeInputMsg->pLineBuf->len = 0;
+            pGcodeInputMsg->in_use = false;
+        }
+    }
+
+    // process SD file
+    if (sd_printing)
+    {
+        if (file_input_msg.result == PR_BUSY)
+        {
+          // try again
+          parse_result = gcode_parse_line (&file_input_msg);
+          file_input_msg.result = parse_result;
+        }
+        else
+        {
+          if (sd_read_file (&sd_line_buf))
+          {
+              parse_result = gcode_parse_line (&file_input_msg);
+              file_input_msg.result = parse_result;
+              // regardless of result, let the task continue and read message queue
+          } 
+          else
+          {
+            // end of file reached, stop printing
+            sd_printing = false;
+            lw_fputs ("Done printing file\r\n", file_input_msg.out_file);
+          }
+        }
+    }
+
+}
+
+
+void GcodeTask( void *pvParameters )
+{
+    (void) pvParameters; // not used
+        
+    // TASK INIT
+    //task_params = *(tShellParams *)pvParameters;
+
+    gcode_task_init(pvParameters);
+
+    // TASK BODY
+
+    for( ;; )
+    {
+        gcode_task_poll (pvParameters);
+    }
+}
