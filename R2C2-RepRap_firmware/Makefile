@@ -652,7 +652,7 @@ $(foreach src, $(ASRCARM), $(eval $(call ASSEMBLE_ARM_TEMPLATE, $(src))))
 define COMPILE_C_TEMPLATE
 $(OUTDIR)/$(notdir $(basename $(1))).o : $(1) $(BUILDONCHANGE)
 	@echo $(MSG_COMPILING) $$< to $$@
-	$(CC) -c $(THUMB) $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
+	@$(CC) -c $(THUMB) $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
 endef
 $(foreach src, $(SRC), $(eval $(call COMPILE_C_TEMPLATE, $(src)))) 
 
@@ -660,7 +660,7 @@ $(foreach src, $(SRC), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
 define COMPILE_C_ARM_TEMPLATE
 $(OUTDIR)/$(notdir $(basename $(1))).o : $(1) $(BUILDONCHANGE)
 	@echo $(MSG_COMPILING_ARM) $$< to $$@
-	$(CC) -c $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
+	@$(CC) -c $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
 endef
 $(foreach src, $(SRCARM), $(eval $(call COMPILE_C_ARM_TEMPLATE, $(src)))) 
 

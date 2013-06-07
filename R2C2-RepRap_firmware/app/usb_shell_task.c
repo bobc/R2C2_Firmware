@@ -40,12 +40,15 @@
 
 static tLineBuffer LineBuf;
 static tGcodeInputMsg GcodeInputMsg;
+
 static tShellParams task_params;
 
-#define pParameters ((tShellParams *)pvParameters)
 
 void usb_shell_task_init (void *pvParameters)
 {
+(void)pvParameters;
+    tShellParams *pParameters = &task_params;
+    
     pParameters->in_file = lw_fopen ("usbser", "rw");
     pParameters->out_file = pParameters->in_file;
 
@@ -58,11 +61,14 @@ void usb_shell_task_init (void *pvParameters)
     lw_fprintf(pParameters->out_file, "Start\r\nOK\r\n");
 }
 
+// process received data (USB stuff is done inside interrupt)
 void usb_shell_task_poll (void *pvParameters)
 {
+(void)pvParameters;
     int num;
     uint8_t c;
     eParseResult parse_result;
+    tShellParams *pParameters = &task_params;
 
     if (!GcodeInputMsg.in_use)
     {
@@ -103,15 +109,9 @@ void usb_shell_task_poll (void *pvParameters)
 void usb_shell_task( void *pvParameters )
 {
   // TASK INIT
-  
-  if (pvParameters != NULL)
-    task_params = *(tShellParams *)pvParameters;
-
   usb_shell_task_init (pvParameters);
 
   // TASK BODY
-
-  // process received data (USB stuff is done inside interrupt)
   for( ;; )
   {
     usb_shell_task_poll (pvParameters);

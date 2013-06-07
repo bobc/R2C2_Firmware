@@ -41,8 +41,8 @@ typedef struct
 
 void uart_shell_task ( void *pvParameters );
 
-void uart_task_init (tShellParams *pParameters);
-void uart_task_poll (tShellParams *pParameters);
+void uart_task_init (void *pvParameters); // tShellParams *pParameters
+void uart_task_poll (void *pvParameters); // tShellParams *pParameters
 
 
 #endif

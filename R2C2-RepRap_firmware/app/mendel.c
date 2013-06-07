@@ -155,10 +155,10 @@ static void PrinterInit (void)
 }
 
 
+static  tShellParams uart_shell_params;
 
 void printer_task_init ( void *pvParameters )
 {
-  tShellParams shell_params;
 
   PrinterInit();
 
@@ -175,9 +175,9 @@ void printer_task_init ( void *pvParameters )
 
   // option
   // Start a Gcode shell on UART
-  shell_params.in_file = lw_fopen ("uart1", "rw");
-  shell_params.out_file = shell_params.in_file;
-  lw_TaskCreate( uart_task_init, uart_task_poll,    "UartSh", 128, ( void * ) &shell_params, LWR_IDLE_PRIORITY, NULL );
+  uart_shell_params.in_file = lw_fopen ("uart1", "rw");
+  uart_shell_params.out_file = uart_shell_params.in_file;
+  lw_TaskCreate( uart_task_init, uart_task_poll,    "UartSh", 128, ( void * ) &uart_shell_params, LWR_IDLE_PRIORITY, NULL );
 
   // start up user interface
   lw_TaskCreate( ui_task_init, ui_task_poll,        "UiTask", 256, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
@@ -226,12 +226,12 @@ void printer_task_poll( void *pvParameters )
 void PrinterTask( void *pvParameters )
 {
     // TASK INIT
-    printer_task_init ( (tShellParams *)pvParameters );
+    printer_task_init ( pvParameters );
   
     // TASK BODY
     for( ;; )
     {
-        printer_task_poll( (tShellParams *)pvParameters );
+        printer_task_poll( pvParameters );
     }
 }
 

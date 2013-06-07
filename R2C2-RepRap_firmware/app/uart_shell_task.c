@@ -41,8 +41,10 @@ static tLineBuffer      LineBuf;
 static tGcodeInputMsg   GcodeInputMsg;
 //static tShellParams     task_params;
 
-void uart_task_init (tShellParams *pParameters)
-{
+void uart_task_init ( void *pvParameters)
+{                                                       
+    tShellParams *pParameters = pvParameters;
+             
     GcodeInputMsg.pLineBuf = &LineBuf;
     GcodeInputMsg.out_file = pParameters->out_file;
     GcodeInputMsg.result = PR_OK;
@@ -52,11 +54,12 @@ void uart_task_init (tShellParams *pParameters)
     lw_fprintf(pParameters->out_file, "Start\r\nOK\r\n");
 }
 
-void uart_task_poll (tShellParams *pParameters)
+void uart_task_poll ( void *pvParameters)
 {
   int num;
   uint8_t c;
   eParseResult parse_result;
+  tShellParams *pParameters = pvParameters;
 
   if (!GcodeInputMsg.in_use)
   {
@@ -100,13 +103,13 @@ void uart_shell_task ( void *pvParameters )
   // TASK INIT
   //task_params = *(tShellParams *)pvParameters;
 
-  uart_task_init ( (tShellParams *)pvParameters );
+  uart_task_init ( pvParameters );
 
   // TASK BODY
 
   for( ;; )
   {
-    uart_task_poll( (tShellParams *)pvParameters );
+    uart_task_poll( pvParameters );
   }
 }
 
