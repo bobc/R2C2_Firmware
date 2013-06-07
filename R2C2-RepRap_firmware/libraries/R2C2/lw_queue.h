@@ -7,21 +7,21 @@
 /*                                                                            */
 /* ========================================================================== */
 
-#ifndef _QUEUE_H
-#define _QUEUE_H
+#ifndef _LW_QUEUE_H
+#define _LW_QUEUE_H
 
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef void * tpMessageData;
+typedef uint8_t * tpQueueData;
 
 typedef struct {
-    int First;
-    int Last;
-    int Count;
+    uint16_t First;
+    uint16_t Last;
+    uint16_t Count;
     
-    int NumEntries;   
-    int ItemSize;
+    uint16_t MaxEntries;
+    uint16_t ItemSize;
     
     uint8_t *pData;
    
@@ -30,21 +30,22 @@ typedef struct {
 typedef struct {
     tQueueHeader Header;
     
-    uint8_t Data [0];
+    uint8_t Data [4];
 } tQueue;
 
 
-void QueueInit (tQueue *pQueue, uint8_t *pData, int NumEntries, int ItemSize);
+void QueueInit (tQueueHeader *pQueueHeader, uint8_t *pData, uint16_t NumEntries, uint16_t ItemSize);
 
-bool QueuePut (tQueue *pQueue, tpMessageData pMessage);
+bool QueuePut (tQueueHeader *pQueueHeader, tpQueueData pMessage);
 
-bool QueueEmpty (tQueue *pQueue);
+bool QueueGet (tQueueHeader *pQueueHeader, tpQueueData pMessage);
 
-bool QueueGet (tQueue *pQueue, tpMessageData pMessage);
+bool QueueIsEmpty (tQueueHeader *pQueueHeader);
+bool QueueIsFull (tQueueHeader *pQueueHeader);
 
 //
 
 
 
 //---------------------------------------------------------------------------
-#endif // _QUEUE_H
+#endif // _LW_QUEUE_H

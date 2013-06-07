@@ -20,36 +20,36 @@ static int IncWrap (int count, int max)
    return count;
 }
 
-void QueueInit (tQueue *pQueue, uint8_t *pData, int NumEntries, int ItemSize)
+void QueueInit (tQueueHeader *pQueueHeader, tpQueueData pData, uint16_t MaxEntries, uint16_t ItemSize)
 {
-   if (pQueue != NULL)
+   if (pQueueHeader != NULL)
    {
-      pQueue->Header.First = 0;         
-      pQueue->Header.Last = 0;         
-      pQueue->Header.Count = 0;
+      pQueueHeader->First = 0;         
+      pQueueHeader->Last = 0;         
+      pQueueHeader->Count = 0;
       
-      pQueue->Header.NumEntries = NumEntries;
-      pQueue->Header.ItemSize = ItemSize;
-      pQueue->Header.pData = pData;
+      pQueueHeader->MaxEntries = MaxEntries;
+      pQueueHeader->ItemSize = ItemSize;
+      pQueueHeader->pData = pData;
    }
 }
 
 
 
-bool QueuePut (tQueue *pQueue, tpMessageData pMessage)
+bool QueuePut (tQueueHeader *pQueueHeader, tpQueueData pMessage)
 {
-   if (pQueue != NULL)
+   if (pQueueHeader != NULL)
    {
-      if (pQueue->Header.Count < pQueue->Header.NumEntries)
+      if (pQueueHeader->Count < pQueueHeader->MaxEntries)
       {
          uint8_t *pDest;
          
-         pDest = pQueue->Header.pData +  pQueue->Header.ItemSize * pQueue->Header.Last;
+         pDest = pQueueHeader->pData +  pQueueHeader->ItemSize * pQueueHeader->Last;
          
-         memcpy (pDest, pMessage, pQueue->Header.ItemSize);
+         memcpy (pDest, pMessage, pQueueHeader->ItemSize);
          
-         pQueue->Header.Last = IncWrap (pQueue->Header.Last, pQueue->Header.NumEntries);
-         pQueue->Header.Count++;
+         pQueueHeader->Last = IncWrap (pQueueHeader->Last, pQueueHeader->MaxEntries);
+         pQueueHeader->Count++;
          return true;
       }
       else
@@ -62,24 +62,29 @@ bool QueuePut (tQueue *pQueue, tpMessageData pMessage)
       return false; // invalid queue
 }
 
-bool QueueEmpty (tQueue *pQueue)
+bool QueueIsEmpty (tQueueHeader *pQueueHeader)
 {
-    return pQueue->Header.Count == 0;
+    return pQueueHeader->Count == 0;
+}
+
+bool QueueIsFull (tQueueHeader *pQueueHeader)
+{
+    return pQueueHeader->Count == pQueueHeader->MaxEntries;
 }
 
 
-bool QueueGet (tQueue *pQueue, tpMessageData pMessage)
+bool QueueGet (tQueueHeader *pQueueHeader, tpQueueData pMessage)
 {
-    if (pQueue->Header.Count != 0)
+    if (pQueueHeader->Count != 0)
     {
         uint8_t *pSrc;
      
-        pSrc = pQueue->Header.pData +  pQueue->Header.ItemSize * pQueue->Header.First;
+        pSrc = pQueueHeader->pData +  pQueueHeader->ItemSize * pQueueHeader->First;
 
-        memcpy (pMessage, pSrc, pQueue->Header.ItemSize);
+        memcpy (pMessage, pSrc, pQueueHeader->ItemSize);
       
-        pQueue->Header.First = IncWrap (pQueue->Header.First, pQueue->Header.NumEntries);
-        pQueue->Header.Count--;
+        pQueueHeader->First = IncWrap (pQueueHeader->First, pQueueHeader->MaxEntries);
+        pQueueHeader->Count--;
    
         return true;
     }
