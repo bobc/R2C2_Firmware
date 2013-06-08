@@ -31,7 +31,8 @@
 
 #include "rtos_api.h"
 
-#include "r2c2.h"
+#include "timer.h"
+
 #include "app_config.h"
 #include "ui_task.h"
 #include "keypad_gen4_mb.h"

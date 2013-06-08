@@ -35,7 +35,13 @@
 
 #include "LPC17xx.h"    // NVIC_SystemReset
 
+#include "spi.h"
+
 #include "r2c2.h"
+#include "buzzer.h"
+#include "timer.h"
+#include "uart.h"
+
 #include "gcode_parse.h"
 //#include "pinout.h"
 #include "pin_control.h"
@@ -45,7 +51,6 @@
 #include "planner.h"
 #include "stepper.h"
 #include "usb_serial.h"
-#include "uart.h"
 #include "ff.h"
 #include "eth_shell_task.h"
 #include "usb_shell_task.h"

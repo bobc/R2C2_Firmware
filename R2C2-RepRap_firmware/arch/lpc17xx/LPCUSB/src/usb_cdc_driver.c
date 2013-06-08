@@ -34,11 +34,10 @@
 #include "lpc17xx_pinsel.h"
 #include "lpc17xx_gpio.h"
 
-#include "FreeRTOS.h"
-
 #include "serial_fifo.h"
 #include "usbapi.h"
 #include "usbdebug.h"
+#include "usb_cdc_driver.h"
 
 #define BAUD_RATE   115200
 

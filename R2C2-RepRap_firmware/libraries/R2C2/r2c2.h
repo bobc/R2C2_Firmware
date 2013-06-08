@@ -30,12 +30,13 @@
 #ifndef _R2C2_H
 #define _R2C2_H
 
+/*
 #include "adc.h"
 #include "buzzer.h"
 #include "ios.h"
 #include "sdcard.h"
 #include "spi.h"
 #include "timer.h"
-
+*/
 
 #endif

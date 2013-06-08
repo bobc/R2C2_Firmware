@@ -132,14 +132,28 @@ OUTDIR = $(RUN_MODE)
 TARGET = project
 
 # FreeRTOS paths
-FREERTOS_PATH = libraries/FreeRTOS
+#FREERTOS_PATH = libraries/FreeRTOS
 #FREERTOS_DEMO_DIR = $(FREERTOS_PATH)/Demo/Common
 #FREERTOS_DEMO_TYPE_DIR = $(FREERTOS_DEMO_DIR)/Minimal
-FREERTOS_SOURCE_DIR = $(FREERTOS_PATH)/Source
-FREERTOS_PORT_DIR = $(FREERTOS_SOURCE_DIR)/portable/GCC/ARM_CM3
+#FREERTOS_SOURCE_DIR = $(FREERTOS_PATH)/Source
+#FREERTOS_PORT_DIR = $(FREERTOS_SOURCE_DIR)/portable/GCC/ARM_CM3
 
-# application dir and source
+#	 $(FREERTOS_SOURCE_DIR)/include \
+#	 $(FREERTOS_PORT_DIR)/ \
+
+#FREERTOS_SRC = $(FREERTOS_SOURCE_DIR)/list.c \
+#	$(FREERTOS_SOURCE_DIR)/queue.c \
+#	$(FREERTOS_SOURCE_DIR)/tasks.c \
+#	$(FREERTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
+#	$(FREERTOS_PORT_DIR)/port.c \
+
+
+#
+	 
+
+#############################################################################
 APPDIR = app
+# application source
 APPSRC = \
 	$(APPDIR)/gcode_parse.c \
 	$(APPDIR)/gcode_process.c \
@@ -162,61 +176,73 @@ APPSRC = \
 	$(APPDIR)/stepper.c \
 	$(APPDIR)/ui_task.c
 
+APPINC = $(APPDIR) 
 # 
 #APPDIR = sample
 #APPSRC = $(APPDIR)/sample_app.c
-
 # 
-APPLIBDIR    = libraries
-INCLUDES = arch/lpc17xx/CMSISv1p30/inc \
-	arch/lpc17xx/drivers/include \
-	 $(APPLIBDIR)/LPCUSB/inc \
-	 $(APPLIBDIR)/FatFs/src \
+#############################################################################
+APPLIBDIR = libraries
+
+APPLIBSRC = \
+	$(wildcard $(APPLIBDIR)/FatFs/src/*.c) \
+	$(wildcard $(APPLIBDIR)/R2C2/*.c)
+	
+#TODO:	$(wildcard $(APPLIBDIR)/ethernet/*.c)
+
+APPLIBINC =	 $(APPLIBDIR)/FatFs/src \
 	 $(APPLIBDIR)/R2C2/ \
 	 $(APPLIBDIR)/ethernet/ \
 	 $(APPLIBDIR)/lwip/src/include/ \
 	 $(APPLIBDIR)/lwip/src/include/ipv4/ \
-	 $(APPLIBDIR)/lwip/ports/r2c2/include/ \
-	 $(FREERTOS_SOURCE_DIR)/include \
-	 $(FREERTOS_PORT_DIR)/ \
-	 app/grbl/ \
-	 $(APPDIR)
+	 $(APPLIBDIR)/lwip/ports/r2c2/include/
 
-FREERTOS_SRC = $(FREERTOS_SOURCE_DIR)/list.c \
-	$(FREERTOS_SOURCE_DIR)/queue.c \
-	$(FREERTOS_SOURCE_DIR)/tasks.c \
-	$(FREERTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
-	$(FREERTOS_PORT_DIR)/port.c \
+#############################################################################
+ARCHLIBDIR = arch
 
+ARCHLIBINC = \
+	$(ARCHLIBDIR)/lpc17xx/CMSISv1p30/inc \
+	$(ARCHLIBDIR)/lpc17xx/drivers/include \
+	$(ARCHLIBDIR)/lpc17xx/LPCUSB/inc \
+	$(ARCHLIBDIR)/hal
+
+ARCHLIBSRC = \
+	$(ARCHLIBDIR)/lpc17xx/CMSISv1p30/src/system_LPC17xx.c \
+	$(wildcard $(ARCHLIBDIR)/lpc17xx/Drivers/source/lpc17xx_*.c) \
+	$(wildcard $(ARCHLIBDIR)/lpc17xx/hal/*.c) \
+	$(wildcard $(ARCHLIBDIR)/lpc17xx/LPCUSB/src/*.c) \
+	$(wildcard $(ARCHLIBDIR)/hal/*.c)
+
+#############################################################################
+
+INCLUDES = $(APPINC) $(APPLIBINC) $(ARCHLIBINC) 
+
+#############################################################################
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
-SRC = \
-	arch/lpc17xx/CMSISv1p30/src/system_LPC17xx.c \
-	$(wildcard arch/lpc17xx/Drivers/source/lpc17xx_*.c) \
-	$(wildcard $(APPLIBDIR)/LPCUSB/src/*.c) \
-	$(wildcard $(APPLIBDIR)/FatFs/src/*.c) \
-	$(wildcard $(APPLIBDIR)/R2C2/*.c) \
-	$(wildcard $(APPLIBDIR)/ethernet/*.c) \
-	$(APPSRC) \
-	main.c
+SRC = $(ARCHLIBSRC) $(APPLIBSRC) $(APPSRC) main.c
 
 ##	$(FREERTOS_SRC) \
 ##	$(filter-out $(APPLIBDIR)/R2C2/lw_rtos.c, $(wildcard $(APPLIBDIR)/R2C2/*.c)) \
 	
+#############################################################################
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files
 ## just for testing, timer.c classcould be compiled in thumb-mode too
 SRCARM = 
 
+#############################################################################
 # List C++ source files here.
 # use file-extension .cpp for C++-files (not .C)
 CPPSRC = 
 
+#############################################################################
 # List C++ source files here which must be compiled in ARM-Mode.
 # use file-extension .cpp for C++-files (not .C)
 #CPPSRCARM = $(TARGET).cpp
 CPPSRCARM = 
  
+#############################################################################
 # List Assembler source files here.
 # Make them always end in a capital .S. Files ending in a lowercase .s
 # will not be considered source files but generated files (assembler
@@ -224,11 +250,13 @@ CPPSRCARM =
 # Even though the DOS/Win* filesystem matches both .s and .S the same,
 # it will preserve the spelling of the filenames, and gcc itself does
 # care about how the name is spelled on its command-line.
-ASRC = startup.S
+
+ASRC = $(ARCHLIBDIR)/lpc17xx/startup.S
 
 # List Assembler source files here which must be assembled in ARM-Mode.
 ASRCARM  = 
 
+#############################################################################
 # Place project-specific -D (define) and/or -U options for C here.
 CDEFS = 
 # enables parameter-checking in NXP's library

@@ -978,8 +978,12 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       
       // M115- report firmware version
       case 115:
-        lw_fprintf(pGcodeInputMsg->out_file, "FIRMWARE_NAME:Teacup_R2C2 FIRMWARE_URL:http%%3A//github.com/bitboxelectronics/R2C2_Firmware " 
-                "PROTOCOL_VERSION:1.0 MACHINE_TYPE:Mendel FEATURES:0/R2C2_BOOTLOAD\r\n");
+        lw_fprintf(pGcodeInputMsg->out_file, "FIRMWARE_NAME:R2C2_bobc "
+			"FIRMWARE_URL:http%%3A//github.com/bobc/R2C2_Firmware " 
+            "PROTOCOL_VERSION:1.0 "
+			"MACHINE_TYPE:Mendel "
+			"FEATURES:0/R2C2_BOOTLOAD"
+			"\r\n");
       break;
 
       // M116 - Wait for all temperatures and other slowly-changing variables to arrive at their set values

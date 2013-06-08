@@ -29,12 +29,13 @@
 
 #include "rtos_api.h"
 
+/* HAL includes */
 #include "lpc17xx_nvic.h"
+#include "buzzer.h"
+#include "uart.h"
 
 /* Application includes */
 #include "lw_io.h"
-#include "r2c2.h"
-#include "uart.h"
 #include "soundplay.h"
 
 //TODO:
@@ -52,10 +53,7 @@
 extern int app_main (void);
 
 /**********************************************************************/
-void startup_delay(void)
-{
-  for (volatile unsigned long i = 0; i < 500000; i++) { ; }
-}
+
 
 void fatal_error (void)
 {

@@ -31,6 +31,8 @@
 
 #include "serial_fifo.h"
 
+#define configUSB_INTERRUPT_PRIORITY 	6
+
 extern fifo_t txfifo;
 extern fifo_t rxfifo;
 

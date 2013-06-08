@@ -30,6 +30,8 @@
 #ifndef	_UART_H
 #define	_UART_H
 
+#include <stdbool.h>
+
 typedef enum {
   parity_none,
   parity_even,
