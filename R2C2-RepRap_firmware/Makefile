@@ -285,7 +285,7 @@ EXTRA_LIBS =
 BUILDONCHANGE = Makefile 
 
 # Path to linker-scripts (see -T option)
-LINKERSCRIPTPATH = .
+LINKERSCRIPTPATH = $(ARCHLIBDIR)/lpc17xx
 
 # List any directories with files included from linker-scripts.
 #    Each directory must be seperated by a space.

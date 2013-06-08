@@ -10,9 +10,6 @@
       <file file_name="startup.S">
         <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
       </file>
-      <file file_name="LPC1758_flash.ld">
-        <configuration Name="Common" file_type="Linker Script"/>
-      </file>
       <file file_name="syscalls.c">
         <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
       </file>
@@ -68,6 +65,7 @@
       <file file_name="libraries/R2C2/LiquidCrystal.c"/>
       <file file_name="libraries/R2C2/lw_queue.c"/>
       <file file_name="libraries/R2C2/lw_task.c"/>
+      <file file_name="libraries/R2C2/nk_heap.c"/>
     </folder>
     <folder Name="app_reprap">
       <file file_name="app/alerter.c"/>
@@ -128,6 +126,9 @@
         <file file_name="arch/lpc17xx/LPCUSB/src/usbinit.c"/>
         <file file_name="arch/lpc17xx/LPCUSB/src/usbstdreq.c"/>
       </folder>
+      <file file_name="arch/lpc17xx/LPC1758_flash.ld">
+        <configuration Name="Common" file_type="Reset Script"/>
+      </file>
     </folder>
   </project>
   <configuration Name="THUMB RAM Debug" inherited_configurations="THUMB;RAM;Debug"/>

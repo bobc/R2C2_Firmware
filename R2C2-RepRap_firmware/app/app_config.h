@@ -46,7 +46,7 @@
 #define E_AXIS 3
 
 // 6 axes should be enough for anyone?
-#define MAX_AXES 6
+#define MAX_AXES 5
 
 // defines number of extruder temperature channels
 #define MAX_EXTRUDERS 2
