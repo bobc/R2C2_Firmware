@@ -60,8 +60,8 @@ typedef void* tQueueHandle;
 typedef uint32_t tTicks;
 
 typedef enum {
-    LWR_OK,
-    LWR_ERROR
+    LWR_ERROR,
+    LWR_OK
     }
     LW_RTOS_RESULT;
 

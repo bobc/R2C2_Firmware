@@ -36,7 +36,9 @@
 // --------------------------------------------------------------------------
 
 #include "lw_rtos.h"
+#include "lw_queue.h"
 
+#include "nk_heap.h"
 // --------------------------------------------------------------------------
 // Externals
 // --------------------------------------------------------------------------
@@ -87,11 +89,12 @@
 
 void lw_mem_free ( void *pv )
 {
+    free (pv);
 }
 
 void *lw_mem_malloc( size_t xSize )
 {
-    return NULL;
+    return malloc (xSize);
 }
 
 
@@ -101,19 +104,35 @@ void *lw_mem_malloc( size_t xSize )
 
 tQueueHandle lw_QueueCreate (uint16_t uQueueLength, uint16_t ItemSize)
 {
-    return NULL;
+    tQueueHeader *pQueue;
+    uint8_t *pData;
+     
+    pQueue = malloc (sizeof (tQueueHeader) + sizeof (uQueueLength * ItemSize));
+    pData = pQueue + 1;
+
+    QueueInit (pQueue, pData, uQueueLength, ItemSize);
+
+    return pQueue;
 }
 
 
 uint16_t lw_QueueMessagesWaiting (const tQueueHandle QueueId)
 {
-    return 0;
+    tQueueHeader *pQueue = (tQueueHeader *)QueueId;
+
+    if ( QueueIsEmpty (pQueue))
+        return 0;
+    else
+        return 1;
 }
 
 
 LW_RTOS_RESULT lw_QueueGet (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout)
 {
-    return LWR_ERROR;
+    if (QueueGet ( (tQueueHeader *)QueueId, pItemBuffer))
+      return LWR_OK;
+    else
+      return LWR_ERROR;
 }
 
 
@@ -125,7 +144,10 @@ LW_RTOS_RESULT lw_QueuePeek (tQueueHandle QueueId, void * pItemBuffer, tTicks Ti
 
 LW_RTOS_RESULT lw_QueuePut (tQueueHandle QueueId, void * pItemBuffer, tTicks Timeout)
 {
-    return LWR_ERROR;
+    if (QueuePut ( (tQueueHeader *)QueueId, pItemBuffer))
+      return LWR_OK;
+    else
+      return LWR_ERROR;
 }
 
 
