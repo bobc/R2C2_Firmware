@@ -86,13 +86,13 @@ void lw_mem_free ( void *pv );
 void *lw_mem_malloc( size_t xSize );
 
 
-LW_RTOS_RESULT lw_TaskCreate (  fpTaskPoll    TaskPoll,
-                                fpTaskInit    TaskInit,
-                                const char * const pName,
-							    uint16_t       StackSize,
-							    void           *pvParameters,
-							    uint16_t       uPriority,
-							    tTaskHandle    *pTaskId);
+LW_RTOS_RESULT lw_TaskCreate (  fpTaskInit    TaskInit,
+    fpTaskPoll    TaskPoll,
+    const char * const pName,
+    uint16_t       StackSize,
+    void           *pvParameters,
+    uint16_t       uPriority,
+    tTaskHandle    *pTaskId);
 
 LW_RTOS_RESULT lw_TaskDelete (tTaskHandle TaskId);
 

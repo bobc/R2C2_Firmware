@@ -112,8 +112,8 @@ static uint16_t NumTasks;
 //! @return
 // --------------------------------------------------------------------------
 
-LW_RTOS_RESULT lw_TaskCreate (  fpTaskPoll    TaskPoll,
-                                fpTaskInit    TaskInit,
+LW_RTOS_RESULT lw_TaskCreate (  fpTaskInit    TaskInit,
+                                fpTaskPoll    TaskPoll,
                               const char * const pName,
                               uint16_t       StackSize,
                               void           *pvParameters,

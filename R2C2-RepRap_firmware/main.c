@@ -89,6 +89,11 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName
   fatal_error();
 }
 
+#else
+void SysTick_Handler(void)
+{
+  r2c2_SysTick();
+}
 #endif
 
 /**********************************************************************
