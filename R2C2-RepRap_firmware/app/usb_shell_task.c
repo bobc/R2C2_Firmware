@@ -29,7 +29,6 @@
 
 #include "rtos_api.h"
 
-#include "r2c2.h"
 #include "gcode_parse.h"
 #include "gcode_task.h"
 #include "lw_io.h"

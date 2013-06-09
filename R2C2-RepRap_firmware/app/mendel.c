@@ -36,8 +36,6 @@
 #include "LPC17xx.h"    // NVIC_SystemReset
 
 #include "spi.h"
-
-#include "r2c2.h"
 #include "buzzer.h"
 #include "timer.h"
 #include "uart.h"

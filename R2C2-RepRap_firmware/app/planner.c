@@ -27,13 +27,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "r2c2.h"
 
 #include "planner.h"
-//#include "nuts_bolts.h"
 #include "stepper.h"
-//#include "settings.h"
-//#include "config.h"
 
 #include "app_config.h"
 

@@ -100,13 +100,13 @@ REMOVE_CMD=rm
 USE_THUMB_MODE = YES
 #USE_THUMB_MODE = NO
 
-# MCU name, submodel and board
-# - MCU used for compiler-option (-mcpu)
-# - SUBMDL used for linker-script name (-T) and passed as define
-# - BOARD just passed as define (don't used '-' characters)
-MCU      = cortex-m3
-CHIP     = LPC1758
-BOARD    = USER
+#############################################################################
+# Define board
+# - BOARD 	just passed as define (don't used '-' characters)
+BOARD    = r2c2
+
+# get MCU, CHIP, ARCH_FAMILY, 
+include board/${BOARD}/board.mk
 
 # *** This example only supports "FLASH_RUN" ***
 # RUN_MODE is passed as define and used for the linker-script filename,
@@ -131,6 +131,7 @@ OUTDIR = $(RUN_MODE)
 # Target file name (without extension).
 TARGET = project
 
+#############################################################################
 # FreeRTOS paths
 #FREERTOS_PATH = libraries/FreeRTOS
 #FREERTOS_DEMO_DIR = $(FREERTOS_PATH)/Demo/Common
@@ -146,9 +147,10 @@ TARGET = project
 #	$(FREERTOS_SOURCE_DIR)/tasks.c \
 #	$(FREERTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
 #	$(FREERTOS_PORT_DIR)/port.c \
+#############################################################################
 
 
-#
+
 	 
 
 #############################################################################
@@ -174,7 +176,8 @@ APPSRC = \
 	$(APPDIR)/gcode_task.c \
 	$(APPDIR)/planner.c \
 	$(APPDIR)/stepper.c \
-	$(APPDIR)/ui_task.c
+	$(APPDIR)/ui_task.c \
+	main.c
 
 APPINC = $(APPDIR) 
 # 
@@ -187,40 +190,36 @@ APPLIBDIR = libraries
 APPLIBSRC = \
 	$(wildcard $(APPLIBDIR)/FatFs/src/*.c) \
 	$(wildcard $(APPLIBDIR)/R2C2/*.c)
-	
+
 #TODO:	$(wildcard $(APPLIBDIR)/ethernet/*.c)
 
-APPLIBINC =	 $(APPLIBDIR)/FatFs/src \
-	 $(APPLIBDIR)/R2C2/ \
-	 $(APPLIBDIR)/ethernet/ \
-	 $(APPLIBDIR)/lwip/src/include/ \
-	 $(APPLIBDIR)/lwip/src/include/ipv4/ \
-	 $(APPLIBDIR)/lwip/ports/r2c2/include/
+APPLIBINC = \
+	$(APPLIBDIR)/ethernet/ \
+	$(APPLIBDIR)/FatFs/src \
+	$(APPLIBDIR)/lwip/src/include/ \
+	$(APPLIBDIR)/lwip/src/include/ipv4/ \
+	$(APPLIBDIR)/lwip/ports/r2c2/include/ \
+	$(APPLIBDIR)/R2C2/
 
 #############################################################################
-ARCHLIBDIR = arch
+HALDIR = arch/hal
+HALINC = $(HALDIR)
+HALSRC = $(wildcard $(HALDIR)/*.c)
 
-ARCHLIBINC = \
-	$(ARCHLIBDIR)/lpc17xx/CMSISv1p30/inc \
-	$(ARCHLIBDIR)/lpc17xx/drivers/include \
-	$(ARCHLIBDIR)/lpc17xx/LPCUSB/inc \
-	$(ARCHLIBDIR)/hal
 
-ARCHLIBSRC = \
-	$(ARCHLIBDIR)/lpc17xx/CMSISv1p30/src/system_LPC17xx.c \
-	$(wildcard $(ARCHLIBDIR)/lpc17xx/Drivers/source/lpc17xx_*.c) \
-	$(wildcard $(ARCHLIBDIR)/lpc17xx/hal/*.c) \
-	$(wildcard $(ARCHLIBDIR)/lpc17xx/LPCUSB/src/*.c) \
-	$(wildcard $(ARCHLIBDIR)/hal/*.c)
+#############################################################################
+include arch/$(ARCH_FAMILY)/platform.mk
+
 
 #############################################################################
 
-INCLUDES = $(APPINC) $(APPLIBINC) $(ARCHLIBINC) 
+INCLUDES = $(APPINC) $(APPLIBINC) $(HALINC) $(ARCHLIBINC) 
 
 #############################################################################
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
-SRC = $(ARCHLIBSRC) $(APPLIBSRC) $(APPSRC) main.c
+SRC = $(ARCHLIBSRC) $(HALSRC) $(APPLIBSRC) $(APPSRC)
+#SRC = $(APPLIBSRC) $(APPSRC)
 
 ##	$(FREERTOS_SRC) \
 ##	$(filter-out $(APPLIBDIR)/R2C2/lw_rtos.c, $(wildcard $(APPLIBDIR)/R2C2/*.c)) \
@@ -251,7 +250,8 @@ CPPSRCARM =
 # it will preserve the spelling of the filenames, and gcc itself does
 # care about how the name is spelled on its command-line.
 
-ASRC = $(ARCHLIBDIR)/lpc17xx/startup.S
+# ***
+ASRC = $(ARCHLIBDIR)/startup.S
 
 # List Assembler source files here which must be assembled in ARM-Mode.
 ASRCARM  = 
@@ -285,7 +285,8 @@ EXTRA_LIBS =
 BUILDONCHANGE = Makefile 
 
 # Path to linker-scripts (see -T option)
-LINKERSCRIPTPATH = $(ARCHLIBDIR)/lpc17xx
+# ***
+LINKERSCRIPTPATH = $(ARCHLIBDIR)
 
 # List any directories with files included from linker-scripts.
 #    Each directory must be seperated by a space.

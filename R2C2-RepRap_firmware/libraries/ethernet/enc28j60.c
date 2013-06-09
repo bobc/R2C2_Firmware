@@ -28,7 +28,6 @@
 #include "lpc17xx_ssp.h"
 
 #include "ios.h"
-#include "r2c2.h"
 #include "enc28j60.h"
 
 #define byte uint8_t

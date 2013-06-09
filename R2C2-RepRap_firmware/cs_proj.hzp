@@ -127,7 +127,7 @@
         <file file_name="arch/lpc17xx/LPCUSB/src/usbstdreq.c"/>
       </folder>
       <file file_name="arch/lpc17xx/LPC1758_flash.ld">
-        <configuration Name="Common" file_type="Reset Script"/>
+        <configuration Name="Common" file_type="Linker Script"/>
       </file>
     </folder>
   </project>

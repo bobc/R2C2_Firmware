@@ -33,7 +33,6 @@
 
 #include "rtos_api.h"
 
-#include "r2c2.h"
 #include "stepper.h"
 #include "gcode_parse.h"
 #include "gcode_process.h"
