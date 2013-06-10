@@ -30,7 +30,9 @@
 #include <string.h>
 
 #include "spi.h"
+#ifdef HAVE_FILESYSTEM
 #include "ff.h"
+#endif
 #include "ios.h"
 #include "gcode_parse.h"
 #include "debug.h"    // may not be initialised yet?
@@ -43,8 +45,6 @@
  */
 tApplicationConfiguration config;
 
-
-
 #define NUM_TOKENS(table) (sizeof(table)/sizeof(tConfigItem))
 
 // lookup table for general/application level configuration
@@ -55,104 +55,104 @@ static const tConfigItem config_lookup [] =
   // general config
   //
   
-  { "machine_model",        &config.machine_model, TYPE_INT, {.val_i=0}},
-  { "acceleration",         &config.acceleration, TYPE_DOUBLE, {.val_d=100.0}},         /* 100mm / second^2 */
-  { "junction_deviation",   &config.junction_deviation, TYPE_DOUBLE, {.val_d=0.05}},  
+  { "machine_model",        &config.machine_model,      TYPE_INT,       {.val_i= 0    }},
+  { "acceleration",         &config.acceleration,       TYPE_DOUBLE,    {.val_d= 100.0}},         /* 100mm / second^2 */
+  { "junction_deviation",   &config.junction_deviation, TYPE_DOUBLE,    {.val_d= 0.05 }},  
   
-  { "auto_power_off_time",  &config.auto_power_off_time, TYPE_INT, {.val_i = 0}},
+  { "auto_power_off_time",  &config.auto_power_off_time, TYPE_INT,      {.val_i= 0  }},
   
   //  
   // interfaces
   //
-  { "debug_flags",          &config.debug_flags, TYPE_INT, {.val_i=0}},
-  { "step_led_flash_method", &config.step_led_flash_method, TYPE_INT, {.val_i = STEP_LED_FLASH_VARIABLE}},
-  { "beep_on_events",       &config.beep_on_events, TYPE_INT, {.val_i=0x0000000F}},
+  { "debug_flags",          &config.debug_flags,            TYPE_INT,   {.val_i= 0   }},
+  { "step_led_flash_method",&config.step_led_flash_method,  TYPE_INT,   {.val_i= STEP_LED_FLASH_VARIABLE}},
+  { "beep_on_events",       &config.beep_on_events,         TYPE_INT,   {.val_i= 0x0000000F}},
 
   { "control_panel",        &config.interface_control_panel_enabled, TYPE_INT, {.val_i = 0}},
   
-  { "cp_lcd_type",        &config.interface_cp_lcd_type, TYPE_INT, {.val_i = 1}},
-  { "cp_lcd_rows",        &config.interface_cp_lcd_rows, TYPE_INT, {.val_i = 4}},
-  { "cp_lcd_cols",        &config.interface_cp_lcd_cols, TYPE_INT, {.val_i = 20}},
+  { "cp_lcd_type",          &config.interface_cp_lcd_type,    TYPE_INT, {.val_i = 1}},
+  { "cp_lcd_rows",          &config.interface_cp_lcd_rows,    TYPE_INT, {.val_i = 4}},
+  { "cp_lcd_cols",          &config.interface_cp_lcd_cols,    TYPE_INT, {.val_i = 20}},
 
-  { "tcp_ip_enabled",       &config.interface_tcp_ip_enabled, TYPE_INT, {.val_i = 0}},
-  { "network_interface",    &config.interface_tcp_ip_phy_type, TYPE_INT, {.val_i = 0}},
+  { "tcp_ip_enabled",       &config.interface_tcp_ip_enabled,   TYPE_INT, {.val_i = 0}},
+  { "network_interface",    &config.interface_tcp_ip_phy_type,  TYPE_INT, {.val_i = 0}},
 
   //  
   // axis config
   //
     
-  { "steps_per_mm_x", &config.axis[X_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d=80}},
-  { "steps_per_mm_y", &config.axis[Y_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d=80}},
-  { "steps_per_mm_z", &config.axis[Z_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d=6400}},
-  { "steps_per_mm_e", &config.axis[E_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d=36}},    /* Wades extruder, NEMA 17 geared extruder (1/39 * 6.5mm) */
+  { "steps_per_mm_x", &config.axis[X_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= 80}},
+  { "steps_per_mm_y", &config.axis[Y_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= 80}},
+  { "steps_per_mm_z", &config.axis[Z_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= 6400}},
+  { "steps_per_mm_e", &config.axis[E_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= 36}},    /* Wades extruder, NEMA 17 geared extruder (1/39 * 6.5mm) */
 
   /* used for G0 rapid moves and as a cap for all other feedrates */
-  { "maximum_feedrate_x", &config.axis[X_AXIS].maximum_feedrate, TYPE_INT, {.val_i=3000}}, /* 50mm / second */
-  { "maximum_feedrate_y", &config.axis[Y_AXIS].maximum_feedrate, TYPE_INT, {.val_i=3000}},
-  { "maximum_feedrate_z", &config.axis[Z_AXIS].maximum_feedrate, TYPE_INT, {.val_i=60}},   /* 1mm / second */
-  { "maximum_feedrate_e", &config.axis[E_AXIS].maximum_feedrate, TYPE_INT, {.val_i=3000}}, /* 50mm / second */
+  { "maximum_feedrate_x", &config.axis[X_AXIS].maximum_feedrate, TYPE_INT, {.val_i= 3000}}, /* 50mm / second */
+  { "maximum_feedrate_y", &config.axis[Y_AXIS].maximum_feedrate, TYPE_INT, {.val_i= 3000}},
+  { "maximum_feedrate_z", &config.axis[Z_AXIS].maximum_feedrate, TYPE_INT, {.val_i= 60}},   /* 1mm / second */
+  { "maximum_feedrate_e", &config.axis[E_AXIS].maximum_feedrate, TYPE_INT, {.val_i= 3000}}, /* 50mm / second */
 
   // if axis acceleration is 0, general default acceleration will be used
-  { "x.acceleration", &config.axis[X_AXIS].acceleration, TYPE_INT, {.val_i=0}},
-  { "y.acceleration", &config.axis[Y_AXIS].acceleration, TYPE_INT, {.val_i=0}},
-  { "z.acceleration", &config.axis[Z_AXIS].acceleration, TYPE_INT, {.val_i=0}},
-  { "e.acceleration", &config.axis[E_AXIS].acceleration, TYPE_INT, {.val_i=0}},
+  { "x.acceleration", &config.axis[X_AXIS].acceleration, TYPE_INT, {.val_i= 0}},
+  { "y.acceleration", &config.axis[Y_AXIS].acceleration, TYPE_INT, {.val_i= 0}},
+  { "z.acceleration", &config.axis[Z_AXIS].acceleration, TYPE_INT, {.val_i= 0}},
+  { "e.acceleration", &config.axis[E_AXIS].acceleration, TYPE_INT, {.val_i= 0}},
 
-  { "x.dir.invert", &config.axis[X_AXIS].dir_invert, TYPE_INT, {.val_i=0}},
-  { "y.dir.invert", &config.axis[Y_AXIS].dir_invert, TYPE_INT, {.val_i=0}},
-  { "z.dir.invert", &config.axis[Z_AXIS].dir_invert, TYPE_INT, {.val_i=0}},
+  { "x.dir.invert", &config.axis[X_AXIS].dir_invert, TYPE_INT, {.val_i= 0}},
+  { "y.dir.invert", &config.axis[Y_AXIS].dir_invert, TYPE_INT, {.val_i= 0}},
+  { "z.dir.invert", &config.axis[Z_AXIS].dir_invert, TYPE_INT, {.val_i= 0}},
 
   /* used when searching endstops and similar */
-  { "search_feedrate_x", &config.axis[X_AXIS].search_feedrate, TYPE_INT, {.val_i=120}},
-  { "search_feedrate_y", &config.axis[Y_AXIS].search_feedrate, TYPE_INT, {.val_i=120}},
-  { "search_feedrate_z", &config.axis[Z_AXIS].search_feedrate, TYPE_INT, {.val_i=60}},
-  { "search_feedrate_e", &config.axis[E_AXIS].search_feedrate, TYPE_INT, {.val_i=1600}},  // does E have endstop??
+  { "search_feedrate_x", &config.axis[X_AXIS].search_feedrate, TYPE_INT, {.val_i= 120}},
+  { "search_feedrate_y", &config.axis[Y_AXIS].search_feedrate, TYPE_INT, {.val_i= 120}},
+  { "search_feedrate_z", &config.axis[Z_AXIS].search_feedrate, TYPE_INT, {.val_i= 60}},
+  { "search_feedrate_e", &config.axis[E_AXIS].search_feedrate, TYPE_INT, {.val_i= 1600}},  // does E have endstop??
   
-  { "homing_feedrate_x", &config.axis[X_AXIS].homing_feedrate, TYPE_INT, {.val_i=3000}},
-  { "homing_feedrate_y", &config.axis[Y_AXIS].homing_feedrate, TYPE_INT, {.val_i=3000}},
-  { "homing_feedrate_z", &config.axis[Z_AXIS].homing_feedrate, TYPE_INT, {.val_i=60}},
+  { "homing_feedrate_x", &config.axis[X_AXIS].homing_feedrate, TYPE_INT, {.val_i= 3000}},
+  { "homing_feedrate_y", &config.axis[Y_AXIS].homing_feedrate, TYPE_INT, {.val_i= 3000}},
+  { "homing_feedrate_z", &config.axis[Z_AXIS].homing_feedrate, TYPE_INT, {.val_i= 60}},
   
   // home pos is left front
-  { "home_direction_x", &config.axis[X_AXIS].home_direction, TYPE_INT, {.val_i=-1}}, 
-  { "home_direction_y", &config.axis[Y_AXIS].home_direction, TYPE_INT, {.val_i=-1}},
-  { "home_direction_z", &config.axis[Z_AXIS].home_direction, TYPE_INT, {.val_i=-1}},
+  { "home_direction_x", &config.axis[X_AXIS].home_direction, TYPE_INT, {.val_i= -1}}, 
+  { "home_direction_y", &config.axis[Y_AXIS].home_direction, TYPE_INT, {.val_i= -1}},
+  { "home_direction_z", &config.axis[Z_AXIS].home_direction, TYPE_INT, {.val_i= -1}},
   
-  { "home_pos_x", &config.axis[X_AXIS].home_pos, TYPE_INT, {.val_i=0}},
-  { "home_pos_y", &config.axis[Y_AXIS].home_pos, TYPE_INT, {.val_i=0}},
-  { "home_pos_z", &config.axis[Z_AXIS].home_pos, TYPE_INT, {.val_i=0}},
+  { "home_pos_x",       &config.axis[X_AXIS].home_pos, TYPE_INT, {.val_i= 0}},
+  { "home_pos_y",       &config.axis[Y_AXIS].home_pos, TYPE_INT, {.val_i= 0}},
+  { "home_pos_z",       &config.axis[Z_AXIS].home_pos, TYPE_INT, {.val_i= 0}},
 
-  { "printing_vol_x", &config.axis[X_AXIS].printing_vol , TYPE_INT, {.val_i=0}},
-  { "printing_vol_y", &config.axis[Y_AXIS].printing_vol , TYPE_INT, {.val_i=0}},
-  { "printing_vol_z", &config.axis[Z_AXIS].printing_vol , TYPE_INT, {.val_i=0}},
+  { "printing_vol_x",   &config.axis[X_AXIS].printing_vol , TYPE_INT, {.val_i= 0}},
+  { "printing_vol_y",   &config.axis[Y_AXIS].printing_vol , TYPE_INT, {.val_i= 0}},
+  { "printing_vol_z",   &config.axis[Z_AXIS].printing_vol , TYPE_INT, {.val_i= 0}},
   
   //  
   // config for printers
   //
 
   // dump pos
-  { "have_dump_pos", &config.have_dump_pos , TYPE_INT, {.val_i=0}},
-  { "dump_pos_x", &config.dump_pos_x , TYPE_INT, {.val_i=0}},
-  { "dump_pos_y", &config.dump_pos_x , TYPE_INT, {.val_i=0}},
+  { "have_dump_pos",    &config.have_dump_pos , TYPE_INT,   {.val_i= 0}},
+  { "dump_pos_x",       &config.dump_pos_x , TYPE_INT,      {.val_i= 0}},
+  { "dump_pos_y",       &config.dump_pos_x , TYPE_INT,      {.val_i= 0}},
   
   // rest pos
-  { "have_rest_pos", &config.have_rest_pos , TYPE_INT, {.val_i=0}},
-  { "rest_pos_x", &config.rest_pos_x , TYPE_INT, {.val_i=0}},
-  { "rest_pos_y", &config.rest_pos_y , TYPE_INT, {.val_i=0}},
+  { "have_rest_pos",    &config.have_rest_pos , TYPE_INT,   {.val_i=0}},
+  { "rest_pos_x",       &config.rest_pos_x , TYPE_INT,      {.val_i=0}},
+  { "rest_pos_y",       &config.rest_pos_y , TYPE_INT,      {.val_i=0}},
 
   // wipe pos
-  { "have_wipe_pos",   &config.have_wipe_pos , TYPE_INT, {.val_i=0}},
+  { "have_wipe_pos",    &config.have_wipe_pos , TYPE_INT,   {.val_i=0}},
   { "wipe_entry_pos_x", &config.wipe_entry_pos_x , TYPE_INT, {.val_i=0}},
   { "wipe_entry_pos_y", &config.wipe_entry_pos_y , TYPE_INT, {.val_i=0}},
-  { "wipe_pos_x", &config.wipe_entry_pos_x , TYPE_INT, {.val_i=0}},     // DEPRECATED
-  { "wipe_pos_y", &config.wipe_entry_pos_y , TYPE_INT, {.val_i=0}},     // DEPRECATED
-  { "wipe_exit_pos_x", &config.wipe_exit_pos_x , TYPE_INT, {.val_i=0}},
-  { "wipe_exit_pos_y", &config.wipe_exit_pos_y , TYPE_INT, {.val_i=0}},
+  { "wipe_pos_x",       &config.wipe_entry_pos_x , TYPE_INT, {.val_i=0}},     // DEPRECATED
+  { "wipe_pos_y",       &config.wipe_entry_pos_y , TYPE_INT, {.val_i=0}},     // DEPRECATED
+  { "wipe_exit_pos_x",  &config.wipe_exit_pos_x , TYPE_INT, {.val_i=0}},
+  { "wipe_exit_pos_y",  &config.wipe_exit_pos_y , TYPE_INT, {.val_i=0}},
 
   { "steps_per_revolution_e", &config.steps_per_revolution_e, TYPE_INT, {.val_i=3200}},  // 200 * 16
   
-  { "wait_on_temp", &config.wait_on_temp, TYPE_INT, {.val_i=0}},
+  { "wait_on_temp",     &config.wait_on_temp, TYPE_INT,     {.val_i=0}},
     
-  { "num_extruders", &config.num_extruders, TYPE_INT, {.val_i=1}},
+  { "num_extruders",    &config.num_extruders, TYPE_INT,    {.val_i=1}},
 
   { "enable_extruder_0", &config.enable_extruder_0, TYPE_INT, {.val_i=1}},
 };
@@ -256,8 +256,11 @@ static tKeyHash config_keys [NUM_TOKENS(config_lookup)];
 static tKeyHash config_pindef_keys [NUM_TOKENS(config_lookup_pindef)];
 
 
+static tLineBuffer line_buf;
 
-
+//
+//
+//
 void app_config_set_defaults(void)
 {
   set_defaults (config_lookup, NUM_TOKENS(config_lookup));
@@ -281,6 +284,7 @@ void app_config_set_defaults(void)
 // read the config files from SD Card
 void app_config_read (void)
 {
+#ifdef HAVE_FILESYSTEM
   FRESULT res;    /* FatFs function common result code */
       
   create_key_hash_table (NUM_TOKENS(config_lookup_pindef), config_lookup_pindef, config_pindef_keys);
@@ -289,6 +293,7 @@ void app_config_read (void)
   res = read_config_file ("conf_pin.txt", config_lookup_pindef, NUM_TOKENS(config_lookup_pindef), config_pindef_keys);
 
   res = read_config_file ("config.txt", config_lookup, NUM_TOKENS(config_lookup), config_keys);
+#endif  
 }
 
 // print the config tables
@@ -297,11 +302,11 @@ void app_config_print()
   print_config_table (config_lookup, NUM_TOKENS(config_lookup) );
 }
 
-static tLineBuffer line_buf;
-
+//TODO: move
 // read a file and execute GCode commands
 void exec_gcode_file (char *filename)
 {
+#ifdef HAVE_FILESYSTEM
   char *pLine;
   FIL file;
   FRESULT res;
@@ -326,5 +331,5 @@ void exec_gcode_file (char *filename)
     if (res)
       debug("Error closing %s\n", filename);
   }  
-
+#endif
 }

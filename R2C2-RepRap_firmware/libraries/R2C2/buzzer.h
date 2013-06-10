@@ -30,6 +30,7 @@
 #ifndef _BUZZER_
 #define _BUZZER_
 
+#include <stdint.h>
 
 void buzzer_init (void);
 

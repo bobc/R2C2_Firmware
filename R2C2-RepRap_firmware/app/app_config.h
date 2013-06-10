@@ -35,6 +35,8 @@
 
 #include "ios.h"
 
+#define HARD_CONFIG
+
 
 // TODO: sort out use of max number vs actual number configured
 #define NUM_AXES 4

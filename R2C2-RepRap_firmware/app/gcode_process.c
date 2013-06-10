@@ -1244,10 +1244,8 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       }  
       break;
       
-      // Plays Jingle Bell from Static Library
       case 301:
       {
-         play_jingle_bell();
       }
       break;
 

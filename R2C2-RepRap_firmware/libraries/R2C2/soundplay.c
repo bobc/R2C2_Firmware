@@ -28,7 +28,7 @@
 */
 
 #include   <string.h>
-#include "lpc_types.h"
+
 #include "buzzer.h"
 
 #include   "soundplay.h"
@@ -40,17 +40,23 @@ void set_whole_note_time(uint32_t new_note_time)
   whole_note_time = new_note_time;
 } 
  
-void play_music_string(char *music) {
-
+void play_music_string(char *music) 
+{
   int noteCount = strlen(music);
-  float freq = 0;
+  int freq = 0;
   uint32_t duration = 0;
   
-  for (int i=0;i<noteCount;i+=2) {
-    switch(music[i]){
+  for (int i=0; i<noteCount; i+=2) 
+  {
+    switch(music[i])
+    {
+      case 'C' :
+        freq=FREQ_C4;
+        break;
       case 'D' :
         freq=FREQ_D4;
         break;
+        
       case 'e' :
         freq=FREQ_E4;
         break;
@@ -66,15 +72,22 @@ void play_music_string(char *music) {
       case 'b' :
         freq=FREQ_B4;
         break;
+      //        
       case 'c' :
-        freq=FREQ_C5;
+        freq=FREQ_C4 * 2;
         break;
       case 'd' :
-        freq=FREQ_D5;
+        freq=FREQ_D4 * 2;
+        break;
+        
+      case ' ':
+        freq = 0;
         break;
     }
+    
     //Note Timing
-    switch(music[i+1]){
+    switch(music[i+1])
+    {
       case '1' :
         duration=whole_note_time;
         break;
@@ -94,6 +107,7 @@ void play_music_string(char *music) {
   }
 }
 
+#if 0
 void play_jingle_bell()
 {
   //Jingle Bells translated from sheet music
@@ -107,5 +121,6 @@ void play_jingle_bell()
   "b4b4b2"     "b4b4b2"     "b4d4g4a8" "b2 4" "c4c4"
   "c4b4b4b8b8" "d4d4c4a4"   "g2";
 
-  play_music_string(jingle_bells);
+  play_music_string (jingle_bells);
 }
+#endif
