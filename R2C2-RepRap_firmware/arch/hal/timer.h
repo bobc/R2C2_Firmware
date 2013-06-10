@@ -32,14 +32,14 @@
 
 #include <stdbool.h>
 
+#include "timer_lld.h"
+
 // time-related constants
 //#define	US	(F_CPU / 1000000)
 #define	MS	(F_CPU / 1000)
 
 // #define	DEFAULT_TICK	(100 US)
 #define	WAITING_DELAY  (10 * MS)
-
-#define NUM_HARDWARE_TIMERS 4
 
 // Slow timers
 typedef struct tTimer tTimer; // incomplete type
@@ -76,7 +76,7 @@ uint8_t isHwTimerEnabled(uint16_t timerNum);
 void setHwTimerMatch (uint16_t timerNum, uint16_t matchReg, uint32_t interval);
 
 void SysTickTimer_Init(void);
-void r2c2_SysTick(void);
+void r2c2_SysTick(void);	//TODO
 
 void delay(int delay);
 void delay_ms(int delay);

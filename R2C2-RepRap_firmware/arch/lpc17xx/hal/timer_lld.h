@@ -1,4 +1,3 @@
-/* Copyright (c) 2011 Jorge Pinto - casainho@gmail.com       */
 /* All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
@@ -27,39 +26,12 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef	_UART_H
-#define	_UART_H
-
-#include <stdbool.h>
-
-#include "uart_lld.h"
-
-typedef enum {
-  parity_none,
-  parity_even,
-  parity_odd,
-  parity_always1,
-  parity_always0} tParity;
-
-typedef struct {
-  uint32_t  baud_rate;
-  uint8_t   data_bits;
-  tParity   parity;
-  uint8_t   stop_bits;
-} tPortSettings;
-
-void uart_init(int uart_num);
-bool uart_configure(int uart_num, tPortSettings *port_settings_p);
-int  uart_data_available(int uart_num);
-char uart_receive(int uart_num);
-void uart_send(int uart_num, char byte);
-
-#if 0
-void uart_writestr(char *data);
-#endif
+#ifndef	_TIMER_LLD_H
+#define	_TIMER_LLD_H
 
 
+#define NUM_HARDWARE_TIMERS 4
 
-// #define serial_writechar(x) uart_send(x)
 
-#endif	/* _UART_H */
+#endif	/* _TIMER_LLD_H */
+

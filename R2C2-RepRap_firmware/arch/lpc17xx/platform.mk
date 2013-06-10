@@ -3,7 +3,9 @@ ARCHLIBDIR = arch/lpc17xx
 ARCHLIBINC = \
 	$(ARCHLIBDIR)/CMSISv1p30/inc \
 	$(ARCHLIBDIR)/drivers/include \
-	$(ARCHLIBDIR)/LPCUSB/inc
+	$(ARCHLIBDIR)/LPCUSB/inc \
+	$(ARCHLIBDIR)/hal
+	
 
 ARCHLIBSRC = \
 	$(ARCHLIBDIR)/CMSISv1p30/src/system_LPC17xx.c \

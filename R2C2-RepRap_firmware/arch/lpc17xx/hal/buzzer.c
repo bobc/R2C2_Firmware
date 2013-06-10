@@ -145,6 +145,7 @@ void buzzer_play_sync (uint16_t frequency, uint32_t duration)
 }
 
 
+//TODO: pin config
 void buzzer_init (void)
 {
   PINSEL_CFG_Type PinCfg;

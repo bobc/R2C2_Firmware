@@ -28,16 +28,25 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "integer.h"
+#include <stdbool.h>
+
+/*
 #include "lpc_types.h"
 #include "lpc17xx_pinsel.h"
 #include "lpc17xx_gpio.h"
 #include "lpc17xx_ssp.h"
-#include "lpc17xx_clkpwr.h"
-#include "diskio.h"
-#include "spi.h"
-#include "debug.h"
+#include "lpc17xx_clkpwr.h"                             
+*/
 
+#include "ios.h"
+#include "spi.h"
+
+//!#include "debug.h"
+
+#include "integer.h"
+#include "diskio.h"
+
+//
 #define xmit_spi(dat)  spi_rw(dat)
 
 /* used SSP-port: */
@@ -78,16 +87,17 @@ static uint8_t CardType;                       /* Card type flags */
 /* SPI low-level functions                                               */
 /*-----------------------------------------------------------------------*/
 
+//TODO pin config
 static inline void select_card()
 {
 	// SSEL1 P0.6 low
-	GPIO_ClearValue(0, (1 << 6));
+	digital_write (0, (1 << 6), 0);
 }
 
 static inline void de_select_card()
 {
 	// SSEL1 high
-	GPIO_SetValue(0, (1 << 6));
+	digital_write (0, (1 << 6), 1);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -141,7 +151,7 @@ static void power_off()
 /*-----------------------------------------------------------------------*/
 /* Receive a data packet from MMC                                        */
 /*-----------------------------------------------------------------------*/
-static Bool rcvr_datablock (
+static bool rcvr_datablock (
 	BYTE *buff,			/* Data buffer to store received data */
 	UINT btr			/* Byte count (must be multiple of 4) */
 )
@@ -153,14 +163,14 @@ static Bool rcvr_datablock (
 	do {							/* Wait for data packet in timeout of 100ms */
 		token = rcvr_spi();
 	} while ((token == 0xFF) && Timer1);
-	if(token != 0xFE) return FALSE;	/* If not valid data token, return with error */
+	if(token != 0xFE) return false;	/* If not valid data token, return with error */
 
 	spi_rcvr_block( buff, btr );
 
 	rcvr_spi();						/* Discard CRC */
 	rcvr_spi();
 
-	return TRUE;					/* Return with success */
+	return true;					/* Return with success */
 }
 
 
@@ -168,14 +178,14 @@ static Bool rcvr_datablock (
 /* Send a data packet to MMC                                             */
 /*-----------------------------------------------------------------------*/
 #if _FS_READONLY == 0
-static Bool xmit_datablock (
+static bool xmit_datablock (
 	const BYTE *buff,	/* 512 byte data block to be transmitted */
 	BYTE token			/* Data/Stop token */
 )
 {
 	BYTE resp;
 
-	if (wait_ready() != 0xFF) return FALSE;
+	if (wait_ready() != 0xFF) return false;
 
 	xmit_spi(token);					/* transmit data token */
 	if (token != 0xFD) {	/* Is data token */
@@ -186,10 +196,10 @@ static Bool xmit_datablock (
         xmit_spi(0xFF);
         resp = rcvr_spi();				/* Receive data response */
         if ((resp & 0x1F) != 0x05)		/* If not accepted, return with error */
-                return FALSE;
+                return false;
 	}
 
-	return TRUE;
+	return true;
 }
 #endif /* _READONLY */
 
