@@ -30,19 +30,14 @@
 
 #include <stdbool.h>
 
-/*
-#include "lpc_types.h"
-#include "lpc17xx_pinsel.h"
-#include "lpc17xx_gpio.h"
-#include "lpc17xx_ssp.h"
-#include "lpc17xx_clkpwr.h"                             
-*/
-
+// hal
 #include "ios.h"
 #include "spi.h"
 
-//!#include "debug.h"
+// lib_r2c2
+#include "debug.h"
 
+// lib_fatfs
 #include "integer.h"
 #include "diskio.h"
 

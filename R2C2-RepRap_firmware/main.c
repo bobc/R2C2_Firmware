@@ -30,8 +30,8 @@
 #include "rtos_api.h"
 
 /* HAL includes */
-#include "lpc17xx_nvic.h"
 #include "buzzer.h"
+#include "sys_util.h"
 #include "uart.h"
 
 /* Application includes */
@@ -47,8 +47,7 @@
 #define DBGF(s)
 #endif
 
-#define USER_FLASH_START 0x10000 /* For USB bootloader */
-//#define USER_FLASH_START 0x0 /* No USB bootloader */
+
 
 extern int app_main (void);
 
@@ -101,22 +100,8 @@ void SysTick_Handler(void)
  **********************************************************************/
 int main(void)
 {
-  // DeInit NVIC and SCBNVIC
-  NVIC_DeInit();
-  NVIC_SCBDeInit();
-
-  /* Configure the NVIC Preemption Priority Bits:
-   * two (2) bits of preemption priority, six (6) bits of sub-priority.
-   * Since the Number of Bits used for Priority Levels is five (5), so the
-   * actual bit number of sub-priority is three (3)
-   */
-   // FreeRTOS requires 0 it seems
-  NVIC_SetPriorityGrouping(0x0);
-
-  /* Change the Vector Table to the USER_FLASH_START
-  in case the user application uses interrupts */
-  SCB->VTOR = (USER_FLASH_START & 0x1FFFFF80);
-
+  sys_initialise();
+	
   DBG_INIT();
   DBGF ("init\n");
 

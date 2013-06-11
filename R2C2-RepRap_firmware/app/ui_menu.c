@@ -29,21 +29,24 @@
 
 #include <string.h>
 
-#include "app_config.h"
+// hal
+#include "sys_util.h"
+
+// lib_r2c2
 #include "lw_io.h"
+#include "LiquidCrystal.h"
+#include "sermsg.h"
+
+// app
+#include "app_config.h"
 #include "gcode_parse.h"
 #include "gcode_task.h"
 #include "gcode_process.h"
 #include "packed_gcode.h"
-#include "sermsg.h"
 #include "temp.h"
-#include "LiquidCrystal.h"
-
 #include "keypad_gen4_mb.h"
-
 #include "ui_menu.h"
 
-extern void reboot (void);
 
 // --------------------------------------------------------------------------
 // Local defines
@@ -113,8 +116,8 @@ static char cur_path [MAX_LINE] = "/";
 */
 
 typedef struct {
-  uint8_t attrib;
-  char data [LCD_NUM_COLS+1];
+  uint8_t 	attrib;
+  char 		data [LCD_NUM_COLS+1];
 } item_entry_t;
 
 #define NUM_LIST_ENTRIES(list) (sizeof(list)/sizeof(item_entry_t))
@@ -283,9 +286,10 @@ static void home (uint8_t axis)
 
 }
 
+#ifdef HAVE_FILESYSTEM
+
 static void start_sd_print  (item_entry_t *pItem)
 {
-  
   if (GcodeInputMsg.in_use)
     return;
 
@@ -307,6 +311,7 @@ static void start_sd_print  (item_entry_t *pItem)
   // check result?
 }
 
+#endif
 // --------------------------------------------------------------------------
 // 
 // --------------------------------------------------------------------------
@@ -331,7 +336,6 @@ static dir_entry_t  *cur_dir;       // first entry not ".."
 list_entry_t *list_get_entry (list_entry_t *first, uint16_t index)
 {
 }
-
 #endif
 
 
@@ -355,20 +359,26 @@ void show_cursor (uint8_t ch)
 }
 
 //void dir_display_entry (dir_entry_t *dir_entry, uint8_t row, uint8_t col)
-void dir_display_entry (uint16_t index, uint8_t row, uint8_t col)
+void list_display_entry (uint16_t index, uint8_t row, uint8_t col)
 {
   char *info = item_list[index];
 
   {
     lcd_setCursor (col, row);
+    
+#ifdef HAVE_FILESYSTEM
     if (info[0] & AM_DIR) 
       lcd_write ('<');
+#endif
+      
     lcd_print (info+1);
+    
+#ifdef HAVE_FILESYSTEM
     if (info[0] & AM_DIR) 
       lcd_write ('>');
+#endif
   }
 }
-
 
 void show_list (bool init)
 {
@@ -389,7 +399,7 @@ void show_list (bool init)
         if (list_top + row < list_count)
         {
             //dir_display_entry ( (dir_entry_t *)list_get_entry((list_entry_p)cur_dir, list_top + row), row+TOP_LIST_ROW, 2);    
-            dir_display_entry ( list_top + row, row+TOP_LIST_ROW, 1);    
+            list_display_entry ( list_top + row, row+TOP_LIST_ROW, 1);    
         }
     }
     show_cursor (CH_CURSOR);
@@ -432,7 +442,8 @@ void cursor_down (void)
 }
 
 //
-bool match_file (FILINFO *fno)
+#ifdef HAVE_FILESYSTEM
+static bool match_file (FILINFO *fno)
 {
   char *dot_p;
 
@@ -547,6 +558,7 @@ void get_directory_list (void)
   }
 
 }
+#endif
 
 // --------------------------------------------------------------------------
 // Public functions
@@ -625,6 +637,7 @@ void menu_enter (eMenu new_menu)
       show_list (true);
     break;
 
+#ifdef HAVE_FILEYSTEM
     case menu_sd_select:
       // display entries, pointer
       lcd_clear();
@@ -633,7 +646,7 @@ void menu_enter (eMenu new_menu)
       get_directory_list();
       show_list (true);
     break;
-
+#endif
   }
 }
 
@@ -666,6 +679,7 @@ void menu_poll (void)
         switch (host_state)
         {
           case hs_ready:
+#ifdef HAVE_FILEYSTEM
             if (sd_printing)
             {
               lcd_print ("Printing");
@@ -674,6 +688,7 @@ void menu_poll (void)
               //todo: percent done etc
             }
             else
+#endif
             {
               lcd_print ("Ready");
               lcd_clear_line (1);
@@ -683,8 +698,10 @@ void menu_poll (void)
           case hs_running:
             lcd_print ("Printing");
             
+#ifdef HAVE_FILEYSTEM
             lcd_setCursor (0,1);
             lcd_print (sd_file_name);
+#endif
             break;
 
           case hs_error:
@@ -743,7 +760,7 @@ void menu_keyhandler (uint8_t key_pressed)
 {
   
   if (key_pressed == KEY_CANCEL)
-    reboot();
+    sys_reboot();
 
   switch (menu)
   {
@@ -786,9 +803,12 @@ void menu_keyhandler (uint8_t key_pressed)
       {
         case KEY_ZERO:
 //        case KEY_CANCEL:
+#ifdef HAVE_FILEYSTEM
           menu_enter (menu_sd_select);
+#endif
           break;
-        case KEY_Z_PLUS:
+        
+		case KEY_Z_PLUS:
           cursor_up();
         break;
 
@@ -802,6 +822,7 @@ void menu_keyhandler (uint8_t key_pressed)
       }
     break;
 
+#ifdef HAVE_FILEYSTEM
     case menu_sd_select:
       switch (key_pressed)
       {
@@ -824,6 +845,7 @@ void menu_keyhandler (uint8_t key_pressed)
           break;
       }
     break;
+#endif
   }
 }
 

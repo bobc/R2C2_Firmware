@@ -38,19 +38,26 @@
 #include   <string.h>
 #include   <ctype.h>  // for tolower
 
+//HAL
+#include "buzzer.h"
+#include "ios.h"
+#include "sys_util.h"
+#include "timer.h"
+
+//#include "ff.h"
+
+// lib_r2c2
+//#include "debug.h"
+#include "lw_io.h"
+#include "soundplay.h"
+
+// app
 #include "gcode_defs.h"
 #include "gcode_process.h"
 //#include "gcode_parse.h"
-#include "lw_io.h"
 #include "temp.h"
-#include "timer.h"
 #include "pin_control.h"
 #include "app_config.h"
-#include "ff.h"
-#include "buzzer.h"
-#include "soundplay.h"
-//#include "debug.h"
-#include "ios.h"
 #include "planner.h"
 #include "stepper.h"
 #include "geometry.h"
@@ -58,8 +65,8 @@
 
 extern tGcodeInputMsg file_input_msg;
 
-extern void reboot (void);
 
+#ifdef HAVE_FILESYSTEM
 
 bool      sd_active = false;        // SD card active
 bool      sd_printing = false;      // printing from SD file
@@ -69,6 +76,8 @@ uint8_t   file_mode;
 uint32_t  filesize = 0;
 uint32_t  sd_pos = 0;
 char      sd_file_name [21];
+
+#endif
 
 #define EXTRUDER_NUM_0  1
 #define EXTRUDER_NUM_1  2
@@ -303,6 +312,8 @@ static void home_z(void)
   plan_set_current_position (&new_pos);
 }
 
+#ifdef HAVE_FILESYSTEM
+
 // --------------------------------------------------------------------------
 // SD Card functions
 // --------------------------------------------------------------------------
@@ -368,7 +379,6 @@ void sd_list_dir (LW_FILE *out_file)
   sd_list_dir_sub(path, out_file);
 }
 
-
 // --------------------------------------------------------------------------
 // SD file functions
 // --------------------------------------------------------------------------
@@ -433,6 +443,8 @@ void sd_seek(FIL *pFile, unsigned pos)
 {
   f_lseek (pFile, pos);
 }
+
+#endif
 // --------------------------------------------------------------------------
 // 
 // --------------------------------------------------------------------------
@@ -707,6 +719,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
         disable_all_axes();
       break;
 
+#ifdef HAVE_FILESYSTEM
       // SD File functions
       case 20: // M20 - list SD Card files
       lw_fputs("Begin file list\r\n", pGcodeInputMsg->out_file);
@@ -819,6 +832,8 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       case 30: //M30 <data> - write raw data to SD file
       // processed in gcode_parse_line()
       break;
+
+#endif
 
       case 80: // M80 - ATX Power On 
         // Bring ATX PSU out of standby
@@ -1235,8 +1250,8 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       // CAN BLOCK
       case 300:
       {
-        float frequency = 1000;  // 1kHz
-        float duration = 1000; // 1 second
+        uint16_t frequency = 1000;  // 1kHz
+        uint16_t duration = 1000; // 1 second
         
         if (gcode_command.seen_S)
           frequency = gcode_command.S;
@@ -1269,8 +1284,8 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       break;
     
       case 401:
-      // reset
-      reboot();
+      	// reset
+      	sys_reboot();
       break;
 
       // M500 - set/get adc value for temperature

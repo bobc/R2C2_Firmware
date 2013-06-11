@@ -32,10 +32,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
 #include "spi.h"
-#include "ff.h"
+
+#include "config.h"
 #include "lw_io.h"
+
+#ifdef HAVE_FILESYSTEM
+#include "ff.h"
+#endif
+
 
 // TODO: remove dependencies on these ?
 #include "debug.h"    // may not be initialised yet
@@ -327,11 +332,13 @@ void create_key_hash_table (int num_tokens, const tConfigItem lookup[], tKeyHash
   }
 }
 
-
+#ifdef HAVE_FILESYSTEM
 static  FIL file;       /* file object */
+#endif
 
-FRESULT read_config_file (char *filename, const tConfigItem lookup[], int num_tokens, tKeyHash hashes[])
+unsigned read_config_file (char *filename, const tConfigItem lookup[], int num_tokens, tKeyHash hashes[])
 {
+#ifdef HAVE_FILESYSTEM
   FRESULT res;
   char line [MAX_LINE_LEN];
   char *pLine;
@@ -406,6 +413,9 @@ FRESULT read_config_file (char *filename, const tConfigItem lookup[], int num_to
   }
   
   return res;
+#else
+	return 1;
+#endif
 }
 
 

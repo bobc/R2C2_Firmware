@@ -36,11 +36,12 @@
 #include  <stdbool.h>
 #include  <ctype.h>
 
+#include	"lw_io.h"
+
 #include  "app_config.h"
 #include	"gcode_parse.h"
 #include	"gcode_process.h"
 #include	"packed_gcode.h"
-#include	"lw_io.h"
 #include  "machine.h"
 
 
@@ -335,6 +336,7 @@ eParseResult gcode_parse_line (tGcodeInputMsg *pGcodeInputMsg)
   //TODO: more than one command per line
   //TODO: gcode context for each interface
 
+#ifdef HAVE_FILESYSTEM
   // --------------------------------------------------------------------------
   //     SD
   // --------------------------------------------------------------------------
@@ -389,10 +391,11 @@ eParseResult gcode_parse_line (tGcodeInputMsg *pGcodeInputMsg)
       }
     }
   }
+  else
+#endif  
   // --------------------------------------------------------------------------
   //     Not in SD write mode
   // --------------------------------------------------------------------------
-  else
   {
     // process
     result = process_gcode_command(pGcodeInputMsg, &gcode_command.state);

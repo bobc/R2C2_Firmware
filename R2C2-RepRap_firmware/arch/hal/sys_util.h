@@ -1,5 +1,3 @@
-/* Copyright (C) 2009-2010 Michael Moon aka Triffid_Hunter   */
-/* Copyright (c) 2011 Jorge Pinto - casainho@gmail.com       */
 /* All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
@@ -28,34 +26,13 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef	_GCODE_PROCESS_H
-#define	_GCODE_PROCESS_H
+#ifndef _SYS_UTIL_H
+#define _SYS_UTIL_H
 
-#include <stdbool.h>
-#include	"gcode_parse.h"
+void startup_delay(void);
 
-#ifdef HAVE_FILESYSTEM
-#include "ff.h"
+void sys_initialise (void);
 
-#define FM_GCODE    0
-#define FM_HEX_BIN  1
+void sys_reboot (void);
 
-// for SD functions
-extern bool      sd_active;       // SD card active
-extern bool      sd_printing;     // printing from SD file
-extern bool      sd_writing_file; // writing to SD file
-extern FIL       file;
-extern uint8_t   file_mode;
-extern uint32_t  filesize;
-extern uint32_t  sd_pos;
-extern char      sd_file_name [21];
-
-extern void sd_close (FIL *pFile);
-extern bool sd_write_to_file(char *pStr, unsigned bytes_to_write);
-extern bool sd_read_file (tLineBuffer *pLine);
 #endif
-
-// when we have a command, feed it to this
-eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterpreterState *pInterpreterState);
-
-#endif	/* _GCODE_PROCESS_H */

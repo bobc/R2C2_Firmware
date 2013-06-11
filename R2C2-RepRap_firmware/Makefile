@@ -263,6 +263,8 @@ CDEFS =
 #CDEFS += -DDEBUG
 #CDEFS += -DWITH_USB_MS=1
 
+CDEFS += -DHAVE_FILESYSTEM
+
 # Place project-specific -D and/or -U options for 
 # Assembler with preprocessor here.
 ADEFS = 

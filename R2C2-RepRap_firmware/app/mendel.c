@@ -33,36 +33,50 @@
 
 #include "rtos_api.h"
 
-#include "LPC17xx.h"    // NVIC_SystemReset
-
+// HAL
 #include "spi.h"
 #include "buzzer.h"
 #include "timer.h"
 #include "uart.h"
+#include "sys_util.h"
 
+#include "usb_serial.h"
+
+// lib_r2c2
+#include "debug.h"
+
+// lib_FatFs
+#ifdef HAVE_FILESYSTEM
+#include "ff.h"
+#endif
+
+// app
 #include "gcode_parse.h"
 //#include "pinout.h"
 #include "pin_control.h"
-#include "debug.h"
 #include "app_config.h"
 #include "temp.h"
 #include "planner.h"
 #include "stepper.h"
-#include "usb_serial.h"
-#include "ff.h"
+// tasks
 #include "eth_shell_task.h"
 #include "usb_shell_task.h"
 #include "uart_shell_task.h"
 #include "gcode_task.h"
 #include "ui_task.h"
 
+///
+#ifdef HAVE_FILESYSTEM
 FATFS   fs;       /* Work area (file system object) for logical drive */
+#endif
 
 tTimer  temperatureTimer;
 
+//
 // printer task
 static  long timer1 = 0;
 
+//
 void io_init(void)
 {
   int axis;
@@ -103,22 +117,20 @@ void temperatureTimerCallback (tTimer *pTimer)
   temp_tick();
 }
 
-void reboot (void)
-{
-  NVIC_SystemReset();
-}
 
 void check_boot_request (void)
 {
   if (digital_read (BOOT_SW_PORT, _BV(BOOT_SW_PIN_NUMBER)) == 0)
   {
-    reboot();
+    sys_reboot();
   }
 }
 
 static void PrinterInit (void)
 {
+#ifdef HAVE_FILESYSTEM
   FRESULT res;
+#endif
 
   app_config_set_defaults();
 
@@ -136,15 +148,17 @@ static void PrinterInit (void)
   /* initialize SPI for SDCard */
   spi_init();
 
+#ifdef HAVE_FILESYSTEM
   /* Register a work area for logical drive 0 */
   res = f_mount(0, &fs);
   if (res)
     debug("Err mount fs\n");
   else  
   {
-    // read_config will use SPI and a message output (control interface or debug)
+    // read_config will use SPI and a message output (control interface or debug)	//TODO?
     app_config_read();
   }
+#endif
 
   // init devices?
 
@@ -185,8 +199,10 @@ void printer_task_init ( void *pvParameters )
   // start up user interface
   lw_TaskCreate( ui_task_init, ui_task_poll,        "UiTask", 256, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 
+#ifdef HAVE_FILESYSTEM
   // now to do GCode startup
   exec_gcode_file ("autoexec.g");
+#endif
 
   // -- all startup done, signal readiness
 

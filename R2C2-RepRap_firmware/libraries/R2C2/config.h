@@ -34,7 +34,6 @@
 #include "stdbool.h"
 
 #include "ios.h"
-#include "ff.h"
 
 #define TYPE_INT      0
 #define TYPE_DOUBLE   1
@@ -58,7 +57,7 @@ typedef struct {
 
 void set_defaults (const tConfigItem lookup[], int num_tokens);
 
-FRESULT read_config_file (char *filename, const tConfigItem lookup[], int num_tokens, tKeyHash hashes[]);
+unsigned read_config_file (char *filename, const tConfigItem lookup[], int num_tokens, tKeyHash hashes[]);
 
 void print_config_table (const tConfigItem lookup[], int num_token);
 

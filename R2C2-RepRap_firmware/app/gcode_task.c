@@ -116,6 +116,7 @@ void gcode_task_poll (void *pvParameters)
         }
     }
 
+#ifdef HAVE_FILESYSTEM
     // process SD file
     if (sd_printing)
     {
@@ -141,7 +142,7 @@ void gcode_task_poll (void *pvParameters)
           }
         }
     }
-
+#endif
 }
 
 
