@@ -14,33 +14,35 @@
 
 #define LW_HEAP_MAGIC 0xC001CAFE
 
-typedef union {
-        uint32_t    all;
-        
-        uint32_t    free:1;
-        uint32_t    allocated:1;
-    } tFlags;
+#define ALLOC_FLAG (1ul << 31)
 
-typedef struct header {
-    uint32_t    guard;
-    uint32_t    size;
-    struct header * pNext;
-    tFlags      flags;
-} tHeader;
+typedef struct {
+   uint32_t    size; // 31 bits
+} tControl;
+
+typedef struct free_header {
+    uint32_t      guard;
+    tControl      control;
+
+    struct free_header * pNext;
+//    struct free_header * pPrev;
+} tFreeHeader;
 
 typedef struct {
     uint32_t    guard;
-    uint32_t    size;
-    tFlags      flags;
+    tControl    control;
+} tAllocHeader;
+
+
+typedef struct {
+    uint32_t    guard;
+    tControl    control;
 } tTrailer;
 
 typedef struct {
-
-    tHeader header;
-    
-    char data [4];
-    
-    tTrailer trailer;
+    tAllocHeader header;
+    char         data [4];
+    tTrailer     trailer;
 } tBlock;
 
 
