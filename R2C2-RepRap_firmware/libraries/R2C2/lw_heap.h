@@ -12,45 +12,12 @@
 
 #include <stdint.h>
 
-#define LW_HEAP_MAGIC 0xC001CAFE
-
-#define ALLOC_FLAG (1ul << 31)
-
-typedef struct {
-   uint32_t    size; // 31 bits
-} tControl;
-
-typedef struct free_header {
-    uint32_t      guard;
-    tControl      control;
-
-    struct free_header * pNext;
-//    struct free_header * pPrev;
-} tFreeHeader;
-
-typedef struct {
-    uint32_t    guard;
-    tControl    control;
-} tAllocHeader;
-
-
-typedef struct {
-    uint32_t    guard;
-    tControl    control;
-} tTrailer;
-
-typedef struct {
-    tAllocHeader header;
-    char         data [4];
-    tTrailer     trailer;
-} tBlock;
-
-
 //
 
-// p_pool_mem should be word aligned
-void lw_heap_init (void *p_pool_mem, uint32_t pool_size);
+// p_pool_mem should be word aligned as some systems may not support byte alignment
+void lw_heap_init (uint32_t *p_pool_mem, uint32_t pool_size);
 
+// max size is actually 2^31
 void *lw_malloc (uint32_t size);
 
 void lw_free (void *mem);
