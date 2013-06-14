@@ -132,20 +132,20 @@ OUTDIR = $(RUN_MODE)
 TARGET = project
 
 # Utility variables
-APPLIBDIR    = ../R2C2-RepRap_firmware/libraries
+APPLIBDIR   = ../R2C2-RepRap_firmware/libraries
 ARCH_DIR    = ../R2C2-RepRap_firmware/arch/lpc17xx
 INCLUDES = $(ARCH_DIR)/CMSISv1p30/inc \
-	 $(APPLIBDIR)/LPCUSB/inc \
+	 $(ARCH_DIR)/LPCUSB/inc \
 	 $(ARCH_DIR)/Drivers/include \
 	 $(APPLIBDIR)/FatFs/src \
 	 inc \
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
-SRC =	$(APPLIBDIR)/LPCUSB/src/usbcontrol.c \
-	$(APPLIBDIR)/LPCUSB/src/usbhw_lpc.c \
-	$(APPLIBDIR)/LPCUSB/src/usbinit.c \
-	$(APPLIBDIR)/LPCUSB/src/usbstdreq.c \
+SRC =	$(ARCH_DIR)/LPCUSB/src/usbcontrol.c \
+	$(ARCH_DIR)/LPCUSB/src/usbhw_lpc.c \
+	$(ARCH_DIR)/LPCUSB/src/usbinit.c \
+	$(ARCH_DIR)/LPCUSB/src/usbstdreq.c \
 	$(ARCH_DIR)/CMSISv1p30/src/system_LPC17xx.c \
 	$(ARCH_DIR)/CMSISv1p30/src/core_cm3.c \
 	$(ARCH_DIR)/Drivers/source/lpc17xx_nvic.c \
@@ -249,7 +249,7 @@ EXTRA_LIBDIRS =
 #OPT = 1
 #OPT = 2
 #OPT = 3
-OPT = s
+OPT = 0
 
 # Debugging format.
 #DEBUG = stabs
@@ -526,7 +526,8 @@ end:
 	@echo $(MSG_END)
 
 # Display sizes of sections.
-ELFSIZE = $(SIZE) -A $(OUTDIR)/$(TARGET).elf | egrep '^(section|Total|\.(text|data|bss|stack|heap))'
+# ELFSIZE = $(SIZE) -A $(OUTDIR)/$(TARGET).elf | egrep '^(section|Total|\.(text|data|bss|stack|heap))'
+ELFSIZE = $(SIZE) -A $(OUTDIR)/$(TARGET).elf
 sizebefore:
 #	@if [ -f  $(OUTDIR)/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(ELFSIZE); echo; fi
 
