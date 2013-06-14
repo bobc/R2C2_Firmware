@@ -32,8 +32,12 @@
 
 #include <stdint.h>
 
+#include "ios.h"
+
 /* Initialize ADC for extruder temperature reading */
 void adc_init(void);
+
+void adc_configure_pin (tPinDef pindef);
 
 uint16_t analog_read(uint8_t adc_channel);
 

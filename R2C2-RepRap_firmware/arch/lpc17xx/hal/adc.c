@@ -29,6 +29,7 @@
 
 #include "LPC17xx.h"
 #include "lpc17xx_adc.h"
+#include "lpc17xx_pinsel.h"
 
 #include "adc.h"
 
@@ -39,6 +40,18 @@ void adc_init(void)
   ADC_Init(LPC_ADC, 200000); /* ADC conversion rate = 200Khz */
 }
 
+void adc_configure_pin (tPinDef pindef)
+{
+  PINSEL_CFG_Type PinCfg;
+
+  PinCfg.Funcnum = PINSEL_FUNC_2; /* ADC function */
+  PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
+  PinCfg.Pinmode = PINSEL_PINMODE_TRISTATE;
+  PinCfg.Portnum = pindef.port;
+  PinCfg.Pinnum  = pindef.pin_number;
+  PINSEL_ConfigPin(&PinCfg);
+}  
+  
 uint16_t analog_read(uint8_t adc_channel)
 {
   ADC_ChannelCmd(LPC_ADC, adc_channel, ENABLE);

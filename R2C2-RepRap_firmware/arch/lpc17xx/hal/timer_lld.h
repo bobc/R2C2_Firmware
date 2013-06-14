@@ -32,6 +32,8 @@
 
 #define NUM_HARDWARE_TIMERS 4
 
+void timer_lld_init (void);
+
 
 #endif	/* _TIMER_LLD_H */
 

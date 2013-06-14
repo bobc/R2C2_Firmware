@@ -1,5 +1,6 @@
-/* Copyright (c) 2011 Jorge Pinto - casainho@gmail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -25,25 +26,36 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#ifndef _BUZZER_
-#define _BUZZER_
+#ifndef _CONFIG_HAL_H
+#define _CONFIG_HAL_H
 
-#include <stdint.h>
+// --------------------------------------------------------------------------
+// Includes
+// --------------------------------------------------------------------------
 
-#include "ios.h"
+// Do not include anything here!
 
-void buzzer_init (tPinDef pindef);
+// --------------------------------------------------------------------------
+// Defines
+// --------------------------------------------------------------------------
 
-/* put a PWM signal of 50% duty cycle, with a specified frequency and duration.
- * 20Hz <= frequency <= 20000
- * 10ms <= duration <= (2^16 - 1)ms
- */
-void buzzer_play (uint16_t frequency, uint16_t duration);
-void buzzer_wait (void);
+//! Enable the UART
+#define HAL_CFG_USE_UART	TRUE
 
-void buzzer_play_sync (uint16_t frequency, uint32_t duration);
+#define HAL_CFG_USE_UART1	TRUE
+#define HAL_CFG_USE_UART2   FALSE
+#define HAL_CFG_USE_UART3   FALSE
+#define HAL_CFG_USE_UART4   FALSE
 
-#endif  /* _BUZZER_ */
+// --------------------------------------------------------------------------
+//
+// --------------------------------------------------------------------------
+
+#endif // _CONFIG_HAL_H
 

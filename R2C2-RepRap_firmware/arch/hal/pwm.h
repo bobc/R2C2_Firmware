@@ -1,5 +1,6 @@
-/* Copyright (c) 2011 Jorge Pinto - casainho@gmail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -25,102 +26,63 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#ifndef	_TIMER_H
-#define	_TIMER_H
+#ifndef _PWM_H
+#define _PWM_H
 
 // --------------------------------------------------------------------------
 // Includes
 // --------------------------------------------------------------------------
 
-#include <stdbool.h>
 #include <stdint.h>
 
-#include "timer_lld.h"
+#include "ios.h"
+#include "pwm.h"
 
 // --------------------------------------------------------------------------
 // Defines
 // --------------------------------------------------------------------------
 
-// time-related constants
-//#define	US	(F_CPU / 1000000)
-#define	MS	(F_CPU / 1000)
+#define NUM_PWM_CHANNELS    6
 
-// #define	DEFAULT_TICK	(100 US)
-#define	WAITING_DELAY  (10 * MS)
+#define DUTY_CYCLE(percent) ((percent) * 32768ul / 100)
+
+#define Q15_25_PERCENT  (0x2000)
+#define Q15_50_PERCENT  (0x4000)
+#define Q15_75_PERCENT  (0x6000)
+#define Q15_100_PERCENT (0x7FFF)
 
 // --------------------------------------------------------------------------
 // Types
 // --------------------------------------------------------------------------
-																				 
-// --------------------------------------------------------------------------
-// Slow timers (1ms rate or above)
-//
-// slow timers are daisy chained off a single timer interrupt
-// --------------------------------------------------------------------------
-typedef struct tTimer tTimer; // incomplete type
-
-typedef void (*tTimerCallback)(tTimer *);
-
-// do not change values in tTimer struct
-struct tTimer
-{
-  tTimer            *pNext;
-  tTimerCallback    timerCallback;
-  uint32_t          Current;
-  uint32_t          Reload;
-  volatile uint8_t  Running:1;
-  volatile uint8_t  Expired:1;
-  volatile uint8_t  AutoReload:1;
-};
 
 // --------------------------------------------------------------------------
-// Hardware timers
-//
-// Hardware timers are dedicated to single callback. Used for high rates or
-// precise timing < 1ms
+// Public Variables
 // --------------------------------------------------------------------------
-typedef struct tHwTimer tHwTimer;
-
-// timer callback gets pointer to tHwTimer struct and copy of timer IR register
-typedef void (*tHwTimerCallback)(tHwTimer *, uint32_t);
-
-struct tHwTimer
-{
-  tHwTimerCallback timerCallback;
-} ;
-
 
 // --------------------------------------------------------------------------
 // Public functions
 // --------------------------------------------------------------------------
 
-void timer_init (void);
+void pwm_init (void);
 
-void app_SysTick (void);	// this must be provided by the application
+void pwm_set_frequency (uint32_t frequency);
+void pwm_start         (void);
+void pwm_stop          (void);
 
-void timer_sys_tick (void); // called internally
+void pwm_chan_configure     (uint16_t channel, tPinDef pindef);
+void pwm_chan_set_duty      (uint16_t channel, uint16_t duty_cycle);
+void pwm_chan_start         (uint16_t channel);
+void pwm_chan_stop          (uint16_t channel);
 
-void setupHwTimer 		(uint16_t timerNum, tHwTimerCallback timerCallback);
-void setHwTimerInterval (uint16_t timerNum, uint32_t ticks);
-void enableHwTimer 		(uint16_t timerNum);
-void disableHwTimer 	(uint16_t timerNum);
-uint8_t isHwTimerEnabled(uint16_t timerNum);
-void setHwTimerMatch 	(uint16_t timerNum, uint16_t matchReg, uint32_t interval);
+// --------------------------------------------------------------------------
+//
+// --------------------------------------------------------------------------
 
-
-void delay   	(int delay);
-void delay_ms	(int delay);
-void delayMicrosecondsInterruptible(int us);
-#define	delay_us(d) delayMicrosecondsInterruptible(d)
-long millis(void);
-
-// Slow timer (i.e. +/-1ms resolution)
-bool AddSlowTimer   (tTimer *pTimer);
-void StartSlowTimer (tTimer *pTimer, uint32_t intervalMillis, tTimerCallback timerCallback);
-void StopSlowTimer  (tTimer *pTimer);
-#define IsSlowTimerExpired (pTimer)  ((pTimer)->Expired)
-
-#endif	/* _TIMER_H */
+#endif // _$NAME
 

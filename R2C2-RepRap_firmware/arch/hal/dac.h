@@ -1,5 +1,6 @@
-/* Copyright (c) 2011 Jorge Pinto - casainho@gmail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -25,102 +26,45 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#ifndef	_TIMER_H
-#define	_TIMER_H
+#ifndef _DAC_H
+#define _DAC_H
 
 // --------------------------------------------------------------------------
 // Includes
 // --------------------------------------------------------------------------
 
-#include <stdbool.h>
 #include <stdint.h>
 
-#include "timer_lld.h"
+#include "ios.h"
 
 // --------------------------------------------------------------------------
 // Defines
 // --------------------------------------------------------------------------
 
-// time-related constants
-//#define	US	(F_CPU / 1000000)
-#define	MS	(F_CPU / 1000)
-
-// #define	DEFAULT_TICK	(100 US)
-#define	WAITING_DELAY  (10 * MS)
-
 // --------------------------------------------------------------------------
 // Types
 // --------------------------------------------------------------------------
-																				 
-// --------------------------------------------------------------------------
-// Slow timers (1ms rate or above)
-//
-// slow timers are daisy chained off a single timer interrupt
-// --------------------------------------------------------------------------
-typedef struct tTimer tTimer; // incomplete type
-
-typedef void (*tTimerCallback)(tTimer *);
-
-// do not change values in tTimer struct
-struct tTimer
-{
-  tTimer            *pNext;
-  tTimerCallback    timerCallback;
-  uint32_t          Current;
-  uint32_t          Reload;
-  volatile uint8_t  Running:1;
-  volatile uint8_t  Expired:1;
-  volatile uint8_t  AutoReload:1;
-};
 
 // --------------------------------------------------------------------------
-// Hardware timers
-//
-// Hardware timers are dedicated to single callback. Used for high rates or
-// precise timing < 1ms
+// Public Variables
 // --------------------------------------------------------------------------
-typedef struct tHwTimer tHwTimer;
-
-// timer callback gets pointer to tHwTimer struct and copy of timer IR register
-typedef void (*tHwTimerCallback)(tHwTimer *, uint32_t);
-
-struct tHwTimer
-{
-  tHwTimerCallback timerCallback;
-} ;
-
 
 // --------------------------------------------------------------------------
 // Public functions
 // --------------------------------------------------------------------------
 
-void timer_init (void);
+void dac_init (tPinDef pindef);
+void dac_output (uint32_t value);
 
-void app_SysTick (void);	// this must be provided by the application
+// --------------------------------------------------------------------------
+//
+// --------------------------------------------------------------------------
 
-void timer_sys_tick (void); // called internally
-
-void setupHwTimer 		(uint16_t timerNum, tHwTimerCallback timerCallback);
-void setHwTimerInterval (uint16_t timerNum, uint32_t ticks);
-void enableHwTimer 		(uint16_t timerNum);
-void disableHwTimer 	(uint16_t timerNum);
-uint8_t isHwTimerEnabled(uint16_t timerNum);
-void setHwTimerMatch 	(uint16_t timerNum, uint16_t matchReg, uint32_t interval);
-
-
-void delay   	(int delay);
-void delay_ms	(int delay);
-void delayMicrosecondsInterruptible(int us);
-#define	delay_us(d) delayMicrosecondsInterruptible(d)
-long millis(void);
-
-// Slow timer (i.e. +/-1ms resolution)
-bool AddSlowTimer   (tTimer *pTimer);
-void StartSlowTimer (tTimer *pTimer, uint32_t intervalMillis, tTimerCallback timerCallback);
-void StopSlowTimer  (tTimer *pTimer);
-#define IsSlowTimerExpired (pTimer)  ((pTimer)->Expired)
-
-#endif	/* _TIMER_H */
+#endif // _DAC_H
 
