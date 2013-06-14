@@ -170,6 +170,7 @@ static void PrinterInit (void)
   dbg_init();	// [requires io pins (uart)?]
 
   /* initialize SPI for SDCard */
+  spi_configure (config.spi_sck0, config.spi_mosi0, config.spi_miso0, config.spi_ssel0);
   spi_init();
 
 #ifdef HAVE_FILESYSTEM
@@ -184,7 +185,7 @@ static void PrinterInit (void)
     app_config_read(); // <-- sets IO pins - buzzer, lcd, ?
     
     // re-init if changed
-    buzzer_init (app_config.buzzer_pin);
+    buzzer_init (config.buzzer_pin);
   }
 #endif
 

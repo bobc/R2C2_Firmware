@@ -31,22 +31,28 @@
 #ifndef SPI_H_
 #define SPI_H_
 
-#include "stdint.h"
+#include <stdint.h>
+
+#include "ios.h"
 
 enum speed_setting { INTERFACE_SLOW, INTERFACE_FAST };
 
-void spi_init(void);
-uint8_t rcvr_spi(void);
+void spi_configure (tPinDef SClk, tPinDef Mosi, tPinDef Miso, tPinDef SSel);
+
+void spi_init (void);
+
 void spi_set_speed( enum speed_setting speed );
 void spi_close(void);
-void spi_rcvr_block (
-        uint8_t *buff,         /* Data buffer to store received data */
-        uint16_t btr            /* Byte count (must be multiple of 4) */
-);
-uint8_t spi_rw( uint8_t out );
-void spi_xmit_block (
-        const uint8_t *buff    /* 512 byte data block to be transmitted */
-);
+
+uint8_t spi_transmit_and_receive (uint8_t out );
+uint8_t spi_receive_byte (void);
+
+//! @param[out] Data buffer to store received data
+//! @param[in] Byte count (must be multiple of 4)
+void spi_receive_block (uint8_t *buff, uint16_t byte_count);
+
+void spi_transmit_block (const uint8_t *buff);    /* 512 byte data block to be transmitted */
+
 
 
 #endif /* SPI_H_ */

@@ -33,6 +33,7 @@
 #include "buzzer.h"
 #include "sys_util.h"
 #include "uart.h"
+#include "timer.h"
 
 /* lib_r2c2 */
 #include "lw_io.h"

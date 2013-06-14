@@ -30,8 +30,8 @@
 #include <string.h>
 
 // hal
-#include "spi.h"
-#include "ios.h"
+//? #include "spi.h"
+#include "ios.h"    // pin defs
 
 //lib_fatfs
 #ifdef HAVE_FILESYSTEM
@@ -42,8 +42,10 @@
 #include "debug.h"    // may not be initialised yet?
 
 // app
-#include "gcode_parse.h"
-#include "stepper.h"
+#include "gcode_parse.h"  // exec gcode
+
+#include "stepper.h"        // step_led options
+
 #include "config.h"
 #include "app_config.h"
 
@@ -73,6 +75,7 @@ static const tConfigItem config_lookup [] =
   //  
   // interfaces
   //
+  
   { "debug_flags",          &config.debug_flags,            TYPE_INT,   {.val_i= 0   }},
   { "step_led_flash_method",&config.step_led_flash_method,  TYPE_INT,   {.val_i= STEP_LED_FLASH_VARIABLE}},
   { "beep_on_events",       &config.beep_on_events,         TYPE_INT,   {.val_i= 0x0000000F}},
@@ -229,6 +232,11 @@ static const tConfigItem config_lookup_pindef [] =
   { "extruder_1.cooler",              &config.extruder_ctc[1].pin_cooler,           TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
   { "extruder_1.sensor_adc_channel",  &config.extruder_ctc[1].sensor_adc_channel,   TYPE_INT,     {.val_i = 0}},
 
+  { "spi0.ssel0",         &config.spi_ssel0,   TYPE_PIN_DEF, {.val_pin_def =  SPI_SSEL0  }},
+  { "spi0.sck",           &config.spi_sck0 ,   TYPE_PIN_DEF, {.val_pin_def =  SPI_SCK0  }},
+  { "spi0.mosi",          &config.spi_mosi0,    TYPE_PIN_DEF, {.val_pin_def =  SPI_MOSI0  }},
+  { "spi0.miso",          &config.spi_miso0,    TYPE_PIN_DEF, {.val_pin_def =  SPI_MISO0  }},
+
   { "buzzer",          &config.buzzer_pin,   TYPE_PIN_DEF, {.val_pin_def = PIN_DEF (2,2,1)   }},
 
   { "cp_lcd_data_0",   &config.interface_cp_lcd_pin_data[0],   TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF   }},
@@ -277,7 +285,7 @@ void app_config_set_defaults(void)
   
   set_defaults (config_lookup_pindef, NUM_TOKENS(config_lookup_pindef));
 
-    // set default axis map for R2C2 - printer
+  // set default axis map for R2C2 - printer
   config.num_axes = NUM_AXES;
   config.axis[0].letter_code = 'X';
   config.axis[0].is_configured = true;

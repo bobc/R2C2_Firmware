@@ -41,8 +41,9 @@
 #include "integer.h"
 #include "diskio.h"
 
+#include "config_pins.h"
 //
-#define xmit_spi(dat)  spi_rw(dat)
+#define xmit_spi(dat)  spi_transmit_and_receive (dat)
 
 /* used SSP-port: */
 #define CARD_SSP                 1
@@ -76,7 +77,7 @@ static volatile uint32_t Timer1, Timer2;       /* 100Hz decrement timers */
 
 static uint8_t CardType;                       /* Card type flags */
 
-
+static tPinDef slave_select_pin = SPI_SSEL0;
 
 /*-----------------------------------------------------------------------*/
 /* SPI low-level functions                                               */
@@ -85,14 +86,14 @@ static uint8_t CardType;                       /* Card type flags */
 //TODO pin config
 static inline void select_card()
 {
-	// SSEL1 P0.6 low
-	digital_write (0, (1 << 6), 0);
+	// SSEL low
+  write_pin (slave_select_pin, 0);
 }
 
 static inline void de_select_card()
 {
-	// SSEL1 high
-	digital_write (0, (1 << 6), 1);
+	// SSEL high
+  write_pin (slave_select_pin, 1);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -103,9 +104,9 @@ static BYTE wait_ready (void)
 	BYTE res;
 
 	Timer2 = 50;	/* Wait for ready in timeout of 500ms */
-	rcvr_spi();
+	spi_receive_byte();
 	do
-		res = rcvr_spi();
+		res = spi_receive_byte();
 	while ((res != 0xFF) && Timer2);
 
 	return res;
@@ -117,7 +118,7 @@ static BYTE wait_ready (void)
 static void release_spi (void)
 {
 	de_select_card();
-	rcvr_spi();
+	spi_receive_byte();
 }
 
 /*-----------------------------------------------------------------------*/
@@ -156,14 +157,14 @@ static bool rcvr_datablock (
 
 	Timer1 = 10;
 	do {							/* Wait for data packet in timeout of 100ms */
-		token = rcvr_spi();
+		token = spi_receive_byte();
 	} while ((token == 0xFF) && Timer1);
 	if(token != 0xFE) return false;	/* If not valid data token, return with error */
 
-	spi_rcvr_block( buff, btr );
+	spi_receive_block( buff, btr );
 
-	rcvr_spi();						/* Discard CRC */
-	rcvr_spi();
+	spi_receive_byte();						/* Discard CRC */
+	spi_receive_byte();
 
 	return true;					/* Return with success */
 }
@@ -185,11 +186,11 @@ static bool xmit_datablock (
 	xmit_spi(token);					/* transmit data token */
 	if (token != 0xFD) {	/* Is data token */
 
-        spi_xmit_block( buff );
+        spi_transmit_block( buff );
 
         xmit_spi(0xFF);					/* CRC (Dummy) */
         xmit_spi(0xFF);
-        resp = rcvr_spi();				/* Receive data response */
+        resp = spi_receive_byte();				/* Receive data response */
         if ((resp & 0x1F) != 0x05)		/* If not accepted, return with error */
                 return false;
 	}
@@ -234,11 +235,11 @@ static BYTE send_cmd (
 	xmit_spi(n);
 
 	/* Receive command response */
-	if (cmd == CMD12) rcvr_spi();		/* Skip a stuff byte when stop reading */
+	if (cmd == CMD12) spi_receive_byte();		/* Skip a stuff byte when stop reading */
 
 	n = 10;								/* Wait for a valid response in timeout of 10 attempts */
 	do
-		res = rcvr_spi();
+		res = spi_receive_byte();
 	while ((res & 0x80) && --n);
 
 	return res;			/* Return with the response value */
@@ -255,17 +256,17 @@ DSTATUS MMC_disk_initialize(void)
 
 	power_on();							/* Force socket power on and initialize interface */
 	spi_set_speed(INTERFACE_SLOW);
-	for (n = 10; n; n--) rcvr_spi();	/* 80 dummy clocks with card de-selected */
+	for (n = 10; n; n--) spi_receive_byte();	/* 80 dummy clocks with card de-selected */
 
 	ty = 0;
 	if (send_cmd(CMD0, 0) == 1) {			/* Enter Idle state */
 		Timer1 = 100;						/* Initialization timeout of 1000 milliseconds */
 		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDHC */
-			for (n = 0; n < 4; n++) ocr[n] = rcvr_spi();		/* Get trailing return value of R7 response */
+			for (n = 0; n < 4; n++) ocr[n] = spi_receive_byte();		/* Get trailing return value of R7 response */
 			if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* The card can work at VDD range of 2.7-3.6V */
 				while (Timer1 && send_cmd(ACMD41, 1UL << 30));	/* Wait for leaving idle state (ACMD41 with HCS bit) */
 				if (Timer1 && send_cmd(CMD58, 0) == 0) {		/* Check CCS bit in the OCR */
-					for (n = 0; n < 4; n++) ocr[n] = rcvr_spi();
+					for (n = 0; n < 4; n++) ocr[n] = spi_receive_byte();
 					ty = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;
 				}
 			}
@@ -438,9 +439,9 @@ DSTATUS MMC_disk_ioctl(
 		case GET_BLOCK_SIZE :	/* Get erase block size in unit of sector (DWORD) */
 			if (CardType & CT_SD2) {	/* SDC version 2.00 */
 				if (send_cmd(ACMD13, 0) == 0) {	/* Read SD status */
-					rcvr_spi();
+					spi_receive_byte();
 					if (rcvr_datablock(csd, 16)) {				/* Read partial block */
-						for (n = 64 - 16; n; n--) rcvr_spi();	/* Purge trailing data */
+						for (n = 64 - 16; n; n--) spi_receive_byte();	/* Purge trailing data */
 						*(DWORD*)buff = 16UL << (csd[10] >> 4);
 						res = RES_OK;
 					}
@@ -476,14 +477,14 @@ DSTATUS MMC_disk_ioctl(
 
 		case MMC_GET_OCR :		/* Receive OCR as an R3 resp (4 bytes) */
 			if (send_cmd(CMD58, 0) == 0) {	/* READ_OCR */
-				for (n = 4; n; n--) *ptr++ = rcvr_spi();
+				for (n = 4; n; n--) *ptr++ = spi_receive_byte();
 				res = RES_OK;
 			}
 			break;
 
 		case MMC_GET_SDSTAT :	/* Receive SD status as a data block (64 bytes) */
 			if (send_cmd(ACMD13, 0) == 0) {	/* SD_STATUS */
-				rcvr_spi();
+				spi_receive_byte();
 				if (rcvr_datablock(ptr, 64))
 					res = RES_OK;
 			}

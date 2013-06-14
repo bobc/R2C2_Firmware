@@ -33,45 +33,59 @@
 #include "lpc17xx_gpio.h"
 #include "lpc17xx_clkpwr.h"
 #include "lpc17xx_ssp.h"
+
 #include "spi.h"
 
 /*-----------------------------------------------------------------------*/
 /* SPI low-level functions                                               */
 /*-----------------------------------------------------------------------*/
 
-void spi_init(void)
+void spi_configure (tPinDef SClk, tPinDef Mosi, tPinDef Miso, tPinDef SSel)
 {
   PINSEL_CFG_Type PinCfg;
-  SSP_CFG_Type SSP_ConfigStruct;
 
   /*
    * Initialize SPI pin connect
+   */
+   
+   /*
    * P0.16 - SSEL0 - used as GPIO
    * P0.15 - SCK0
    * P0.17 - MISO0
    * P0.18 - MOSI0
    */
 
-  /* SSEL0 P0.16 as GPIO, pull-up mounted */
+  /* SSEL as GPIO, pull-up mounted */
   PinCfg.Funcnum   = PINSEL_FUNC_0;
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLUP;
-  PinCfg.Pinnum    = 16;
-  PinCfg.Portnum   = 0;
-  GPIO_SetDir(0, (1 << 16), 1);
+  PinCfg.Portnum   = SSel.port;
+  PinCfg.Pinnum    = SSel.pin_number;
+  GPIO_SetDir(SSel.port, _BV(SSel.pin_number), 1);
   PINSEL_ConfigPin(&PinCfg);
-  /* SCK0 P0.15 alternate function 0b10 */
+
+  /* SCK0 alternate function 0b10 */
   PinCfg.Funcnum   = PINSEL_FUNC_2;
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLDOWN;
-  PinCfg.Pinnum    = 15;
+  PinCfg.Portnum   = SClk.port;
+  PinCfg.Pinnum    = SClk.pin_number;
   PINSEL_ConfigPin(&PinCfg);
-  /* MISO0 P0.17 */
+
+  /* MISO0 */
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLUP;
-  PinCfg.Pinnum    = 17;
+  PinCfg.Portnum   = Miso.port;
+  PinCfg.Pinnum    = Miso.pin_number;
   PINSEL_ConfigPin(&PinCfg);
-  /* MOSI0 P0.18 */
-  PinCfg.Pinnum    = 18;
+
+  /* MOSI0 */
+  PinCfg.Portnum   = Mosi.port;
+  PinCfg.Pinnum    = Mosi.pin_number;
   PINSEL_ConfigPin(&PinCfg);
+ }
+
+void spi_init (void)
+{
+  SSP_CFG_Type SSP_ConfigStruct;
 
   /* initialize SSP configuration structure */
   SSP_ConfigStruct.CPHA = SSP_CPHA_FIRST;
@@ -105,6 +119,7 @@ void spi_close(void)
   SSP_Cmd(LPC_SSP0, DISABLE);
   SSP_DeInit(LPC_SSP0);
 
+/*
   PinCfg.Funcnum   = PINSEL_FUNC_0;
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLDOWN;
@@ -117,9 +132,10 @@ void spi_close(void)
   PINSEL_ConfigPin(&PinCfg);
   PinCfg.Pinnum    = 18;
   PINSEL_ConfigPin(&PinCfg);
+*/
 }
 
-uint8_t spi_rw( uint8_t out )
+uint8_t spi_transmit_and_receive ( uint8_t out )
 {
   uint8_t in;
 
@@ -130,25 +146,25 @@ uint8_t spi_rw( uint8_t out )
   return in;
 }
 
-uint8_t rcvr_spi(void)
+uint8_t spi_receive_byte (void)
 {
-  return spi_rw(0xff);
+  return spi_transmit_and_receive (0xff);
 }
 
 /* Alternative macro to receive data fast */
 #define rcvr_spi_m(dst)  *(dst)=spi_rw(0xff)
 
-#define FIFO_ELEM 8 /* "8 frame FIFOs for both transmit and receive.*/
+#define FIFO_ELEM 8           /* "8 frame FIFOs for both transmit and receive.*/
 
-void spi_rcvr_block (
+void spi_receive_block (
         uint8_t *buff,         /* Data buffer to store received data */
-        uint16_t btr            /* Byte count (must be multiple of 4) */
+        uint16_t byte_count            /* Byte count (must be multiple of 4) */
 )
 {
         uint16_t hwtr, startcnt, i, rec;
 
-        hwtr = btr/2;
-        if ( btr < FIFO_ELEM ) {
+        hwtr = byte_count/2;
+        if ( byte_count < FIFO_ELEM ) {
                 startcnt = hwtr;
         } else {
                 startcnt = FIFO_ELEM;
@@ -176,7 +192,7 @@ void spi_rcvr_block (
         LPC_SSP0->CR0 = ( LPC_SSP0->CR0 & ~SSP_CR0_DSS(16) ) | SSP_CR0_DSS(8); // DSS to 8 bit
 }
 
-void spi_xmit_block (
+void spi_transmit_block (
         const uint8_t *buff    /* 512 byte data block to be transmitted */
 )
 {

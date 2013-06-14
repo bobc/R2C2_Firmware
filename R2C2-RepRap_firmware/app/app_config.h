@@ -129,6 +129,11 @@ typedef struct
   int32_t beep_on_events;
 
   // -- interfaces --
+  tPinDef spi_ssel0;
+  tPinDef spi_sck0;
+  tPinDef spi_mosi0;
+  tPinDef spi_miso0;
+  
   tPinDef buzzer_pin;    
   
   int32_t interface_control_panel_enabled;      // = 0 none, 1 = Makerbot Gen4
