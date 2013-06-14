@@ -35,14 +35,15 @@
 #ifndef _ALERTER_H
 #define _ALERTER_H
 
-#include "lpc_types.h"
+#include <stdint.h>
 
+#include "ios.h"
 
-#define EVENT_START_TEMP_WAIT _BIT(0)
-#define EVENT_END_TEMP_WAIT   _BIT(1)
+#define EVENT_START_TEMP_WAIT _BV(0)
+#define EVENT_END_TEMP_WAIT   _BV(1)
 
-#define EVENT_BEFORE_HOMING   _BIT(2)
-#define EVENT_AFTER_HOMING    _BIT(3)
+#define EVENT_BEFORE_HOMING   _BV(2)
+#define EVENT_AFTER_HOMING    _BV(3)
 
 
 void alert_event(int32_t beep_event);

@@ -1,5 +1,6 @@
-/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -25,32 +26,57 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
 // **************************************************************************
 // Description:
 //
 // **************************************************************************
 
+#ifndef _CONFIG_APP_H
+#define _CONFIG_APP_H
+
 // --------------------------------------------------------------------------
 // Includes
 // --------------------------------------------------------------------------
 
-#include "app_config.h"
-
-#include "adc.h"
-#include "ios.h"
-
-void ctc_init (tCtcSettings *ctc_config)
-{
-  // heater output pin
-  set_pin_mode (ctc_config->pin_heater, OUTPUT);
-  write_pin (ctc_config->pin_heater, DISABLE);
-
-  // fan output pin
-  set_pin_mode(ctc_config->pin_cooler, OUTPUT);
-  write_pin (ctc_config->pin_cooler, DISABLE);
+// --------------------------------------------------------------------------
+// Defines
+// --------------------------------------------------------------------------
 
 
-  adc_configure_pin (ctc_config->pin_temp_sensor);
-  
-}
+// 6 axes should be enough for anyone?
+#define MAX_AXES        4
+
+// defines number of extruder temperature channels
+#define MAX_EXTRUDERS   2
+
+#define MAX_BUTTONS     10
+
+
+// TODO: sort out use of max number vs actual number configured
+#define NUM_AXES    4
+
+// axis map for 3D printer with 1 extruder for compatibility with existing code
+#define X_AXIS      0
+#define Y_AXIS      1
+#define Z_AXIS      2
+#define E_AXIS      3
+
+// --------------------------------------------------------------------------
+// Types
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+// Public Variables
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+// Public functions
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+//
+// --------------------------------------------------------------------------
+
+#endif // _$NAME
+

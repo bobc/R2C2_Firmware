@@ -28,8 +28,8 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _PINOUT_H
-#define _PINOUT_H
+#ifndef _CONFIG_PINS_H
+#define _CONFIG_PINS_H
 
 #include "ios.h"
 
@@ -69,28 +69,28 @@
 
 
 //
-#define STEPPERS_RESET_PIN    PIN_DEF (0,22,ACTIVE_LOW)         /* P0.22 */
+#define STEPPERS_RESET_PIN              PIN_DEF (0,22,ACTIVE_LOW)         /* P0.22 */
 
 // CTC #1 / Extruder 0
-#define EXTRUDER_0_HEATER_PIN           PIN_DEF (2,4,ACTIVE_HIGH)        /* P2.4 */
+#define EXTRUDER_0_HEATER_PIN           PIN_DEF (2,4,ACTIVE_HIGH)       /* P2.4 */
 
-#define EXTRUDER_0_SENSOR_ADC_PIN       PIN_DEF (0,2,ACTIVE_HIGH)        /* P0.2 */
-#define EXTRUDER_0_SENSOR_ADC_CHANNEL   7        /* P0.2 */
+#define EXTRUDER_0_SENSOR_ADC_PIN       PIN_DEF (0,2,ACTIVE_HIGH)       /* P0.2 */
+#define EXTRUDER_0_SENSOR_ADC_CHANNEL   7                               /* P0.2 */
 
-#define EXTRUDER_0_FAN_PIN              PIN_DEF (2,3,ACTIVE_HIGH)         /* P2.3 */
+#define EXTRUDER_0_FAN_PIN              PIN_DEF (2,3,ACTIVE_HIGH)       /* P2.3 */
 
 // CTC #2 / Heated Bed
-#define HEATED_BED_0_HEATER_PIN         PIN_DEF (2,5,ACTIVE_HIGH)        /* P2.5 */
+#define HEATED_BED_0_HEATER_PIN         PIN_DEF (2,5,ACTIVE_HIGH)       /* P2.5 */
 
-#define HEATED_BED_0_ADC_PIN            PIN_DEF (0,3,ACTIVE_HIGH)        /* P0.3 */
-#define HEATED_BED_0_SENSOR_ADC_CHANNEL 6        /* P0.3 */
+#define HEATED_BED_0_ADC_PIN            PIN_DEF (0,3,ACTIVE_HIGH)       /* P0.3 */
+#define HEATED_BED_0_SENSOR_ADC_CHANNEL 6                               /* P0.3 */
 
 // might be needed before config file is read?
-#define BUZZER_PORT     2         /* P2.2 PWM1[3] */
-#define BUZZER_PIN      (1 << 22) /* P2.2 PWM1[3] */
+#define BUZZER_PORT                     2                               /* P2.2 PWM1[3] */
+#define BUZZER_PIN_NUMBER               2                               /* P2.2 PWM1[3] */
 
 // the push switch to enter the bootloader (may be used by uart3: DBG_RXD)
-#define BOOT_SW_PORT        4
-#define BOOT_SW_PIN_NUMBER  29
+#define BOOT_SW_PORT                    4
+#define BOOT_SW_PIN_NUMBER              29
 
 #endif  /* _PINOUT_H */

@@ -58,8 +58,13 @@
 #include <sys/unistd.h>
 #endif
 
+// lib_hal
 #include "uart.h"
+#ifdef HAVE_USB_SERIAL
 #include "usb_serial.h"
+#endif
+
+// lib_r2c2
 #include "LiquidCrystal.h"
 
 #include "lw_syscalls.h"
@@ -90,8 +95,10 @@ static tDeviceDesc Devices[] = {
   {"uart0", uart0_init, uart0_send, uart0_receive, uart0_data_available}, 
   {"uart1",  uart1_init, uart1_send, uart1_receive, uart1_data_available}, 
 //TODO:  {"uart2",  uart2_init, uart2_send, uart2_receive, uart2_data_available}, 
-  {"uart3",  uart3_init, uart3_send, uart3_receive, uart3_data_available}, 
+  {"uart3",  uart3_init, uart3_send, uart3_receive, uart3_data_available},
+#ifdef HAVE_USB_SERIAL   
   {"usbser", usb_serial_init, usb_serial_writechar, usb_serial_popchar, usb_serial_rxchars}, // USB serial
+#endif
   {"lcd", lcd_initialise, lcd_writechar, NULL, NULL} 
 };
 

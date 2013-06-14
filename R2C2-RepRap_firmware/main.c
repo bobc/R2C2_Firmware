@@ -29,24 +29,23 @@
 
 #include "rtos_api.h"
 
-/* HAL includes */
+/* lib_HAL */
 #include "buzzer.h"
 #include "sys_util.h"
 #include "uart.h"
 
-/* Application includes */
+/* lib_r2c2 */
 #include "lw_io.h"
 #include "soundplay.h"
 
 //TODO:
 #ifdef debug
 #define DBG_INIT()   uart_init()
-#define DBGF(s)   uart3_writestr(s)
+#define DBGF(s)   	 uart3_writestr(s)
 #else
 #define DBG_INIT()
 #define DBGF(s)
 #endif
-
 
 
 extern int app_main (void);
@@ -72,7 +71,7 @@ void vApplicationTickHook( void )
 
   ulTicksSinceLastDisplay++;
 
-  r2c2_SysTick();
+  timer_SysTick(); //TODO ?
 }
 
 /**********************************************************************/
@@ -89,10 +88,6 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName
 }
 
 #else
-void SysTick_Handler(void)
-{
-  r2c2_SysTick();
-}
 #endif
 
 /**********************************************************************
@@ -100,13 +95,15 @@ void SysTick_Handler(void)
  **********************************************************************/
 int main(void)
 {
+  //TODO: hal_init ();
   sys_initialise();
-	
+
+//TODO	
   DBG_INIT();
   DBGF ("init\n");
 
 #if !defined(USE_FREERTOS)
-  SysTickTimer_Init(); // Initialize the timer for millis()
+  timer_init(); // start millisecond timers/callback
 #endif
 
 

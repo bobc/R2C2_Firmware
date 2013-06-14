@@ -21,8 +21,6 @@
 #ifndef stepper_h
 #define stepper_h 
 
-#include "pinout.h"
-
 // from nuts_bolts.h:
 #define square(x) ((x)*(x))
 #define sleep_mode(x) do {} while (0)

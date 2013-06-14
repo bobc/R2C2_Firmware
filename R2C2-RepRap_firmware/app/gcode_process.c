@@ -52,12 +52,13 @@
 #include "soundplay.h"
 
 // app
+#include "app_config.h"
+
 #include "gcode_defs.h"
 #include "gcode_process.h"
 //#include "gcode_parse.h"
 #include "temp.h"
 #include "pin_control.h"
-#include "app_config.h"
 #include "planner.h"
 #include "stepper.h"
 #include "geometry.h"

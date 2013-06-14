@@ -40,7 +40,9 @@
 #include "uart.h"
 #include "sys_util.h"
 
+#ifdef HAVE_USB_SERIAL
 #include "usb_serial.h"
+#endif
 
 // lib_r2c2
 #include "debug.h"
@@ -48,16 +50,20 @@
 // lib_FatFs
 #ifdef HAVE_FILESYSTEM
 #include "ff.h"
+#include "sdcard.h"
 #endif
 
 // app
 #include "gcode_parse.h"
-//#include "pinout.h"
 #include "pin_control.h"
 #include "app_config.h"
 #include "temp.h"
 #include "planner.h"
 #include "stepper.h"
+
+#include "app_config.h"
+#include "config_pins.h"
+
 // tasks
 #include "eth_shell_task.h"
 #include "usb_shell_task.h"
@@ -75,6 +81,23 @@ tTimer  temperatureTimer;
 //
 // printer task
 static  long timer1 = 0;
+
+// app_SysTick will be called every milli-second
+void app_SysTick(void)
+{
+#ifdef HAVE_FILESYSTEM
+  static uint8_t counter = 0;
+
+  /* 100ms tick for SDCard ***********************************************/
+  counter++;
+  if (counter > 99)
+  {
+    MMC_disk_timerproc();
+    counter = 0;
+  }
+  /***********************************************************************/
+#endif
+}
 
 //
 void io_init(void)
@@ -108,7 +131,7 @@ void io_init(void)
   }
   
 
-  adc_init();
+  adc_init(); // [hal]
 }
 
 void temperatureTimerCallback (tTimer *pTimer)
@@ -132,18 +155,19 @@ static void PrinterInit (void)
   FRESULT res;
 #endif
 
-  app_config_set_defaults();
+//TODO: what are the order of dependencies here? 
+  app_config_set_defaults();	// <-- sets default IO pins - buzzer, lcd, ?
 
   // initialise some drivers useful for debugging
-  buzzer_init();
+  buzzer_init (config.buzzer_pin);	// [hal: requires io pins]
 
-  // initialize low-level USB serial and UART drivers
+  // initialize low-level USB serial and UART drivers [hal]
   _sys_init_devices();
 
   // open standard files
   lw_initialise();
 
-  dbg_init();
+  dbg_init();	// [requires io pins (uart)?]
 
   /* initialize SPI for SDCard */
   spi_init();
@@ -156,7 +180,11 @@ static void PrinterInit (void)
   else  
   {
     // read_config will use SPI and a message output (control interface or debug)	//TODO?
-    app_config_read();
+    
+    app_config_read(); // <-- sets IO pins - buzzer, lcd, ?
+    
+    // re-init if changed
+    buzzer_init (app_config.buzzer_pin);
   }
 #endif
 
@@ -165,6 +193,7 @@ static void PrinterInit (void)
   // set up inputs and outputs
   io_init();
 
+  //TODO: CTC
   AddSlowTimer (&temperatureTimer);
   StartSlowTimer (&temperatureTimer, 10, temperatureTimerCallback);
   temperatureTimer.AutoReload = 1;
@@ -184,11 +213,15 @@ void printer_task_init ( void *pvParameters )
   // GCode engine
   lw_TaskCreate( gcode_task_init, gcode_task_poll,         "Gcode", 512, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 
+#ifdef HAVE_USB_SERIAL
   // GCode control interfaces
   lw_TaskCreate( usb_shell_task_init, usb_shell_task_poll, "USBSh", 128, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
+#endif
 
+#ifdef HAVE_ETHERNET
   // option
   lw_TaskCreate( eth_shell_task_init, eth_shell_task_poll, "EthSh", 128, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
+#endif
 
   // option
   // Start a Gcode shell on UART
@@ -224,7 +257,7 @@ void printer_task_poll( void *pvParameters )
       // 2: safe power off (steppers, heaters) after being idle for a while, in case machine is unattended and
       //    host has stopped without clean up, or user has just forgot to turn things off.
        
-      /* If there are no activity during 30 seconds, power off the machine */
+      /* If there is no activity during 30 seconds, power off the machine */
       if (steptimeout > (30 * 1000/DELAY1))
       {
         atx_power_off();
@@ -242,6 +275,7 @@ void printer_task_poll( void *pvParameters )
 
 }
 
+// not used by LW_RTOS
 void PrinterTask( void *pvParameters )
 {
     // TASK INIT
@@ -262,11 +296,11 @@ void PrinterTask( void *pvParameters )
   1.  create PrinterTask
 
   2.  start scheduler 
-       [ system tick is now running]
+       [FreeRTOS: system tick is now running] 
 
   3.  init buzzer [no config, no debug IO, requires timer]
 
-  4.  init USB CDC-serial [ no config]
+  4.  init USB CDC-serial [ no config ]
 
   5.  read_config files from SD [requires timer, debug IO]
 
@@ -276,14 +310,14 @@ void PrinterTask( void *pvParameters )
 
   8.  start the other tasks [requires above stuff]
 
-  9.  system is now be ready to accept general GCode commands
+  9.  system is now ready to accept general GCode commands
 */
 
 void app_main (void)
 {
   LW_RTOS_RESULT res;
   /* Create the main system task. 
-  *  NB: our system timer tick is called from FreeRTOS timer tick, which only runs after scheduler has started.
+  *  NB if using FreeRTOS: our system timer tick is called from FreeRTOS timer tick, which only runs after scheduler has started.
   *  Therefore, we start only PrinterTask to do initialisation which requires timer, namely the FatFs/SD code.
   */
   //TODO: Check stack usage

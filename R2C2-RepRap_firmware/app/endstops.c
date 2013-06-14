@@ -30,7 +30,6 @@
 #include <stdbool.h>
 
 #include "app_config.h"
-#include "pinout.h"
 
 
 static bool test_min_stop (tPinDef limit_pin)

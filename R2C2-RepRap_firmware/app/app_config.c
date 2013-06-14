@@ -29,17 +29,26 @@
 
 #include <string.h>
 
+// hal
 #include "spi.h"
+#include "ios.h"
+
+//lib_fatfs
 #ifdef HAVE_FILESYSTEM
 #include "ff.h"
 #endif
-#include "ios.h"
-#include "gcode_parse.h"
+
+// lib_r2c2
 #include "debug.h"    // may not be initialised yet?
-#include "pinout.h"
+
+// app
+#include "gcode_parse.h"
 #include "stepper.h"
 #include "config.h"
 #include "app_config.h"
+
+#include "config_app.h"
+#include "config_pins.h"
 
 /* structure reflecting the configuration of the system
  */
@@ -203,23 +212,24 @@ static const tConfigItem config_lookup_pindef [] =
   { "all_steppers.reset",  &config.pin_all_steppers_reset,  TYPE_PIN_DEF, {.val_pin_def = STEPPERS_RESET_PIN}},
 
   // CTC #1 / Extruder 0
-  { "extruder_0.heater",              &config.extruder_ctc[0].pin_heater,  TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_HEATER_PIN}},
-  { "extruder_0.temp_sensor",         &config.extruder_ctc[0].pin_temp_sensor,  TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_SENSOR_ADC_PIN}},
-  { "extruder_0.cooler",              &config.extruder_ctc[0].pin_cooler,  TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_FAN_PIN}},
-  { "extruder_0.sensor_adc_channel",  &config.extruder_ctc[0].sensor_adc_channel,  TYPE_INT, {.val_i = EXTRUDER_0_SENSOR_ADC_CHANNEL}},
+  { "extruder_0.heater",              &config.extruder_ctc[0].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_HEATER_PIN}},
+  { "extruder_0.temp_sensor",         &config.extruder_ctc[0].pin_temp_sensor,      TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_SENSOR_ADC_PIN}},
+  { "extruder_0.cooler",              &config.extruder_ctc[0].pin_cooler,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_FAN_PIN}},
+  { "extruder_0.sensor_adc_channel",  &config.extruder_ctc[0].sensor_adc_channel,   TYPE_INT,     {.val_i = EXTRUDER_0_SENSOR_ADC_CHANNEL}},
 
   // CTC #2 / Heated Bed
-  { "heated_bed.heater",              &config.heated_bed_ctc.pin_heater,  TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_HEATER_PIN}},
-  { "heated_bed.temp_sensor",         &config.heated_bed_ctc.pin_temp_sensor,  TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_ADC_PIN}},
-  { "heated_bed.cooler",              &config.heated_bed_ctc.pin_cooler,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
-  { "heated_bed.sensor_adc_channel",  &config.heated_bed_ctc.sensor_adc_channel,  TYPE_INT, {.val_i = HEATED_BED_0_SENSOR_ADC_CHANNEL}},
+  { "heated_bed.heater",              &config.heated_bed_ctc.pin_heater,            TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_HEATER_PIN}},
+  { "heated_bed.temp_sensor",         &config.heated_bed_ctc.pin_temp_sensor,       TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_ADC_PIN}},
+  { "heated_bed.cooler",              &config.heated_bed_ctc.pin_cooler,            TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+  { "heated_bed.sensor_adc_channel",  &config.heated_bed_ctc.sensor_adc_channel,    TYPE_INT,     {.val_i = HEATED_BED_0_SENSOR_ADC_CHANNEL}},
 
   // Extruder 1 (not supported yet)
-  { "extruder_1.heater",              &config.extruder_ctc[1].pin_heater,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
-  { "extruder_1.temp_sensor",         &config.extruder_ctc[1].pin_temp_sensor,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
-  { "extruder_1.cooler",              &config.extruder_ctc[1].pin_cooler,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
-  { "extruder_1.sensor_adc_channel",  &config.extruder_ctc[1].sensor_adc_channel,  TYPE_INT, {.val_i = 0}},
+  { "extruder_1.heater",              &config.extruder_ctc[1].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+  { "extruder_1.temp_sensor",         &config.extruder_ctc[1].pin_temp_sensor,      TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+  { "extruder_1.cooler",              &config.extruder_ctc[1].pin_cooler,           TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+  { "extruder_1.sensor_adc_channel",  &config.extruder_ctc[1].sensor_adc_channel,   TYPE_INT,     {.val_i = 0}},
 
+  { "buzzer",          &config.buzzer_pin,   TYPE_PIN_DEF, {.val_pin_def = PIN_DEF (2,2,1)   }},
 
   { "cp_lcd_data_0",   &config.interface_cp_lcd_pin_data[0],   TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF   }},
   { "cp_lcd_data_1",   &config.interface_cp_lcd_pin_data[1],   TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF   }},

@@ -43,7 +43,9 @@
 
 tQueueHandle  GcodeRxQueue = NULL;
 
+#ifdef HAVE_FILESYSTEM
 static tLineBuffer   sd_line_buf;
+#endif
 
 // static xQueueHandle TxQueue = NULL;
 
@@ -87,9 +89,10 @@ void gcode_task_init ( void *pvParameters )
         lw_TaskDelete( NULL );
     }
 
+#ifdef HAVE_FILESYSTEM
     file_input_msg.pLineBuf = &sd_line_buf;
     file_input_msg.out_file = NULL; // should be directed to interface that initiated SD command
-
+#endif
 }
 
 // TASK BODY

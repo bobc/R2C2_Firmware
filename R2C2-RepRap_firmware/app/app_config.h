@@ -35,23 +35,13 @@
 
 #include "ios.h"
 
-#define HARD_CONFIG
+//#include "config_pins.h"
+#include "config_app.h"
+
+// #define HARD_CONFIG
 
 
-// TODO: sort out use of max number vs actual number configured
-#define NUM_AXES 4
 
-// axis map for 3D printer with 1 extruder for compatibility with existing code
-#define X_AXIS 0
-#define Y_AXIS 1
-#define Z_AXIS 2
-#define E_AXIS 3
-
-// 6 axes should be enough for anyone?
-#define MAX_AXES 5
-
-// defines number of extruder temperature channels
-#define MAX_EXTRUDERS 2
 
 /*
   // pin config?
@@ -70,7 +60,6 @@
 #define MM_REPRAP_MENDEL  0
 #define MM_RAPMAN         1
 
-#define MAX_BUTTONS       10
 
 // configuration settings for one axis
 typedef struct
@@ -136,10 +125,12 @@ typedef struct
 
   int32_t auto_power_off_time; // seconds
   int32_t step_led_flash_method; // how we control the Step pin to flash the stepper LED
-  
+
   int32_t beep_on_events;
 
   // -- interfaces --
+  tPinDef buzzer_pin;    
+  
   int32_t interface_control_panel_enabled;      // = 0 none, 1 = Makerbot Gen4
   // LCD config
   int32_t interface_cp_lcd_type;                // = 0 none, 1 = 4 bit 44780 compatible
