@@ -150,12 +150,35 @@ TARGET = project
 #############################################################################
 
 
+#############################################################################
 
+# Global Config Options
+#
+# May be used by Makefile and *.mk files to select
+# - include directories
+# - source files
+# - compile time defines
+#
+
+# USE_FILESYSTEM = YES
+# USE_ETHERNET = YES
+# USE_USB = YES
 	 
+# other config in board.mk (etc?)
+#  config_hal.h
+#  machine.h
+#
+# run time config:
+# See app_config.[ch]
+#
+#
+#############################################################################
 
 #############################################################################
-APPDIR = app
 # application source
+
+APPDIR = app
+
 APPSRC = \
 	$(APPDIR)/gcode_parse.c \
 	$(APPDIR)/gcode_process.c \
@@ -169,8 +192,6 @@ APPSRC = \
 	$(APPDIR)/geometry.c \
 	$(APPDIR)/alerter.c \
 	$(APPDIR)/uart_shell_task.c \
-	$(APPDIR)/usb_shell_task.c \
-	$(APPDIR)/eth_shell_task.c \
 	$(APPDIR)/ui_menu.c \
 	$(APPDIR)/keypad_gen4_mb.c \
 	$(APPDIR)/gcode_task.c \
@@ -179,33 +200,49 @@ APPSRC = \
 	$(APPDIR)/ui_task.c \
 	main.c
 
+ifeq ($(USE_USB),YES)
+	APPSRC += 	$(APPDIR)/usb_shell_task.c
+endif
+
+ifeq ($(USE_ETHERNET),YES)
+	APPSRC += $(APPDIR)/eth_shell_task.c
+endif
+
 APPINC = $(APPDIR) 
+
 # 
 #APPDIR = sample
 #APPSRC = $(APPDIR)/sample_app.c
-# 
+#
+ 
 #############################################################################
 APPLIBDIR = libraries
 
-APPLIBSRC = \
-	$(wildcard $(APPLIBDIR)/FatFs/src/*.c) \
-	$(wildcard $(APPLIBDIR)/R2C2/*.c)
+APPLIBINC = $(APPLIBDIR)/R2C2/
+APPLIBSRC = $(wildcard $(APPLIBDIR)/R2C2/*.c)
 
-#TODO:	$(wildcard $(APPLIBDIR)/ethernet/*.c)
 
-APPLIBINC = \
-	$(APPLIBDIR)/ethernet/ \
-	$(APPLIBDIR)/FatFs/src \
+ifeq ($(USE_FILESYSTEM),YES)
+APPLIBINC += $(APPLIBDIR)/FatFs/src 
+APPLIBSRC += $(wildcard $(APPLIBDIR)/FatFs/src/*.c)	
+endif
+
+ifeq ($(USE_ETHERNET),YES)
+APPLIBINC += $(APPLIBDIR)/ethernet/ \
 	$(APPLIBDIR)/lwip/src/include/ \
 	$(APPLIBDIR)/lwip/src/include/ipv4/ \
-	$(APPLIBDIR)/lwip/ports/r2c2/include/ \
-	$(APPLIBDIR)/R2C2/
+	$(APPLIBDIR)/lwip/ports/r2c2/include/
+
+APPLIBSRC += $(wildcard $(APPLIBDIR)/ethernet/*.c) 	
+endif
+
+
+	
 
 #############################################################################
 HALDIR = arch/hal
 HALINC = $(HALDIR)
 HALSRC = $(wildcard $(HALDIR)/*.c)
-
 
 #############################################################################
 include arch/$(ARCH_FAMILY)/platform.mk
@@ -263,7 +300,18 @@ CDEFS =
 #CDEFS += -DDEBUG
 #CDEFS += -DWITH_USB_MS=1
 
+# should be in board.mk?
+ifeq ($(USE_USB),YES)
+CDEFS += -DHAVE_USB_SERIAL
+endif
+
+ifeq ($(USE_FILESYSTEM),YES)
 CDEFS += -DHAVE_FILESYSTEM
+endif
+
+ifeq ($(USE_ETHERNET),YES)
+CDEFS += -DHAVE_ETHERNET
+endif
 
 # Place project-specific -D and/or -U options for 
 # Assembler with preprocessor here.
