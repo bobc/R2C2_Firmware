@@ -65,6 +65,7 @@
 #include "config_pins.h"
 
 // tasks
+#include "printer_task.h"
 #include "eth_shell_task.h"
 #include "usb_shell_task.h"
 #include "uart_shell_task.h"
@@ -100,7 +101,7 @@ void app_SysTick(void)
 }
 
 //
-void io_init(void)
+static void io_init(void)
 {
   int axis;
 
@@ -141,7 +142,7 @@ void temperatureTimerCallback (tTimer *pTimer)
 }
 
 
-void check_boot_request (void)
+static void check_boot_request (void)
 {
   if (digital_read (BOOT_SW_PORT, _BV(BOOT_SW_PIN_NUMBER)) == 0)
   {
@@ -245,10 +246,10 @@ void printer_task_init ( void *pvParameters )
   buzzer_play(2500, 200); /* high beep */
 }
 
+#define DELAY1 100
 void printer_task_poll( void *pvParameters )
 {
     /* Do every 100ms */
-    #define DELAY1 100
     if (timer1 < millis())
     {
       timer1 = millis() + DELAY1;
@@ -277,7 +278,7 @@ void printer_task_poll( void *pvParameters )
 }
 
 // not used by LW_RTOS
-void PrinterTask( void *pvParameters )
+static void PrinterTask( void *pvParameters )
 {
     // TASK INIT
     printer_task_init ( pvParameters );
@@ -294,9 +295,9 @@ void PrinterTask( void *pvParameters )
   required start sequence:
   //TODO: where to read autoexec.g, set config defaults
 
-  1.  create PrinterTask
+  1.  create PrinterTask [main]
 
-  2.  start scheduler 
+  2.  start scheduler    [main]
        [FreeRTOS: system tick is now running] 
 
   3.  init buzzer [no config, no debug IO, requires timer]

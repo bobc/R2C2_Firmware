@@ -102,8 +102,9 @@ USE_THUMB_MODE = YES
 
 #############################################################################
 # Define board
-# - BOARD 	just passed as define (don't used '-' characters)
-BOARD    = r2c2
+# - BOARD 	also passed as define (don't used '-' characters)
+#BOARD    = r2c2
+BOARD    = smoothieboard
 
 # get MCU, CHIP, ARCH_FAMILY, 
 include board/${BOARD}/board.mk
@@ -126,7 +127,7 @@ VECTOR_TABLE_LOCATION=VECT_TAB_FLASH
 #VECTOR_TABLE_LOCATION=VECT_TAB_RAM
 
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.)
-OUTDIR = $(RUN_MODE)
+OUTDIR = ${BOARD}_$(RUN_MODE)
 
 # Target file name (without extension).
 TARGET = project
@@ -180,24 +181,24 @@ TARGET = project
 APPDIR = app
 
 APPSRC = \
+	$(APPDIR)/app_config.c \
 	$(APPDIR)/gcode_parse.c \
 	$(APPDIR)/gcode_process.c \
+	$(APPDIR)/planner.c \
+	$(APPDIR)/stepper.c \
 	$(APPDIR)/packed_gcode.c \
-	$(APPDIR)/mendel.c \
 	$(APPDIR)/temp.c \
 	$(APPDIR)/temp_controller.c \
-	$(APPDIR)/app_config.c \
 	$(APPDIR)/endstops.c \
 	$(APPDIR)/pin_control.c \
 	$(APPDIR)/geometry.c \
 	$(APPDIR)/alerter.c \
-	$(APPDIR)/uart_shell_task.c \
 	$(APPDIR)/ui_menu.c \
 	$(APPDIR)/keypad_gen4_mb.c \
-	$(APPDIR)/gcode_task.c \
-	$(APPDIR)/planner.c \
-	$(APPDIR)/stepper.c \
 	$(APPDIR)/ui_task.c \
+	$(APPDIR)/uart_shell_task.c \
+	$(APPDIR)/gcode_task.c \
+	$(APPDIR)/printer_task.c \
 	main.c
 
 ifeq ($(USE_USB),YES)
@@ -250,7 +251,7 @@ include arch/$(ARCH_FAMILY)/platform.mk
 
 #############################################################################
 
-INCLUDES = $(APPINC) $(APPLIBINC) $(HALINC) $(ARCHLIBINC) 
+INCLUDES = $(BOARDINC) $(APPINC) $(APPLIBINC) $(HALINC) $(ARCHLIBINC) 
 
 #############################################################################
 # List C source files here. (C dependencies are automatically generated.)

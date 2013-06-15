@@ -36,11 +36,15 @@
 #include "timer.h"
 
 /* lib_r2c2 */
+#include "debug.h"
 #include "lw_io.h"
 #include "soundplay.h"
 
+// app
+#include "printer_task.h"
+
 //TODO:
-#ifdef debug
+#ifdef DEBUG
 #define DBG_INIT()   uart_init()
 #define DBGF(s)   	 uart3_writestr(s)
 #else
@@ -48,8 +52,6 @@
 #define DBGF(s)
 #endif
 
-
-extern int app_main (void);
 
 /**********************************************************************/
 
@@ -96,6 +98,8 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName
  **********************************************************************/
 int main(void)
 {
+  LW_RTOS_RESULT res;
+
   //TODO: hal_init ();
   sys_initialise();
 
@@ -107,10 +111,19 @@ int main(void)
   timer_init(); // start millisecond timers/callback
 #endif
 
+  /* Create the main system task. 
+  *  NB if using FreeRTOS: our system timer tick is called from FreeRTOS timer tick, which only runs after scheduler has started.
+  *  Therefore, we start only PrinterTask to do initialisation which requires timer, namely the FatFs/SD code.
+  */
+  //TODO: Check stack usage
+  
+  res = lw_TaskCreate (printer_task_init, printer_task_poll,  "Print", 512, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
+  if (res != LWR_OK)
+    debug ("error starting PrinterTask\n");
 
-  // enter the application
-  app_main ();
-
+  /* Start the scheduler. */
+  lw_TaskScheduler();
+  
   /* should never get here */
   DBGF ("main:err\n");
   fatal_error();
