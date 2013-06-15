@@ -30,11 +30,10 @@
 #include "timer.h"
 #include "ios.h"
 
-//#include "pinout.h"
 #include "app_config.h"
 #include "temp.h"
 #include "stepper.h"
-#include "machine.h"
+//#include "machine.h"
 #include "planner.h"
 #include "endstops.h"
 

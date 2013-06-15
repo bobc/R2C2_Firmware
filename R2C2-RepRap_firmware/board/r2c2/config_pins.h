@@ -99,4 +99,4 @@
 #define SPI_MISO0                       PIN_DEF (0,17,ACTIVE_HIGH)
 #define SPI_MOSI0                       PIN_DEF (0,18,ACTIVE_HIGH)
 
-#endif  /* _PINOUT_H */
+#endif  /* _CONFIG_PINS_H */

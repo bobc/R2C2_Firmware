@@ -29,9 +29,10 @@
 */
 
 #include "adc.h"
+
 #include "app_config.h"
+
 #include "temp.h"
-//#include "machine.h"
 #include "pin_control.h"
 #include "debug.h"
 #include "stepper.h"    // TODO: steptimeout

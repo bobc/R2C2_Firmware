@@ -42,7 +42,7 @@
 #include	"gcode_parse.h"
 #include	"gcode_process.h"
 #include	"packed_gcode.h"
-#include  "machine.h"
+//#include  "machine.h"
 
 
 // --------------------------------------------------------------------------

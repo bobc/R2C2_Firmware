@@ -39,7 +39,7 @@
 // Includes
 // --------------------------------------------------------------------------
 
-#include "app/machine.h"
+#include "config_app.h"
 
 #ifdef USE_FREERTOS
   /* FreeRTOS includes. */
@@ -47,87 +47,12 @@
   #include "task.h"
   #include "queue.h"
 
+  //TODO: need to map lw_rtos to FreeRTOS
 #else
   
-#include <stddef.h>  
+  #include <stddef.h>  
 
-#include "lw_rtos.h"
-
-#endif
-
-  
-#if 0
-// --------------------------------------------------------------------------
-// Defines
-// --------------------------------------------------------------------------
-
-#define tskIDLE_PRIORITY 0
-
-#define portBASE_TYPE	long
-
-#define portMAX_DELAY 0xffffffff
-
-#define pdTRUE		( 1 )
-#define pdFALSE		( 0 )
-
-#define pdPASS									( 1 )
-#define pdFAIL									( 0 )
-#define errQUEUE_EMPTY							( 0 )
-#define errQUEUE_FULL							( 0 )
-
-// --------------------------------------------------------------------------
-// Types
-// --------------------------------------------------------------------------
-
-typedef void (*pdTASK_CODE)( void * );
-typedef void * xTaskHandle;
-
-
-typedef unsigned long xQueueHandle ;
-
-typedef unsigned long portTickType;
-
-// --------------------------------------------------------------------------
-// Public Variables
-// --------------------------------------------------------------------------
-
-// --------------------------------------------------------------------------
-// Public functions
-// --------------------------------------------------------------------------
-
-// Task
-
-portBASE_TYPE xTaskCreate(
-							  pdTASK_CODE pvTaskCode,
-							  const char * const pcName,
-							  unsigned short usStackDepth,
-							  void *pvParameters,
-							  unsigned portBASE_TYPE uxPriority,
-							  xTaskHandle *pvCreatedTask
-						  );
-
-void vTaskDelete( xTaskHandle pxTask );
-
-void vTaskStartScheduler( void );
-
-// message queue
-xQueueHandle xQueueCreate( unsigned portBASE_TYPE uxQueueLength, unsigned portBASE_TYPE uxItemSize );
-
-unsigned portBASE_TYPE uxQueueMessagesWaiting( const xQueueHandle xQueue );
-
-signed portBASE_TYPE xQueueReceive( xQueueHandle xQueue, void * const pvBuffer, portTickType xTicksToWait );
-
-signed portBASE_TYPE xQueueSend( xQueueHandle xQueue, const void * const pvItemToQueue, portTickType xTicksToWait);
-
-
-signed portBASE_TYPE xQueueGenericReceive( xQueueHandle xQueue, void * const pvBuffer, portTickType xTicksToWait, portBASE_TYPE xJustPeek );
-
-signed portBASE_TYPE xQueueGenericSend( xQueueHandle xQueue, const void * const pvItemToQueue, portTickType xTicksToWait, portBASE_TYPE xCopyPosition );
-
-// heap memory
-
-void vPortFree( void *pv );
-void *pvPortMalloc( size_t xSize );
+  #include "lw_rtos.h"
 
 #endif
 
