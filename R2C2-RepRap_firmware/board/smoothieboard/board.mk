@@ -5,6 +5,6 @@
 
 MCU      	= cortex-m3
 ARCH_FAMILY = lpc17xx
-CHIP     	= LPC1758
+CHIP     	= LPC1769
 
-BOARDINC = board/r2c2
+BOARDINC = board/smoothieboard
