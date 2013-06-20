@@ -1,6 +1,8 @@
 *~
 *.bak
 FLASH_RUN/
+FLASH_r2c2/
+FLASH_smoothieboard/
 THUMB\ Flash\ Debug/
 THUMB\ Flash\ Release/
 *.orig

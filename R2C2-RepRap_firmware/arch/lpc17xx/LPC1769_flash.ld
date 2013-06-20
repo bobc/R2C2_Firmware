@@ -29,13 +29,22 @@ ENTRY(__cs3_reset_cortex_m)
 SEARCH_DIR(.)
 /* GROUP(-lgcc -lc -lcs3 -lcs3unhosted -lcs3micro) */
 
+/* NB: bootloader size is hard coded */
+
 MEMORY
 {
-  rom (rx)  : ORIGIN = 64K, LENGTH = (512K - 64K) /* Bootloader uses first 64Kbytes of flash memory */
-  /* rom (rx)  : ORIGIN = 0, LENGTH = 512K */
-  ram (rwx) : ORIGIN = 0x10000000, LENGTH =  32K
-  ahbb0(rw) : ORIGIN = 0x2007C000, LENGTH =  16K
-  /* ahbb1(rw) : ORIGIN = 0x20080000, LENGTH =  16K */
+    /* No bootloader */
+    /* rom (rx)  : ORIGIN = 0, LENGTH = 512K */   
+
+    /* Bootloader occupies first xx Kbytes */
+    /* rom (rx)  : ORIGIN = xxK, LENGTH = (512K - xxK) 
+    rom (rx)  : ORIGIN = 64K, LENGTH = (512K - 64K) 
+  
+    ram (rwx) : ORIGIN = 0x10000000, LENGTH =  32K
+  
+    /* Make single contiguous chunk out of AHB RAM */
+    ahbb0(rw) : ORIGIN = 0x2007C000, LENGTH =  32K
+    /* ahbb1(rw) : ORIGIN = 0x20080000, LENGTH =  16K */
 }
 
 /* These force the linker to search for particular symbols from
