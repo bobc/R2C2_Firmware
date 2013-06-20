@@ -103,8 +103,8 @@ USE_THUMB_MODE = YES
 #############################################################################
 # Define board
 # - BOARD 	also passed as define (don't used '-' characters)
-#BOARD    = r2c2
-BOARD    = smoothieboard
+BOARD    = r2c2
+#BOARD    = smoothieboard
 
 # get MCU, CHIP, ARCH_FAMILY, 
 include board/${BOARD}/board.mk
@@ -127,7 +127,7 @@ VECTOR_TABLE_LOCATION=VECT_TAB_FLASH
 #VECTOR_TABLE_LOCATION=VECT_TAB_RAM
 
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.)
-OUTDIR = ${BOARD}_$(RUN_MODE)
+OUTDIR = FLASH_${BOARD}
 
 # Target file name (without extension).
 TARGET = project
@@ -579,7 +579,7 @@ REMOVE  = $(REMOVE_CMD) -f
 
 # Define Messages
 # English
-MSG_BEGIN = --------  begin, mode: $(RUN_MODE)  --------
+MSG_BEGIN = --------  begin, making: FLASH_${BOARD}  --------
 MSG_END = --------  end  --------
 MSG_SIZE_BEFORE = Size before:
 MSG_SIZE_AFTER = Size after build:
