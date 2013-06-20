@@ -44,17 +44,17 @@
 // --------------------------------------------------------------------------
 
 
-// 6 axes should be enough for anyone?
+// number of stepper drivers
 #define MAX_AXES        4
 
-// defines number of extruder temperature channels
-#define MAX_EXTRUDERS   2
+// defines number of extruders
+#define MAX_EXTRUDERS   1
 
 #define MAX_BUTTONS     10
 
 
 // TODO: sort out use of max number vs actual number configured
-#define NUM_AXES    4
+#define NUM_AXES    MAX_AXES
 
 // axis map for 3D printer with 1 extruder for compatibility with existing code
 #define X_AXIS      0
@@ -66,10 +66,17 @@
 // firmware build options
 // --------------------------------------------------------------------------
 
+//#define USE_FREERTOS
 #define F_CPU 100000000 /* 100MHz */
 
-//#define USE_BOOT_BUTTON
-//#define USE_FREERTOS
+//#define CFG_APP_USE_BOOT_BUTTON
+
+//#define CFG_APP_USE_UI
+
+//#define CFG_APP_USE_UART_SHELL
+#define CFG_APP_UART_SHELL_NAME "uart0"
+
+//#define CFG_APP_HAVE_BUZZER
 
 // --------------------------------------------------------------------------
 //
