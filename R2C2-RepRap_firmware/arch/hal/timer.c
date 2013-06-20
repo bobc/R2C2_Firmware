@@ -118,23 +118,41 @@ void delay (int d)
   delayMicrosecondsInterruptible(d & 0xFFFF);
 }
 
+static bool find_entry (tTimer *pTimer)
+{
+  tTimer *pThis;
+
+  pThis = SlowTimerHead;
+  while (pThis != NULL)
+  {
+    if (pThis == pTimer)
+      return true;
+    pThis = pThis->pNext;
+  }
+  return false;
+}
 
 // Slow timers
 bool AddSlowTimer (tTimer *pTimer)
 {
-  pTimer->pNext = NULL;
-  if (SlowTimerHead == NULL)
+  if (!find_entry (pTimer))
   {
-    SlowTimerHead = pTimer;
-    SlowTimerTail = pTimer;
+    pTimer->pNext = NULL;
+    if (SlowTimerHead == NULL)
+    {
+      SlowTimerHead = pTimer;
+      SlowTimerTail = pTimer;
+    }
+    else
+    {
+      SlowTimerTail->pNext = pTimer;
+      SlowTimerTail = pTimer;
+    }
+
+    return true;
   }
   else
-  {
-    SlowTimerTail->pNext = pTimer;
-    SlowTimerTail = pTimer;
-  }
-
-  return true;
+    return false;
 }
 
 void StartSlowTimer (tTimer *pTimer, uint32_t intervalMillis, tTimerCallback timerCallback)

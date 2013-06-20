@@ -34,18 +34,18 @@
 
 
 // initialise USB serial subsystem
-void usb_serial_init(void);
+void usb_serial_init(int dev_num);
 
 // send one character
-void usb_serial_writechar(char data);
+void usb_serial_writechar(int dev_num, char data);
 
 // read one character
-char usb_serial_popchar(void);
+char usb_serial_popchar(int dev_num);
 
-// return number of characters in the receive buffer, and number of spaces in the send buffer
-int usb_serial_rxchars(void);
+// return number of characters in the receive buffer
+int usb_serial_rxchars(int dev_num);
 
-//
+// return number of characters in the send buffer
 uint8_t usb_serial_txchars(void);
 
 // read/write many characters

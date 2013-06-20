@@ -128,7 +128,7 @@ static void power_on()
 {
 	for (Timer1 = 25; Timer1; );	/* Wait for 250ms */
 
-	spi_init();
+	spi_init (SD_SPI_CHANNEL);
 	spi_set_speed(INTERFACE_SLOW);
 	de_select_card();
 }

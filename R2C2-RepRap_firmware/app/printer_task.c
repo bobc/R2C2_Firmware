@@ -46,6 +46,7 @@
 
 // lib_r2c2
 #include "debug.h"
+#include "lw_syscalls.h"
 
 // lib_FatFs
 #ifdef HAVE_FILESYSTEM
@@ -60,6 +61,7 @@
 #include "temp.h"
 #include "planner.h"
 #include "stepper.h"
+#include "motor_current_limit.h"
 
 #include "app_config.h"
 #include "config_pins.h"
@@ -114,9 +116,15 @@ static void io_init(void)
   ctc_init (&config.heated_bed_ctc);
 
   /* setup stepper axes */
+  
+  //OPTION: reset control
   set_pin_mode (config.pin_all_steppers_reset, OUTPUT);
   write_pin (config.pin_all_steppers_reset, DISABLE); /* Disable reset state for all stepper motors */
 
+  // Option
+  if (config.have_digipot)
+    motor_current_init ();  
+  
   for (axis = 0; axis < MAX_AXES; axis++)
   {
     if (config.axis [axis].is_configured)
@@ -127,7 +135,11 @@ static void io_init(void)
       
       set_pin_mode (config.axis [axis].pin_min_limit, INPUT);
     
+      // could be shared?
       axis_enable(axis);
+
+      if (config.have_digipot)
+        motor_current_set (axis, 0.25);
     }
   }
   
@@ -172,7 +184,7 @@ static void PrinterInit (void)
 
   /* initialize SPI for SDCard */
   spi_configure (config.spi_sck0, config.spi_mosi0, config.spi_miso0, config.spi_ssel0);
-  spi_init();
+  spi_init(config.sd_spi_channel);
 
 #ifdef HAVE_FILESYSTEM
   /* Register a work area for logical drive 0 */
@@ -186,7 +198,7 @@ static void PrinterInit (void)
     app_config_read(); // <-- sets IO pins - buzzer, lcd, ?
     
     // re-init if changed
-    buzzer_init (config.buzzer_pin);
+//!    buzzer_init (config.buzzer_pin);
   }
 #endif
 
@@ -211,7 +223,6 @@ void printer_task_init ( void *pvParameters )
   PrinterInit();
 
   // -- init complete, can now start other tasks --
-
   // GCode engine
   lw_TaskCreate( gcode_task_init, gcode_task_poll,         "Gcode", 512, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 
@@ -225,25 +236,31 @@ void printer_task_init ( void *pvParameters )
   lw_TaskCreate( eth_shell_task_init, eth_shell_task_poll, "EthSh", 128, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
 #endif
 
-  // option
+#ifdef CFG_APP_USE_UART_SHELL
+  // TODO: option, uart number
   // Start a Gcode shell on UART
-  uart_shell_params.in_file = lw_fopen ("uart1", "rw");
+  uart_shell_params.in_file = lw_fopen (CFG_APP_UART_SHELL_NAME, "rw"); 
   uart_shell_params.out_file = uart_shell_params.in_file;
   lw_TaskCreate( uart_task_init, uart_task_poll,    "UartSh", 128, ( void * ) &uart_shell_params, LWR_IDLE_PRIORITY, NULL );
+#endif
 
+#ifdef CFG_APP_USE_UI
+  // option
   // start up user interface
   lw_TaskCreate( ui_task_init, ui_task_poll,        "UiTask", 256, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
+#endif
 
 #ifdef HAVE_FILESYSTEM
-  // now to do GCode startup
+  // now do GCode startup
   exec_gcode_file ("autoexec.g");
 #endif
 
   // -- all startup done, signal readiness
-
+#ifdef CFG_APP_HAVE_BUZZER
   buzzer_play(1500, 100); /* low beep */
   buzzer_wait();
   buzzer_play(2500, 200); /* high beep */
+#endif
 }
 
 #define DELAY1 100

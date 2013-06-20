@@ -78,54 +78,98 @@ extern LW_FILE file_table [];
 #define     EBADF 9
 #endif
 
+// this is a mini /dev
 typedef struct {
   char *name;
-//  int   dev_major;
-  void (*dev_init) (void);
-  void (*dev_putc) (char c);  
-  char (*dev_getc) (void);
-  int (*dev_rx_avail) (void);
-//  int (*dev_ioctl) (int cmd, argList args);
+
+  uint16_t  dev_major;
+  uint16_t  dev_minor;
 } tDeviceDesc;
+
+// registered drivers
+// index by dev_major?
+typedef struct {
+  uint16_t  dev_major;
+
+  void (*dev_init) (int dev_num);
+  // open
+  // close
+  void (*dev_putc)    (int dev_num, char c);      //write
+  char (*dev_getc)    (int dev_num);        //read
+  int (*dev_rx_avail) (int dev_num);
+//  int (*dev_ioctl) (int cmd, argList args);
+} tDriverDesc;
 
 // DEVICES TABLE
 // index by device number, not file number
 static tDeviceDesc Devices[] = {
   
-  {"uart0", uart0_init, uart0_send, uart0_receive, uart0_data_available}, 
-  {"uart1",  uart1_init, uart1_send, uart1_receive, uart1_data_available}, 
-//TODO:  {"uart2",  uart2_init, uart2_send, uart2_receive, uart2_data_available}, 
-  {"uart3",  uart3_init, uart3_send, uart3_receive, uart3_data_available},
-#ifdef HAVE_USB_SERIAL   
-  {"usbser", usb_serial_init, usb_serial_writechar, usb_serial_popchar, usb_serial_rxchars}, // USB serial
+#if CFG_HAL_USE_UART0 == TRUE
+  {"uart0", 0, 0}, 
 #endif
-  {"lcd", lcd_initialise, lcd_writechar, NULL, NULL} 
+
+#if CFG_HAL_USE_UART1 == TRUE
+  {"uart1", 0, 1}, 
+#endif
+
+//TODO: 
+#if CFG_HAL_USE_UART2 == TRUE
+  {"uart2", 0, 2}, 
+#endif
+
+#if CFG_HAL_USE_UART3 == TRUE
+  {"uart3", 0, 3},
+#endif
+
+#ifdef HAVE_USB_SERIAL   
+  {"usbser", 1, 0}, // USB serial
+#endif
+
+  {"lcd", 2, 0} 
 };
 
 #define NUM_DEVICES sizeof(Devices) / sizeof(tDeviceDesc)
 
-static void dev_write_block (tDeviceDesc *pDevice, const char *ptr, int len)
+// TODO: dev_minor
+static tDriverDesc DriverTable[] = {
+  
+  {0, uart_init, uart_send, uart_receive, uart_data_available}, 
+
+#ifdef HAVE_USB_SERIAL   
+  {1, usb_serial_init, usb_serial_writechar, usb_serial_popchar, usb_serial_rxchars}, // USB serial
+#endif
+
+  {2, lcd_initialise, lcd_writechar, NULL, NULL} 
+};
+
+#define NUM_DRIVERS sizeof(DriverTable) / sizeof(tDriverDesc)
+
+
+//
+static void dev_write_block (tDriverDesc *pDriver, int dev_num, const char *ptr, int len)
 {
   int j;
   for (j=0; j < len; j++)
-    pDevice->dev_putc (*ptr++);
+    pDriver->dev_putc (dev_num, *ptr++);
 }
 
-static void dev_read_block (tDeviceDesc *pDevice, char *ptr, int len)
+static void dev_read_block (tDriverDesc *pDriver, int dev_num, char *ptr, int len)
 {
   int j;
   for (j=0; j < len; j++)
   {
-    *ptr = pDevice->dev_getc ();
+    *ptr = pDriver->dev_getc (dev_num);
     ptr++;
   }
 }
 
+// actually init drivers
 void _sys_init_devices(void)
 {
   int j;
-  for (j=0; j < NUM_DEVICES; j++)
-    Devices[j].dev_init();
+  for (j=0; j < NUM_DRIVERS; j++)
+    if (DriverTable[j].dev_init != NULL)
+      DriverTable[j].dev_init(0);   //TODO: dev num?
 }
 
 // ---------------------------------------------------------------------------
@@ -165,8 +209,8 @@ int _open (const char *name, int flags, int mode)
   if (found)
   {
     file_table[handle].in_use = 1;
-    file_table[handle].dev_major = dev_num;
-    file_table[handle].dev_minor = 0;
+    file_table[handle].dev_major = Devices[dev_num].dev_major;
+    file_table[handle].dev_minor = Devices[dev_num].dev_minor;
     file_table[handle].handle = handle;
     file_table[handle].flags = flags;
     file_table[handle].mode = mode;
@@ -197,7 +241,7 @@ int _read(int file, char *ptr, int len)
   if (file < MAX_FILES)
   {
     dev_num = file_table [file].dev_major;
-    dev_read_block (&Devices[dev_num], ptr, len);
+    dev_read_block (&DriverTable[dev_num], file_table [file].dev_minor, ptr, len);
     return len;
   }
   else
@@ -220,7 +264,7 @@ int _write(int file, const char *ptr, int len)
   if (file < MAX_FILES)
   {
     dev_num = file_table [file].dev_major;
-    dev_write_block (&Devices[dev_num], ptr, len);
+    dev_write_block (&DriverTable[dev_num], file_table [file].dev_minor, ptr, len);
     return len;
   }
   else
@@ -246,7 +290,7 @@ int _ioctl(int file, int cmd, va_list args)
         int *pNum = va_arg (args, int *);
 
         if (pNum != NULL)
-          *pNum = Devices[dev_num].dev_rx_avail();
+          *pNum = DriverTable[dev_num].dev_rx_avail(file_table [file].dev_minor);
          
         result = 0;
         //errno = 0;

@@ -31,7 +31,7 @@
 #include "serial_fifo.h"
 #include "usb_cdc_driver.h"
 
-void usb_serial_init()
+void usb_serial_init(int dev_num)
 {
     USBSerial_Init();        
 }
@@ -40,12 +40,12 @@ void usb_serial_init()
         Read
 */
 
-int usb_serial_rxchars()
+int usb_serial_rxchars(int dev_num)
 {
   return fifo_avail(&rxfifo);
 }
 
-char usb_serial_popchar()
+char usb_serial_popchar(int dev_num)
 {
   uint8_t c = 0;
 
@@ -63,7 +63,7 @@ uint8_t usb_serial_txchars()
   return fifo_avail(&txfifo);
 }
 
-void usb_serial_writechar(char data)
+void usb_serial_writechar(int dev_num, char data)
 {
   fifo_put(&txfifo, data);
 }
@@ -73,7 +73,7 @@ void usb_serial_writeblock(void *data, int datalen)
   int i;
 
   for (i = 0; i < datalen; i++)
-    usb_serial_writechar(((uint8_t *) data)[i]);
+    usb_serial_writechar(0, ((uint8_t *) data)[i]);
 }
 
 void usb_serial_writestr(char *data)
@@ -81,5 +81,5 @@ void usb_serial_writestr(char *data)
   uint8_t i = 0, r;
 
   while ((r = data[i++]))
-    usb_serial_writechar(r);
+    usb_serial_writechar(0, r);
 }

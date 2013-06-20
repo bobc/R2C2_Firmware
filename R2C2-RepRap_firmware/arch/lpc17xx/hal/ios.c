@@ -32,7 +32,7 @@
 
 #include "ios.h"
 
-
+#if 1
 /* Initialize all the IO pins */
 /* Example of usage: pin_mode(PORT_0, X_STEP_PIN, OUTPUT); */
 void pin_mode(uint8_t portNum, uint32_t bitMask, uint8_t dir)
@@ -55,6 +55,7 @@ uint32_t digital_read(uint8_t portNum, uint32_t bitMask)
 {
   return ((FIO_ReadValue(portNum) & bitMask) ? 1 : 0);
 }
+#endif
 
 // 
 // Using tPinDef

@@ -39,7 +39,7 @@ enum speed_setting { INTERFACE_SLOW, INTERFACE_FAST };
 
 void spi_configure (tPinDef SClk, tPinDef Mosi, tPinDef Miso, tPinDef SSel);
 
-void spi_init (void);
+void spi_init (int spi_channel);
 
 void spi_set_speed( enum speed_setting speed );
 void spi_close(void);

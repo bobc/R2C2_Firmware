@@ -213,6 +213,13 @@ static const tConfigItem config_lookup_pindef [] =
   { "e.pin_max_limit", &config.axis[E_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
 
   { "all_steppers.reset",  &config.pin_all_steppers_reset,  TYPE_PIN_DEF, {.val_pin_def = STEPPERS_RESET_PIN}},
+  
+  { "have_digipot",         &config.have_digipot,  TYPE_INT, {.val_i = CFG_HAVE_DIGIPOT}},
+  { "digipot_i2c_channel",  &config.digipot_i2c_channel,  TYPE_INT, {.val_i = CFG_DIGIPOT_I2C_CHAN}},
+  
+  { "digipot_i2c_scl",  &config.digipot_i2c_scl,  TYPE_PIN_DEF, {.val_pin_def = CFG_PIN_DIGIPOT_I2C_SCL}},
+  { "digipot_i2c_sda",  &config.digipot_i2c_sda,  TYPE_PIN_DEF, {.val_pin_def = CFG_PIN_DIGIPOT_I2C_SDA}},
+
 
   // CTC #1 / Extruder 0
   { "extruder_0.heater",              &config.extruder_ctc[0].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_HEATER_PIN}},
@@ -236,8 +243,9 @@ static const tConfigItem config_lookup_pindef [] =
   { "spi0.sck",           &config.spi_sck0 ,   TYPE_PIN_DEF, {.val_pin_def =  SPI_SCK0  }},
   { "spi0.mosi",          &config.spi_mosi0,    TYPE_PIN_DEF, {.val_pin_def =  SPI_MOSI0  }},
   { "spi0.miso",          &config.spi_miso0,    TYPE_PIN_DEF, {.val_pin_def =  SPI_MISO0  }},
+  { "sd.spi_channel",     &config.sd_spi_channel,   TYPE_INT,     {.val_i = SD_SPI_CHANNEL}},
 
-  { "buzzer",          &config.buzzer_pin,   TYPE_PIN_DEF, {.val_pin_def = PIN_DEF (2,2,1)   }},
+  { "buzzer",          &config.buzzer_pin,   TYPE_PIN_DEF, {.val_pin_def = PIN_DEF (BUZZER_PORT, BUZZER_PIN_NUMBER, 1)   }},
 
   { "cp_lcd_data_0",   &config.interface_cp_lcd_pin_data[0],   TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF   }},
   { "cp_lcd_data_1",   &config.interface_cp_lcd_pin_data[1],   TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF   }},

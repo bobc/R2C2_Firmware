@@ -44,9 +44,9 @@ void adc_configure_pin (tPinDef pindef)
 {
   PINSEL_CFG_Type PinCfg;
 
-  PinCfg.Funcnum = PINSEL_FUNC_2; /* ADC function */
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
   PinCfg.Pinmode = PINSEL_PINMODE_TRISTATE;
+  PinCfg.Funcnum = pindef.function;
   PinCfg.Portnum = pindef.port;
   PinCfg.Pinnum  = pindef.pin_number;
   PINSEL_ConfigPin(&PinCfg);

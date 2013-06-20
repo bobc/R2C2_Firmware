@@ -237,12 +237,12 @@ void lcd_begin(uint8_t cols, uint8_t rows)
 /********** high level commands, for the user! */
 
 
-void lcd_initialise (void)
+void lcd_initialise (int dev_num)
 {
 
 }
 
-void lcd_writechar (char c)
+void lcd_writechar (int dev_num, char c)
 {
   lcd_write (c);
 }

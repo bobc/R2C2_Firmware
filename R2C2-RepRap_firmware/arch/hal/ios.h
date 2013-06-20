@@ -46,12 +46,17 @@
 #define INACTIVE     0
 #define ACTIVE       1
 
-// polarity
-#define ACTIVE_HIGH 0
-#define ACTIVE_LOW  1
+// modes: polarity
+#define ACTIVE_HIGH 0x00
+#define ACTIVE_LOW  0x01
+
+#define PULLUP_DISABLE  0x00
+#define PULLUP_ENABLE   0x02
+
 
 // create a struct initialiser
 #define PIN_DEF(port,pin,polarity) {(port),(pin),(polarity),0}
+#define PIN_DEF_EX(port,pin,polarity,function) {(port),(pin),(polarity),(function)}
 
 // special pin defs
 #define UNDEFINED_PORT         0xFF
@@ -92,10 +97,14 @@ typedef struct
 {
   uint8_t port;
   uint8_t pin_number;
-  uint8_t active_low;
-  uint8_t reserved;
+  // TODO: modes bitmask
+  uint8_t active_low;   // polarity:1
+  // pullups, mode etc
+  // alt func
+  uint8_t function;
 } tPinDef;
 
+// type: digital, analog in (ADC), DAC, pwm etc
 
 // port number (0-7) + 32 bit bitmask
 void      pin_mode      (uint8_t portNum, uint32_t bitMask, uint8_t dir);

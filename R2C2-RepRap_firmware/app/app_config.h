@@ -98,13 +98,38 @@ typedef struct
   
 } tAxisSettings;
 
+typedef struct {
+    // e.g. heater output, fan
+    tPinDef   pin;
+    int32_t   output_polarity; // 0 = inverted, 1=normal
+
+    // pwm - method (hard,soft)
+    // channel, duty cycle
+} tControlOutput;
+
+// sensor input
+typedef struct {
+    //e.g. temp sensor
+    // type: adc, thermocouple
+    tPinDef pin;
+    int     adc_channel;
+
+} tSensorInput;
+
 // configuration settings for Temperature Control Channel (CTC)
 typedef struct 
 {
-    tPinDef pin_heater;
-    tPinDef pin_temp_sensor;
+  // ** heater (ControlOutput) index
+
+    // heater output
+    tPinDef   pin_heater;   // pindef includes polarity
+
+    // cooling output
     tPinDef pin_cooler;
-    int sensor_adc_channel;
+
+    // ** input sensor index
+    tPinDef pin_temp_sensor;
+    int     sensor_adc_channel;
 
 } tCtcSettings;
 
@@ -113,13 +138,18 @@ typedef struct
 {
   // machine config
   int32_t       machine_model;
-  
+
+  // axis/motor control    
   int32_t       num_axes;
   tAxisSettings axis[MAX_AXES];
-
-  // machine control
   tPinDef       pin_all_steppers_reset;
 
+  int32_t       have_digipot;
+  int32_t       digipot_i2c_channel;
+  tPinDef       digipot_i2c_scl;
+  tPinDef       digipot_i2c_sda;
+
+  // machine control
   double  acceleration;   // global default
   double  junction_deviation;
 
@@ -133,6 +163,7 @@ typedef struct
   tPinDef spi_sck0;
   tPinDef spi_mosi0;
   tPinDef spi_miso0;
+  int32_t sd_spi_channel;
   
   tPinDef buzzer_pin;    
   

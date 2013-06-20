@@ -113,8 +113,8 @@ void   LiquidCrystal_4bit(uint8_t rs, uint8_t enable,
 
 // for lwio
 
-void lcd_initialise (void);
-void lcd_writechar (char c);
+void lcd_initialise (int dev_num);
+void lcd_writechar (int dev_num, char c);
 
 typedef struct {
 } tLiquidCrystal;

@@ -44,7 +44,8 @@
 #include "printer_task.h"
 
 //TODO:
-#ifdef DEBUG
+
+#ifdef _DEBUG
 #define DBG_INIT()   uart_init()
 #define DBGF(s)   	 uart3_writestr(s)
 #else
