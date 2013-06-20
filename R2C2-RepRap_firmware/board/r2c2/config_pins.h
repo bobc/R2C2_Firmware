@@ -74,7 +74,7 @@
 // CTC #1 / Extruder 0
 #define EXTRUDER_0_HEATER_PIN           PIN_DEF (2,4,ACTIVE_HIGH)       /* P2.4 */
 
-#define EXTRUDER_0_SENSOR_ADC_PIN       PIN_DEF (0,2,ACTIVE_HIGH)       /* P0.2 */
+#define EXTRUDER_0_SENSOR_ADC_PIN       PIN_DEF_EX (0,2,ACTIVE_HIGH,2)       /* P0.2 */
 #define EXTRUDER_0_SENSOR_ADC_CHANNEL   7                               /* P0.2 */
 
 #define EXTRUDER_0_FAN_PIN              PIN_DEF (2,3,ACTIVE_HIGH)       /* P2.3 */
@@ -82,7 +82,7 @@
 // CTC #2 / Heated Bed
 #define HEATED_BED_0_HEATER_PIN         PIN_DEF (2,5,ACTIVE_HIGH)       /* P2.5 */
 
-#define HEATED_BED_0_ADC_PIN            PIN_DEF (0,3,ACTIVE_HIGH)       /* P0.3 */
+#define HEATED_BED_0_ADC_PIN            PIN_DEF_EX (0,3,ACTIVE_HIGH,2)       /* P0.3 */
 #define HEATED_BED_0_SENSOR_ADC_CHANNEL 6                               /* P0.3 */
 
 // might be needed before config file is read?
@@ -98,5 +98,11 @@
 #define SPI_SCK0                        PIN_DEF (0,15,ACTIVE_HIGH)
 #define SPI_MISO0                       PIN_DEF (0,17,ACTIVE_HIGH)
 #define SPI_MOSI0                       PIN_DEF (0,18,ACTIVE_HIGH)
+#define SD_SPI_CHANNEL                  0
+
+#define CFG_HAVE_DIGIPOT                0
+#define CFG_DIGIPOT_I2C_CHAN            0
+#define CFG_PIN_DIGIPOT_I2C_SCL         UNDEFINED_PIN_DEF 
+#define CFG_PIN_DIGIPOT_I2C_SDA         UNDEFINED_PIN_DEF
 
 #endif  /* _CONFIG_PINS_H */

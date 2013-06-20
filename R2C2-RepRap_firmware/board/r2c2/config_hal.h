@@ -46,12 +46,12 @@
 // --------------------------------------------------------------------------
 
 //! Enable the UART
-#define HAL_CFG_USE_UART	TRUE
+#define CFG_HAL_USE_UART	TRUE
 
-#define HAL_CFG_USE_UART1	TRUE
-#define HAL_CFG_USE_UART2   FALSE
-#define HAL_CFG_USE_UART3   FALSE
-#define HAL_CFG_USE_UART4   FALSE
+#define CFG_HAL_USE_UART0   TRUE
+#define CFG_HAL_USE_UART1   FALSE
+#define CFG_HAL_USE_UART2   FALSE
+#define CFG_HAL_USE_UART3   FALSE
 
 // --------------------------------------------------------------------------
 //
