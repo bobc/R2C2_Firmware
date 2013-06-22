@@ -26,9 +26,9 @@
   <ProjectSessionItem path="cs_proj" name="unnamed" />
   <ProjectSessionItem path="cs_proj;cs_proj" name="unnamed" />
   <ProjectSessionItem path="cs_proj;cs_proj;app_reprap" name="unnamed" />
+  <ProjectSessionItem path="cs_proj;cs_proj;arch_hal" name="unnamed" />
   <ProjectSessionItem path="cs_proj;cs_proj;lib_FatFs" name="unnamed" />
   <ProjectSessionItem path="cs_proj;cs_proj;lib_R2C2" name="unnamed" />
-  <ProjectSessionItem path="cs_proj;cs_proj;Source Files" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="SSP1;SSP1/SSP1CR0;SSP1/SSP1CR1;SSP1/SSP1SR" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="CPU;SSP1" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -69,10 +69,10 @@
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\hal\adc.c" y="0" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\hal\adc.c" left="0" selected="0" name="unnamed" top="0" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\hal\spi.c" y="165" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\hal\spi.c" left="0" selected="0" name="unnamed" top="139" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\hal\spi.h" y="46" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\hal\spi.h" left="0" selected="0" name="unnamed" top="27" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\libraries\fatfs\src\sdcard.c" y="395" path="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\libraries\fatfs\src\sdcard.c" left="0" selected="1" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\libraries\fatfs\src\sdcard.c" y="395" path="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\libraries\fatfs\src\sdcard.c" left="0" selected="0" name="unnamed" top="0" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\libraries\r2c2\lw_rtos.c" y="110" path="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\libraries\r2c2\lw_rtos.c" left="0" selected="0" name="unnamed" top="0" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\rtos_api.h" y="41" path="C:\git_bobc\r2c2_firmware\r2c2-reprap_firmware\rtos_api.h" left="0" selected="0" name="unnamed" top="23" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\printer_task.c" y="246" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\printer_task.c" left="0" selected="0" name="unnamed" top="210" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\printer_task.c" y="246" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\printer_task.c" left="0" selected="1" name="unnamed" top="125" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\libraries\R2C2\lw_task.c" y="214" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\libraries\R2C2\lw_task.c" left="0" selected="0" name="unnamed" top="178" />
  </Files>
  <ARMCrossStudioWindow activeProject="cs_proj" autoConnectTarget="USB CrossConnect for ARM" debugSearchFileMap="\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__int32_to_float32.s
@@ -82,5 +82,5 @@
 \home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__uint32_to_float32.s
 
 \home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__uint32_to_float64.s
-" fileDialogInitialDirectory="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app" fileDialogDefaultFilter="" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
+" fileDialogInitialDirectory="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\hal" fileDialogDefaultFilter="" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
 </session>

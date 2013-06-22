@@ -66,6 +66,8 @@
       <file file_name="libraries/R2C2/lw_queue.c"/>
       <file file_name="libraries/R2C2/lw_task.c"/>
       <file file_name="libraries/R2C2/nk_heap.c"/>
+      <file file_name="libraries/R2C2/mcp4451.c"/>
+      <file file_name="libraries/R2C2/motor_current_limit.c"/>
     </folder>
     <folder Name="app_reprap">
       <file file_name="app/alerter.c"/>
@@ -117,6 +119,9 @@
       <file file_name="arch/hal/sys_util.c"/>
       <file file_name="arch/lpc17xx/hal/sys_util_lld.c"/>
       <file file_name="arch/hal/buzzer.c"/>
+      <file file_name="arch/hal/hal.c"/>
+      <file file_name="arch/hal/i2c.c"/>
+      <file file_name="arch/lpc17xx/hal/i2c_lld.c"/>
     </folder>
     <folder Name="arch_lpc17xx">
       <file file_name="arch/lpc17xx/startup.S"/>

@@ -120,6 +120,7 @@
       <file file_name="arch/lpc17xx/hal/sys_util_lld.c"/>
       <file file_name="arch/hal/buzzer.c"/>
       <file file_name="arch/lpc17xx/hal/i2c_lld.c"/>
+      <file file_name="arch/hal/hal.c"/>
     </folder>
     <folder Name="arch_lpc17xx">
       <file file_name="arch/lpc17xx/startup.S"/>
