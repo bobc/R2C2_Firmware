@@ -8,3 +8,9 @@ ARCH_FAMILY = lpc17xx
 CHIP     	= LPC1758
 
 BOARDINC = board/r2c2
+
+# options
+
+USE_FILESYSTEM = YES
+# USE_ETHERNET = YES
+USE_USB = YES

@@ -4,7 +4,7 @@ ARCHLIBINC = \
 	$(ARCHLIBDIR)/CMSISv1p30/inc \
 	$(ARCHLIBDIR)/drivers/include \
 	$(ARCHLIBDIR)/hal
-	
+
 
 ARCHLIBSRC = \
 	$(ARCHLIBDIR)/CMSISv1p30/src/system_LPC17xx.c \
@@ -12,6 +12,6 @@ ARCHLIBSRC = \
 	$(wildcard $(ARCHLIBDIR)/hal/*.c)
 	
 ifeq ($(USE_USB),YES)
-	ARCHLIBINC += $(ARCHLIBDIR)/LPCUSB/inc
-	ARCHLIBSRC + $(wildcard $(ARCHLIBDIR)/LPCUSB/src/*.c)
+ARCHLIBINC += $(ARCHLIBDIR)/LPCUSB/inc
+ARCHLIBSRC += $(wildcard $(ARCHLIBDIR)/LPCUSB/src/*.c)
 endif

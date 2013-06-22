@@ -8,3 +8,9 @@ ARCH_FAMILY = lpc17xx
 CHIP     	= LPC1769
 
 BOARDINC = board/smoothieboard
+
+# options
+
+USE_FILESYSTEM = YES
+# USE_ETHERNET = YES
+USE_USB = YES

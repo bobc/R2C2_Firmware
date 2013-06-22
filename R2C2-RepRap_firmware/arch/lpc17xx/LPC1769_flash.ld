@@ -37,7 +37,7 @@ MEMORY
     /* rom (rx)  : ORIGIN = 0, LENGTH = 512K */   
 
     /* Bootloader occupies first xx Kbytes */
-    /* rom (rx)  : ORIGIN = xxK, LENGTH = (512K - xxK) 
+    /* rom (rx)  : ORIGIN = xxK, LENGTH = (512K - xxK) */ 
     rom (rx)  : ORIGIN = 64K, LENGTH = (512K - 64K) 
   
     ram (rwx) : ORIGIN = 0x10000000, LENGTH =  32K
