@@ -29,13 +29,8 @@
 
 #include "rtos_api.h"
 
-/* lib_HAL */
-#include "adc.h"
-#include "buzzer.h"
-#include "spi.h"
-#include "sys_util.h"
-#include "timer.h"
-#include "uart.h"
+/* HAL */
+#include "hal.h"
 
 /* lib_r2c2 */
 #include "debug.h"
@@ -100,16 +95,8 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName
 #else
 #endif
 
-void hal_init(void)
+static void configure_hal (void)
 {
-  sys_initialise();
-
-#if !defined(USE_FREERTOS)
-  timer_init(); // start millisecond timers/callback
-#endif
-
-  adc_init();
-
   // initialise some drivers useful for debugging
   buzzer_init (PinDef (BUZZER_PORT, BUZZER_PIN_NUMBER,0,0) );	// [hal: requires io pins]
 }
@@ -143,6 +130,7 @@ int main(void)
   LW_RTOS_RESULT res;
 
   hal_init();
+  configure_hal();
 
   //TODO	
   DBG_INIT();
