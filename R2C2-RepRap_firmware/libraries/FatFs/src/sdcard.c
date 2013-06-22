@@ -77,7 +77,7 @@ static volatile uint32_t Timer1, Timer2;       /* 100Hz decrement timers */
 
 static uint8_t CardType;                       /* Card type flags */
 
-static tPinDef slave_select_pin = SPI_SSEL0;
+static tPinDef slave_select_pin = SD_SPI_SSEL;
 
 /*-----------------------------------------------------------------------*/
 /* SPI low-level functions                                               */

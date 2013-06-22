@@ -239,11 +239,11 @@ static const tConfigItem config_lookup_pindef [] =
   { "extruder_1.cooler",              &config.extruder_ctc[1].pin_cooler,           TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
   { "extruder_1.sensor_adc_channel",  &config.extruder_ctc[1].sensor_adc_channel,   TYPE_INT,     {.val_i = 0}},
 
-  { "spi0.ssel0",         &config.spi_ssel0,   TYPE_PIN_DEF, {.val_pin_def =  SPI_SSEL0  }},
-  { "spi0.sck",           &config.spi_sck0 ,   TYPE_PIN_DEF, {.val_pin_def =  SPI_SCK0  }},
-  { "spi0.mosi",          &config.spi_mosi0,    TYPE_PIN_DEF, {.val_pin_def =  SPI_MOSI0  }},
-  { "spi0.miso",          &config.spi_miso0,    TYPE_PIN_DEF, {.val_pin_def =  SPI_MISO0  }},
-  { "sd.spi_channel",     &config.sd_spi_channel,   TYPE_INT,     {.val_i = SD_SPI_CHANNEL}},
+  { "sd.spi.ssel0",         &config.sd_spi_ssel,   TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SSEL  }},
+  { "sd.spi.sck",           &config.sd_spi_sck,   TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SCK  }},
+  { "sd.spi.mosi",          &config.sd_spi_mosi,    TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_MOSI  }},
+  { "sd.spi.miso",          &config.sd_spi_miso,    TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_MISO  }},
+  { "sd.spi.channel",       &config.sd_spi_channel,   TYPE_INT,     {.val_i = SD_SPI_CHANNEL}},
 
   { "buzzer",          &config.buzzer_pin,   TYPE_PIN_DEF, {.val_pin_def = PIN_DEF (BUZZER_PORT, BUZZER_PIN_NUMBER, 1)   }},
 

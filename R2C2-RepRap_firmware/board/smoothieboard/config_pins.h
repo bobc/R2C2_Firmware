@@ -93,10 +93,10 @@
 #define BOOT_SW_PIN_NUMBER              10
 
 // SPI for SD card interface
-#define SPI_SSEL0                       PIN_DEF (0,6,ACTIVE_HIGH)
-#define SPI_SCK0                        PIN_DEF (0,7,ACTIVE_HIGH)
-#define SPI_MISO0                       PIN_DEF (0,8,ACTIVE_HIGH)
-#define SPI_MOSI0                       PIN_DEF (0,9,ACTIVE_HIGH)
+#define SD_SPI_SSEL                       PIN_DEF (0,6,ACTIVE_HIGH)
+#define SD_SPI_SCK                        PIN_DEF (0,7,ACTIVE_HIGH)
+#define SD_SPI_MISO                       PIN_DEF (0,8,ACTIVE_HIGH)
+#define SD_SPI_MOSI                       PIN_DEF (0,9,ACTIVE_HIGH)
 #define SD_SPI_CHANNEL                  1
 
 #define CFG_HAVE_DIGIPOT                1
