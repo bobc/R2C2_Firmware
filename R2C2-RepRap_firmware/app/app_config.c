@@ -233,11 +233,13 @@ static const tConfigItem config_lookup_pindef [] =
   { "heated_bed.cooler",              &config.heated_bed_ctc.pin_cooler,            TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
   { "heated_bed.sensor_adc_channel",  &config.heated_bed_ctc.sensor_adc_channel,    TYPE_INT,     {.val_i = HEATED_BED_0_SENSOR_ADC_CHANNEL}},
 
+#if ( MAX_EXTRUDERS > 1)  
   // Extruder 1 (not supported yet)
   { "extruder_1.heater",              &config.extruder_ctc[1].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
   { "extruder_1.temp_sensor",         &config.extruder_ctc[1].pin_temp_sensor,      TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
   { "extruder_1.cooler",              &config.extruder_ctc[1].pin_cooler,           TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
   { "extruder_1.sensor_adc_channel",  &config.extruder_ctc[1].sensor_adc_channel,   TYPE_INT,     {.val_i = 0}},
+#endif
 
   { "sd.spi.ssel0",         &config.sd_spi_ssel,   TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SSEL  }},
   { "sd.spi.sck",           &config.sd_spi_sck,   TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SCK  }},
