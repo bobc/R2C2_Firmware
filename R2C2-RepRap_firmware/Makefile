@@ -103,8 +103,8 @@ USE_THUMB_MODE = YES
 #############################################################################
 # Define board
 # - BOARD 	also passed as define (don't used '-' characters)
-BOARD    = r2c2
-#BOARD    = smoothieboard
+#BOARD    = r2c2
+BOARD    = smoothieboard
 
 # get MCU, CHIP, ARCH_FAMILY, 
 include board/${BOARD}/board.mk
@@ -160,11 +160,6 @@ TARGET = project
 # - source files
 # - compile time defines
 #
-
-# USE_FILESYSTEM = YES
-# USE_ETHERNET = YES
-# USE_USB = YES
-	 
 # other config in board.mk (etc?)
 #  config_hal.h
 #  machine.h
@@ -202,11 +197,11 @@ APPSRC = \
 	main.c
 
 ifeq ($(USE_USB),YES)
-	APPSRC += 	$(APPDIR)/usb_shell_task.c
+APPSRC += $(APPDIR)/usb_shell_task.c
 endif
 
 ifeq ($(USE_ETHERNET),YES)
-	APPSRC += $(APPDIR)/eth_shell_task.c
+APPSRC += $(APPDIR)/eth_shell_task.c
 endif
 
 APPINC = $(APPDIR) 
@@ -234,7 +229,7 @@ APPLIBINC += $(APPLIBDIR)/ethernet/ \
 	$(APPLIBDIR)/lwip/src/include/ipv4/ \
 	$(APPLIBDIR)/lwip/ports/r2c2/include/
 
-APPLIBSRC += $(wildcard $(APPLIBDIR)/ethernet/*.c) 	
+APPLIBSRC += $(wildcard $(APPLIBDIR)/ethernet/*.c)
 endif
 
 
@@ -260,8 +255,7 @@ SRC = $(ARCHLIBSRC) $(HALSRC) $(APPLIBSRC) $(APPSRC)
 #SRC = $(APPLIBSRC) $(APPSRC)
 
 ##	$(FREERTOS_SRC) \
-##	$(filter-out $(APPLIBDIR)/R2C2/lw_rtos.c, $(wildcard $(APPLIBDIR)/R2C2/*.c)) \
-	
+##	$(filter-out $(APPLIBDIR)/R2C2/lw_rtos.c, $(wildcard $(APPLIBDIR)/R2C2/*.c))
 #############################################################################
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files
