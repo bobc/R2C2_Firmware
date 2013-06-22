@@ -120,6 +120,8 @@ static void machine_init(void)
 
   ctc_init();
 
+  temp_init();
+
   /* setup stepper axes */
   
   //OPTION: reset control

@@ -37,17 +37,12 @@
 #include "temp.h"
 #include "debug.h"
 
-
-/* Table for NTC EPCOS B57560G104F and R1 = 330R for Extruder0
- * Table for NTC EPCOS B57560G104F and R1 = 12K for HeatedBed0 */
- // 274
- // 10k
-
 // config
 #include "thermistor_tables.h"
 
 // todo:
-tTempLookupEntry temptable [NUMBER_OF_SENSORS] [NUM_TEMPS] = {
+tTempLookupEntry temptable [NUMBER_OF_SENSORS] [NUM_TEMPS] = 
+{
     #include "thermistor_extruder.h"
 ,
     #include "thermistor_heatbed.h"

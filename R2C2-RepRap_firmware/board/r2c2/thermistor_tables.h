@@ -38,7 +38,7 @@
 //#include "temp.h"
 
 #define NUMBER_OF_SENSORS               2
-#define NUM_TEMPS                       31
+#define NUM_TEMPS                       32+1
 
 
 
