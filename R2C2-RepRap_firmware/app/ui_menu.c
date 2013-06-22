@@ -38,14 +38,16 @@
 #include "sermsg.h"
 
 // app
-#include "app_config.h"
 #include "gcode_parse.h"
 #include "gcode_task.h"
 #include "gcode_process.h"
 #include "packed_gcode.h"
 #include "temp.h"
+#include "temp_controller.h"
 #include "keypad_gen4_mb.h"
 #include "ui_menu.h"
+
+#include "app_config.h"
 
 
 // --------------------------------------------------------------------------
@@ -713,7 +715,7 @@ void menu_poll (void)
         lcd_setCursor (6,2);
         fserwrite_int32_wz (lcdf, val, 3, 0);
 
-        val = temp_get_target (EXTRUDER_0);
+        val = ctc_get_target_temp (EXTRUDER_0);
         lcd_setCursor (10,2);
         fserwrite_int32_wz (lcdf, val, 3, 0);
 
@@ -721,7 +723,7 @@ void menu_poll (void)
         lcd_setCursor (6,3);
         fserwrite_int32_wz (lcdf, val, 3, 0);
 
-        val = temp_get_target (HEATED_BED_0);
+        val = ctc_get_target_temp (HEATED_BED_0);
         lcd_setCursor (10,3);
         fserwrite_int32_wz (lcdf, val, 3, 0);
     }

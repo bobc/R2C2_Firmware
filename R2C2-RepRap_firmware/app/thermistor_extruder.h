@@ -1,6 +1,6 @@
-/* Copyright (C) 2009-2010 Michael Moon aka Triffid_Hunter   */
-/* Copyright (c) 2011 Jorge Pinto - casainho@gmail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -26,40 +26,47 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#ifndef	_TEMP_H
-#define	_TEMP_H
+// No guard because this file may be included more than once
 
+/* table for Extruder */ 
+/* {ADC value, temperature} */
 
-#include <stdint.h>
-#include <stdbool.h>
-
-#include "thermistor_tables.h"
-
-#define EXTRUDER_0                      0
-#define HEATED_BED_0                    1
-
-typedef struct {
-    uint16_t adc_value; 
-    uint16_t temperature;
-    } tTempLookupEntry; 
-
-
-//extern tTempLookupEntry temptable[NUMBER_OF_SENSORS][NUM_TEMPS];
-
-extern uint16_t current_temp [NUMBER_OF_SENSORS];
-
-
-// --------------------------------
-void temp_init (void);
-
-// return filtered temperature reading
-uint16_t temp_get (uint8_t sensor_number);
-
-// 
-bool      temp_set_table_entry (uint8_t sensor_number, uint16_t temp, uint16_t adc_val);
-uint16_t  temp_get_table_entry (uint8_t sensor_number, uint16_t temp);
-
-
-#endif	/* _TIMER_H */
+{
+  {1009, 300}, 
+  {1119, 290},
+  {1240, 280},
+  {1372, 270},
+  {1517, 260},
+  {1673, 250},
+  {1839, 240},
+  {2015, 230},
+  {2198, 220},
+  {2385, 210},
+  {2573, 200},
+  {2759, 190},
+  {2940, 180},
+  {3112, 170},
+  {3270, 160},
+  {3415, 150},
+  {3544, 140},
+  {3655, 130},
+  {3750, 120},
+  {3830, 110},
+  {3894, 100},
+  {3946,  90},
+  {3986,  80},
+  {4017,  70},
+  {4041,  60},
+  {4058,  50},
+  {4070,  40},
+  {4079,  30},
+  {4085,  20},
+  {4089,  10},
+  {4092,   0}
+}

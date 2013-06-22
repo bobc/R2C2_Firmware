@@ -30,19 +30,19 @@
 #include "timer.h"
 #include "ios.h"
 
-#include "app_config.h"
 #include "temp.h"
+#include "temp_controller.h"
 #include "stepper.h"
-//#include "machine.h"
 #include "planner.h"
 #include "endstops.h"
+
+#include "app_config.h"
 
 #define TICKS_PER_MICROSECOND (F_CPU/1000000)
 #define CYCLES_PER_ACCELERATION_TICK ((TICKS_PER_MICROSECOND*1000000)/ACCELERATION_TICKS_PER_SECOND)
 
 // Globals
       
-volatile uint16_t steptimeout = 0;
 
 static uint8_t  led_count [NUM_AXES];
 static uint8_t  led_on;         // a bit mask
@@ -486,11 +486,11 @@ void st_interrupt (void)
       step_bits = 0;
       // TODO: multi_extruder
 
-      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_EXTRUDER_0)) && !temp_achieved(EXTRUDER_0))
+      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_EXTRUDER_0)) && !ctc_temp_achieved(EXTRUDER_0))
           reached_temps = false;
 //      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_EXTRUDER_1)) && !temp_achieved(EXTRUDER_1))
 //          reached_temps = false;
-      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_HEATED_BED)) && !temp_achieved(HEATED_BED_0))
+      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_HEATED_BED)) && !ctc_temp_achieved(HEATED_BED_0))
           reached_temps = false;
 
       if (reached_temps)

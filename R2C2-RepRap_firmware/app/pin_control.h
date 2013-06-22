@@ -63,30 +63,10 @@ void disable_all_axes (void);
 #define e_step_fast()   axis_step(E_AXIS)
 #define e_unstep_fast() axis_unstep(E_AXIS)
 
-// each CTC has heater output (FET) and a thermistor input
-// optionally a fan output
-
-/*
-   CTC 1: extruder
-*/
-
-// extruder heater
-#define extruder_heater_on()  write_pin(config.extruder_ctc[0].pin_heater, ENABLE);
-#define extruder_heater_off() write_pin(config.extruder_ctc[0].pin_heater, DISABLE);
 
 // aux power header (J24)
 #define extruder_fan_on()     write_pin(config.extruder_ctc[0].pin_cooler, ENABLE);
 #define extruder_fan_off()    write_pin(config.extruder_ctc[0].pin_cooler, DISABLE);
-
-// temp sensor?
-
-/*
-  CTC 2 : Heated Bed
-*/
-#define heated_bed_on()   write_pin(config.heated_bed_ctc.pin_heater, ENABLE);
-#define heated_bed_off()  write_pin(config.heated_bed_ctc.pin_heater, DISABLE);
-
-
 
 
 // other functions

@@ -1,5 +1,6 @@
-/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -25,106 +26,55 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
 // **************************************************************************
 // Description:
 //
 // **************************************************************************
 
+#ifndef _TEMP_CONTROLLER_H
+#define _TEMP_CONTROLLER_H
+
 // --------------------------------------------------------------------------
 // Includes
 // --------------------------------------------------------------------------
 
-
-// hal
-#include "adc.h"
-#include "ios.h"
-#include "timer.h"
-
-// app
-#include "pin_control.h"
-#include "stepper.h"    // TODO: steptimeout
-#include "thermistor_tables.h"
-#include "temp.h"
-#include "temp_controller.h"
-#include "printer_task.h"
-
-// config
 #include "app_config.h"
 
+// --------------------------------------------------------------------------
+// Defines
+// --------------------------------------------------------------------------
 
-static tTimer       ctcTimer;
-static int          num_ctcs;
-static tCtcSettings *ctc_configs [NUMBER_OF_SENSORS]; // max ctcs
-static uint16_t     target_temp  [NUMBER_OF_SENSORS] = {0};
+// --------------------------------------------------------------------------
+// Types
+// --------------------------------------------------------------------------
 
+// --------------------------------------------------------------------------
+// Public Variables
+// --------------------------------------------------------------------------
 
-void ctcTimerCallback (tTimer *pTimer)
-{
-  /* Manage heaters using simple ON/OFF logic, no PID */
+// --------------------------------------------------------------------------
+// Public functions
+// --------------------------------------------------------------------------
 
-  for (int j=0; j < num_ctcs; j++)
-  {
-    if (current_temp[j] < target_temp[j])
-    {
-      write_pin(ctc_configs[j]->pin_heater, ENABLE);
-    }
-    else
-    {
-      write_pin(ctc_configs[j]->pin_heater, DISABLE);
-    }
-  }
+void ctc_init ();
 
-}
+void ctc_init_channel (tCtcSettings *ctc_config);
 
+// set target temperature
+void ctc_set_target_temp (uint8_t sensor_number, uint16_t temperature );
 
-void ctc_init (void)
-{
-  AddSlowTimer (&ctcTimer);
-  StartSlowTimer (&ctcTimer, 200, ctcTimerCallback);
-  ctcTimer.AutoReload = 1;
-}
+// return target temperature
+uint16_t ctc_get_target_temp (uint8_t sensor_number);
 
+// true if last read temp is close to target temp, false otherwise
+uint8_t ctc_temp_achieved (uint8_t sensor_number);
 
-void ctc_init_channel (tCtcSettings *ctc_config)
-{
-  ctc_configs [num_ctcs] = ctc_config;
+//TODO: and update heater with PID
 
-  // heater output pin
-  set_pin_mode (ctc_config->pin_heater, OUTPUT);
-  write_pin (ctc_config->pin_heater, DISABLE);
+// --------------------------------------------------------------------------
+//
+// --------------------------------------------------------------------------
 
-  // fan output pin
-  set_pin_mode(ctc_config->pin_cooler, OUTPUT);
-  write_pin (ctc_config->pin_cooler, DISABLE);
+#endif // _TEMP_CONTROLLER_H
 
-  adc_configure_pin (ctc_config->pin_temp_sensor);
-
-  num_ctcs++;
-}
-
-
-
-void ctc_set_target_temp (uint8_t sensor_number, uint16_t temperature )
-{
-  if (temperature > 0)
-  {
-    activity_timer = 0;
-//?    power_on();
-  }
-
-  target_temp[sensor_number] = temperature;
-}
-
-uint16_t ctc_get_target_temp (uint8_t sensor_number)
-{
-  return target_temp[sensor_number];
-}
-
-uint8_t	ctc_temp_achieved(uint8_t sensor_number)
-{
-  if (current_temp[sensor_number] >= target_temp[sensor_number] - 2 )
-    return 255;
-
-  return 0;
-}

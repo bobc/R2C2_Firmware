@@ -216,7 +216,7 @@ static bool parse_parameter_value (uint8_t type, tParamVal *param_val)
 
         param_val->val_pin_def.port = UNDEFINED_PORT;
         param_val->val_pin_def.pin_number = UNDEFINED_PIN_NUMBER;
-        param_val->val_pin_def.active_low = 0;
+        param_val->val_pin_def.modes = 0;
         param_val->val_pin_def.function = 0;
 
         while (pToken && (num < 4) && isdigit (*pToken))
@@ -268,7 +268,7 @@ void print_config_table (const tConfigItem lookup[], int num_tokens)
       case TYPE_PIN_DEF:
       {
         tPinDef *pVal = (tPinDef *)lookup[j].pValue;
-        lw_printf ("%s = %d,%d,%d,%d\r\n", lookup[j].name, pVal->port, pVal->pin_number, pVal->active_low, pVal->function );
+        lw_printf ("%s = %d,%d,%d,%d\r\n", lookup[j].name, pVal->port, pVal->pin_number, pVal->modes, pVal->function );
         break;
       }
     }

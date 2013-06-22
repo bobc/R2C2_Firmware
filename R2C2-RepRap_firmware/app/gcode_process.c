@@ -58,6 +58,7 @@
 #include "gcode_process.h"
 //#include "gcode_parse.h"
 #include "temp.h"
+#include "temp_controller.h"
 #include "pin_control.h"
 #include "planner.h"
 #include "stepper.h"
@@ -898,13 +899,13 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
           }
           else
           {
-            temp_set(gcode_command.S, EXTRUDER_0);
+            ctc_set_target_temp (EXTRUDER_0, gcode_command.S);
             result = enqueue_wait_for_temperatures( _BV(WE_WAIT_TEMP_EXTRUDER_0) );
           }
         }
         else
         {
-          temp_set(gcode_command.S, EXTRUDER_0);
+          ctc_set_target_temp (EXTRUDER_0, gcode_command.S);
         }
       }
       break;
@@ -947,7 +948,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       case 109:
       if (config.enable_extruder_0)
       {
-        temp_set(gcode_command.S, EXTRUDER_0);
+        ctc_set_target_temp (EXTRUDER_0, gcode_command.S);
         result = enqueue_wait_for_temperatures(_BV(WE_WAIT_TEMP_EXTRUDER_0));
       }
       break;
@@ -1087,7 +1088,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
 
       /* M140 - Bed Temperature (Fast) */
       case 140:
-        temp_set(gcode_command.S, HEATED_BED_0);
+        ctc_set_target_temp(HEATED_BED_0, gcode_command.S);
       break;
 
       /* M141 - Chamber Temperature (Fast) */
@@ -1100,7 +1101,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
 
       // M190: Wait for bed temperature to reach target temp 
       case 190:
-        temp_set(gcode_command.S, HEATED_BED_0);
+        ctc_set_target_temp(HEATED_BED_0, gcode_command.S);
         result = enqueue_wait_for_temperatures(_BV(WE_WAIT_TEMP_HEATED_BED));
       break;
 

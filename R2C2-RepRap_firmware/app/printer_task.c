@@ -34,11 +34,11 @@
 #include "rtos_api.h"
 
 // HAL
-#include "spi.h"
 #include "buzzer.h"
+#include "spi.h"
+#include "sys_util.h"
 #include "timer.h"
 #include "uart.h"
-#include "sys_util.h"
 
 #ifdef HAVE_USB_SERIAL
 #include "usb_serial.h"
@@ -59,10 +59,12 @@
 #include "pin_control.h"
 #include "app_config.h"
 #include "temp.h"
+#include "temp_controller.h"
 #include "planner.h"
 #include "stepper.h"
 #include "motor_current_limit.h"
 
+// config
 #include "app_config.h"
 #include "config_pins.h"
 
@@ -79,7 +81,8 @@
 FATFS   fs;       /* Work area (file system object) for logical drive */
 #endif
 
-tTimer  temperatureTimer;
+volatile uint16_t activity_timer = 0;
+
 
 //
 // printer task
@@ -103,17 +106,19 @@ void app_SysTick(void)
 }
 
 //
-static void io_init(void)
+static void machine_init(void)
 {
   int axis;
 
   /* Extruder 0 */
-  ctc_init (&config.extruder_ctc[0]);
+  ctc_init_channel (&config.extruder_ctc[0]);
 
   //TODO: extruder 1
 
   /* Heated Bed */
-  ctc_init (&config.heated_bed_ctc);
+  ctc_init_channel (&config.heated_bed_ctc);
+
+  ctc_init();
 
   /* setup stepper axes */
   
@@ -142,16 +147,8 @@ static void io_init(void)
         motor_current_set (axis, 0.25);
     }
   }
-  
-
-  adc_init(); // [hal]
 }
 
-void temperatureTimerCallback (tTimer *pTimer)
-{
-  /* Manage the temperatures */
-  temp_tick();
-}
 
 
 static void check_boot_request (void)
@@ -171,21 +168,6 @@ static void PrinterInit (void)
 //TODO: what are the order of dependencies here? 
   app_config_set_defaults();	// <-- sets default IO pins - buzzer, lcd, ?
 
-  // initialise some drivers useful for debugging
-  buzzer_init (config.buzzer_pin);	// [hal: requires io pins]
-
-  // initialize low-level USB serial and UART drivers [hal]
-  _sys_init_devices();
-
-  // open standard files
-  lw_initialise();
-
-  dbg_init();	// [requires io pins (uart)?]
-
-  /* initialize SPI for SDCard */
-  spi_configure (config.spi_sck0, config.spi_mosi0, config.spi_miso0, config.spi_ssel0);
-  spi_init(config.sd_spi_channel);
-
 #ifdef HAVE_FILESYSTEM
   /* Register a work area for logical drive 0 */
   res = f_mount(0, &fs);
@@ -194,23 +176,20 @@ static void PrinterInit (void)
   else  
   {
     // read_config will use SPI and a message output (control interface or debug)	//TODO?
-    
     app_config_read(); // <-- sets IO pins - buzzer, lcd, ?
     
-    // re-init if changed
-//!    buzzer_init (config.buzzer_pin);
+    // re-init if changed?
+    //!    buzzer_init (config.buzzer_pin);
   }
 #endif
 
   // init devices?
 
-  // set up inputs and outputs
-  io_init();
+  // set up motors etc
+  machine_init();
 
   //TODO: CTC
-  AddSlowTimer (&temperatureTimer);
-  StartSlowTimer (&temperatureTimer, 10, temperatureTimerCallback);
-  temperatureTimer.AutoReload = 1;
+
 
 }
 
@@ -277,13 +256,13 @@ void printer_task_poll( void *pvParameters )
       //    host has stopped without clean up, or user has just forgot to turn things off.
        
       /* If there is no activity during 30 seconds, power off the machine */
-      if (steptimeout > (30 * 1000/DELAY1))
+      if (activity_timer > (30 * 1000/DELAY1))
       {
         atx_power_off();
       }
       else
       {
-        steptimeout++;
+        activity_timer++;
       }
     }
 

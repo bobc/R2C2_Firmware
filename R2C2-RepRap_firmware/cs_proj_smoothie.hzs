@@ -33,11 +33,6 @@
   <ProjectSessionItem path="cs_proj" name="unnamed" />
   <ProjectSessionItem path="cs_proj;cs_proj" name="unnamed" />
   <ProjectSessionItem path="cs_proj;cs_proj;app_reprap" name="unnamed" />
-  <ProjectSessionItem path="cs_proj;cs_proj;arch_hal" name="unnamed" />
-  <ProjectSessionItem path="cs_proj;cs_proj;arch_lpc17xx" name="unnamed" />
-  <ProjectSessionItem path="cs_proj;cs_proj;arch_lpc17xx;LPCUSB" name="unnamed" />
-  <ProjectSessionItem path="cs_proj;cs_proj;arch_lpc17xx_drivers" name="unnamed" />
-  <ProjectSessionItem path="cs_proj;cs_proj;lib_R2C2" name="unnamed" />
   <ProjectSessionItem path="cs_proj;cs_proj;Source Files" name="unnamed" />
  </Project>
  <Register1>
@@ -110,7 +105,7 @@
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\libraries\FatFs\src\ff.c" y="2731" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\libraries\FatFs\src\ff.c" left="0" selected="0" name="unnamed" top="2714" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="14" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp_controller.c" y="53" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp_controller.c" left="0" selected="0" name="unnamed" top="29" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\pin_control.c" y="0" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\pin_control.c" left="0" selected="0" name="unnamed" top="40" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.c" y="185" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.c" left="0" selected="1" name="unnamed" top="39" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="49" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.c" y="198" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.c" left="0" selected="1" name="unnamed" top="0" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\hal\uart.c" y="661" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\hal\uart.c" left="0" selected="0" name="unnamed" top="627" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="34" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\LPCUSB\inc\usb_serial.h" y="45" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\LPCUSB\inc\usb_serial.h" left="0" selected="0" name="unnamed" top="25" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="28" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\LPCUSB\src\usb_serial.c" y="83" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\LPCUSB\src\usb_serial.c" left="0" selected="0" name="unnamed" top="0" />
@@ -118,7 +113,7 @@
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\endstops.c" y="0" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\endstops.c" left="0" selected="0" name="unnamed" top="30" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\gcode_process.c" y="1031" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\gcode_process.c" left="0" selected="0" name="unnamed" top="78" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\Drivers\source\lpc17xx_gpio.c" y="354" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\lpc17xx\Drivers\source\lpc17xx_gpio.c" left="0" selected="0" name="unnamed" top="336" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.h" y="0" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.h" y="0" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\app\temp.h" left="0" selected="0" name="unnamed" top="28" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\board\smoothieboard\config_pins.h" y="82" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\board\smoothieboard\config_pins.h" left="0" selected="0" name="unnamed" top="50" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="arch\hal\adc.h" y="0" path="arch\hal\adc.h" left="0" selected="0" name="unnamed" top="14" />
   <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\board\r2c2\config_pins.h" y="76" path="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\board\r2c2\config_pins.h" left="0" selected="0" name="unnamed" top="72" />

@@ -30,18 +30,24 @@
 #include "rtos_api.h"
 
 /* lib_HAL */
+#include "adc.h"
 #include "buzzer.h"
+#include "spi.h"
 #include "sys_util.h"
-#include "uart.h"
 #include "timer.h"
+#include "uart.h"
 
 /* lib_r2c2 */
 #include "debug.h"
 #include "lw_io.h"
+#include "lw_syscalls.h"
 #include "soundplay.h"
 
 // app
 #include "printer_task.h"
+
+// board config
+#include "config_pins.h"
 
 //TODO:
 
@@ -94,6 +100,41 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName
 #else
 #endif
 
+void hal_init(void)
+{
+  sys_initialise();
+
+#if !defined(USE_FREERTOS)
+  timer_init(); // start millisecond timers/callback
+#endif
+
+  adc_init();
+
+  // initialise some drivers useful for debugging
+  buzzer_init (PinDef (BUZZER_PORT, BUZZER_PIN_NUMBER,0,0) );	// [hal: requires io pins]
+}
+
+void lib_printer_init (void)
+{
+  tPinDef sd_spi_sck  = SD_SPI_SCK ;
+  tPinDef sd_spi_mosi = SD_SPI_MOSI; 
+  tPinDef sd_spi_miso = SD_SPI_MISO; 
+  tPinDef sd_spi_ssel = SD_SPI_SSEL;
+
+  // initialize low-level USB serial and UART drivers [hal]
+  _sys_init_devices();
+
+  // open standard files
+  lw_initialise();
+
+  dbg_init();	// [requires io pins (uart)?]
+  
+  // if filesystem?
+  /* initialize SPI for SDCard */
+  spi_configure (sd_spi_sck, sd_spi_mosi, sd_spi_miso, sd_spi_ssel);
+  spi_init(SD_SPI_CHANNEL);
+}
+
 /**********************************************************************
  * @brief	Main sub-routine
  **********************************************************************/
@@ -101,16 +142,13 @@ int main(void)
 {
   LW_RTOS_RESULT res;
 
-  //TODO: hal_init ();
-  sys_initialise();
+  hal_init();
 
-//TODO	
+  //TODO	
   DBG_INIT();
   DBGF ("init\n");
 
-#if !defined(USE_FREERTOS)
-  timer_init(); // start millisecond timers/callback
-#endif
+  lib_printer_init();
 
   /* Create the main system task. 
   *  NB if using FreeRTOS: our system timer tick is called from FreeRTOS timer tick, which only runs after scheduler has started.

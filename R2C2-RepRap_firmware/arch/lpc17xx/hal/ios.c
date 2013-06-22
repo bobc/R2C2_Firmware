@@ -61,25 +61,37 @@ uint32_t digital_read(uint8_t portNum, uint32_t bitMask)
 // Using tPinDef
 //
 
+tPinDef   PinDef (uint8_t port, uint8_t pin_number, uint8_t modes, uint8_t function)
+{
+  tPinDef result;
+  result.port = port;
+  result.pin_number = pin_number;
+  result.modes = modes;
+  result.function = function;
+  return result;
+}
+
 void      set_pin_mode (tPinDef pin, uint8_t dir)
 {
   if (pin.port != UNDEFINED_PORT)
     FIO_SetDir(pin.port, _BV(pin.pin_number), dir);
 }
 
+
+
 uint32_t  read_pin (tPinDef pin)
 {
   if (pin.port == UNDEFINED_PORT)
     return 0;
   else
-    return ((FIO_ReadValue(pin.port) & _BV(pin.pin_number)) ? 1 : 0 ) ^ pin.active_low;
+    return ((FIO_ReadValue(pin.port) & _BV(pin.pin_number)) ? 1 : 0 ) ^ pin_is_active_low(pin.modes);
 }
 
 void  write_pin (tPinDef pin, uint8_t state)
 {
   if (pin.port != UNDEFINED_PORT)
   {
-    if (state ^ pin.active_low)
+    if (state ^ pin_is_active_low (pin.modes))
       FIO_SetValue (pin.port, _BV(pin.pin_number));
     else
       FIO_ClearValue (pin.port, _BV(pin.pin_number));

@@ -1,6 +1,6 @@
-/* Copyright (C) 2009-2010 Michael Moon aka Triffid_Hunter   */
-/* Copyright (c) 2011 Jorge Pinto - casainho@gmail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -26,40 +26,21 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#ifndef	_TEMP_H
-#define	_TEMP_H
+#ifndef _THERMISTOR_TABLE_H
+#define _THERMISTOR_TABLE_H
 
+//#include "temp.h"
 
-#include <stdint.h>
-#include <stdbool.h>
-
-#include "thermistor_tables.h"
-
-#define EXTRUDER_0                      0
-#define HEATED_BED_0                    1
-
-typedef struct {
-    uint16_t adc_value; 
-    uint16_t temperature;
-    } tTempLookupEntry; 
+#define NUMBER_OF_SENSORS               2
+#define NUM_TEMPS                       31
 
 
-//extern tTempLookupEntry temptable[NUMBER_OF_SENSORS][NUM_TEMPS];
-
-extern uint16_t current_temp [NUMBER_OF_SENSORS];
 
 
-// --------------------------------
-void temp_init (void);
-
-// return filtered temperature reading
-uint16_t temp_get (uint8_t sensor_number);
-
-// 
-bool      temp_set_table_entry (uint8_t sensor_number, uint16_t temp, uint16_t adc_val);
-uint16_t  temp_get_table_entry (uint8_t sensor_number, uint16_t temp);
-
-
-#endif	/* _TIMER_H */
+#endif

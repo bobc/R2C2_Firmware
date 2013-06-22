@@ -46,17 +46,25 @@
 #define INACTIVE     0
 #define ACTIVE       1
 
-// modes: polarity
+// modes
+ 
+// polarity
 #define ACTIVE_HIGH 0x00
 #define ACTIVE_LOW  0x01
 
 #define PULLUP_DISABLE  0x00
 #define PULLUP_ENABLE   0x02
 
+// functions
+#define PIN_FUNCTION_DEFAULT  0x00
+#define PIN_FUNCTION_ALT1     0x01
+#define PIN_FUNCTION_ALT2     0x02
+#define PIN_FUNCTION_ALT3     0x03
+
 
 // create a struct initialiser
-#define PIN_DEF(port,pin,polarity) {(port),(pin),(polarity),0}
-#define PIN_DEF_EX(port,pin,polarity,function) {(port),(pin),(polarity),(function)}
+#define PIN_DEF(port,pin,modes) {(port),(pin),(modes),0}
+#define PIN_DEF_EX(port,pin,modes,function) {(port),(pin),(modes),(function)}
 
 // special pin defs
 #define UNDEFINED_PORT         0xFF
@@ -98,7 +106,7 @@ typedef struct
   uint8_t port;
   uint8_t pin_number;
   // TODO: modes bitmask
-  uint8_t active_low;   // polarity:1
+  uint8_t modes;            // active_low;   // polarity:1
   // pullups, mode etc
   // alt func
   uint8_t function;
@@ -111,6 +119,9 @@ void      pin_mode      (uint8_t portNum, uint32_t bitMask, uint8_t dir);
 uint32_t  digital_read  (uint8_t portNum, uint32_t bitMask);
 void      digital_write (uint8_t portNum, uint32_t bitMask, uint8_t state);
 
+#define pin_is_active_low(modes) (((modes) & ACTIVE_LOW) ? 1 : 0)
+
+tPinDef   PinDef (uint8_t port, uint8_t pin_number, uint8_t modes, uint8_t function);
 
 void      set_pin_mode (tPinDef pin, uint8_t dir);
 uint32_t  read_pin     (tPinDef pin);

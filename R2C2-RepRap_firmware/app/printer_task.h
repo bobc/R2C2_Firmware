@@ -30,6 +30,10 @@
 #define	_PRINTER_TASK_H
 
 
+// activity_timer is set to zero by any activity, and is incremented when machine is idle. After a period of inactivity
+// the motors may be disabled, and optionally PSU put into standby
+extern volatile uint16_t activity_timer;
+
 void printer_task_init ( void *pvParameters );
 void printer_task_poll ( void *pvParameters );
 
