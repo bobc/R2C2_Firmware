@@ -94,10 +94,10 @@
 #define BOOT_SW_PIN_NUMBER              29
 
 // SPI
-#define SPI_SSEL0                       PIN_DEF (0,16,ACTIVE_HIGH)
-#define SPI_SCK0                        PIN_DEF (0,15,ACTIVE_HIGH)
-#define SPI_MISO0                       PIN_DEF (0,17,ACTIVE_HIGH)
-#define SPI_MOSI0                       PIN_DEF (0,18,ACTIVE_HIGH)
+#define SD_SPI_SSEL                       PIN_DEF (0,16,ACTIVE_HIGH)
+#define SD_SPI_SCK                        PIN_DEF (0,15,ACTIVE_HIGH)
+#define SD_SPI_MISO                       PIN_DEF (0,17,ACTIVE_HIGH)
+#define SD_SPI_MOSI                       PIN_DEF (0,18,ACTIVE_HIGH)
 #define SD_SPI_CHANNEL                  0
 
 #define CFG_HAVE_DIGIPOT                0
