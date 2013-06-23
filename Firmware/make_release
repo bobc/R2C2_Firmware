@@ -25,8 +25,8 @@ echo "You are on: "$branch
 if [ "$1" == "" ] ; then
   echo "Usage: make_release x.y.z"
 else
-  echo "copying bin file to ../releases/R2C2_RepRap_firmware_v$1-rc.bin" 
-  cp FLASH_RUN/project.bin ../releases/R2C2_RepRap_firmware_v$1-rc.bin
+  echo "copying bin file to ../releases/firmware_v$1-rc.bin" 
+  cp FLASH_RUN/project.bin ../releases/firmware_v$1-rc.bin
 fi
 
 

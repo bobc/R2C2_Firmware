@@ -19,6 +19,8 @@
 #include "debug.h"
 #include "type.h"
 
+#include "config_pins.h"
+
 // If COMPUTE_BINARY_CHECKSUM is defined, then code will check that checksum
 // contained within binary image is valid.
 //#define COMPUTE_BINARY_CHECKSUM
@@ -130,8 +132,8 @@ void write_data(unsigned cclk, unsigned dst, void * flash_data_buf, unsigned cou
   param_table[4] = cclk;
 
   // for debug, print the address and number of bytes
-  DBG("Writting address: %d -- ", param_table[1]);
-  DBG("Nr bytes: %d\n", param_table[3]);
+  DBG("Writing address: %lx -- %d bytes", param_table[1], param_table[3]);
+  //DBG("Nr bytes: %d\n", param_table[3]);
 
   iap_entry(param_table,result_table);
   __enable_irq();
@@ -245,18 +247,18 @@ void check_isp_entry_pin (void)
 {
   /* Configure bootloader IO button P4.29 */
   PINSEL_CFG_Type pin;
-  pin.Portnum = 4;
-  pin.Pinnum = 29;
+  pin.Portnum = BOOT_BUTTON_PORT;
+  pin.Pinnum = BOOT_BUTTON_PIN;
   pin.Funcnum = PINSEL_FUNC_0;
   pin.Pinmode = PINSEL_PINMODE_PULLUP;
   pin.OpenDrain = PINSEL_PINMODE_NORMAL;
   PINSEL_ConfigPin(&pin);
 
   /* set as input */
-  GPIO_SetDir(4, (1<<29), 0);
+  GPIO_SetDir(BOOT_BUTTON_PORT, (1<<BOOT_BUTTON_PIN), 0);
 
   /* Verify if bootloader pin is activated */
-  if(GPIO_ReadValue(4) & (1<<29))
+  if(GPIO_ReadValue(BOOT_BUTTON_PORT) & (1<<BOOT_BUTTON_PIN))
   {
     execute_user_code();
   }

@@ -31,26 +31,29 @@
 #include "lpc17xx_uart.h"
 #include "lpc17xx_pinsel.h"
 
+#include "config_pins.h"
+
 void uart_init(void)
 {
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;
 	// UART FIFO configuration Struct variable
 	UART_FIFO_CFG_Type UARTFIFOConfigStruct;
-	// Pin configuration for UART3
+	// Pin configuration for UART
 	PINSEL_CFG_Type PinCfg;
 
 	/*
-	* Initialize UART3 pin connect: P4.28 -> TXD3; P4.29 -> RXD3
+	* Initialize UART pin connect: 
+	* P4.28 -> TXD3; P4.29 -> RXD3
 	* P0.2 -> TXD0, P0.3 -> RXD0
 	*/
 	PinCfg.Funcnum = PINSEL_FUNC_1;
 	PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
 	PinCfg.Pinmode = PINSEL_PINMODE_PULLUP;
-	PinCfg.Portnum = 0;
-	PinCfg.Pinnum = 2;
+	PinCfg.Portnum = DBG_UART_PORT;
+	PinCfg.Pinnum = DBG_UART_TX_PIN;
 	PINSEL_ConfigPin(&PinCfg);
-	PinCfg.Pinnum = 3;
+	PinCfg.Pinnum = DBG_UART_RX_PIN;
 	PINSEL_ConfigPin(&PinCfg);
 
 	/* Initialize UART Configuration parameter structure to default state:
@@ -63,7 +66,7 @@ void uart_init(void)
 	UARTConfigStruct.Baud_rate = 57600;
 
 	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init((LPC_UART_TypeDef *)LPC_UART0, &UARTConfigStruct);
+	UART_Init((LPC_UART_TypeDef *)DBG_UART, &UARTConfigStruct);
 
 	/* Initialize FIFOConfigStruct to default state:
 	*                              - FIFO_DMAMode = DISABLE
@@ -75,26 +78,26 @@ void uart_init(void)
 	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
 	// Initialize FIFO for UART3 peripheral
-	UART_FIFOConfig((LPC_UART_TypeDef *)LPC_UART0, &UARTFIFOConfigStruct);
+	UART_FIFOConfig((LPC_UART_TypeDef *)DBG_UART, &UARTFIFOConfigStruct);
 
 	// Enable UART Transmit
-	UART_TxCmd((LPC_UART_TypeDef *)LPC_UART0, ENABLE);
+	UART_TxCmd((LPC_UART_TypeDef *)DBG_UART, ENABLE);
 }
 
 char uart_data_available(void)
 {
-	return (LPC_UART0->LSR & UART_LSR_RDR);
+	return (DBG_UART->LSR & UART_LSR_RDR);
 }
 
 char uart_receive(void)
 {
-	return (UART_ReceiveByte((LPC_UART_TypeDef *)LPC_UART0));
+	return (UART_ReceiveByte((LPC_UART_TypeDef *)DBG_UART));
 }
 
 void uart_send(char byte)
 {
-	while (!(LPC_UART0->LSR & UART_LSR_THRE)) ;
-	UART_SendByte((LPC_UART_TypeDef *)LPC_UART0, byte);
+	while (!(DBG_UART->LSR & UART_LSR_THRE)) ;
+	UART_SendByte((LPC_UART_TypeDef *)DBG_UART, byte);
 }
 
 void serial_writestr(unsigned char *data)

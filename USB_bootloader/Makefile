@@ -104,9 +104,13 @@ USE_THUMB_MODE = YES
 # - MCU used for compiler-option (-mcpu)
 # - SUBMDL used for linker-script name (-T) and passed as define
 # - BOARD just passed as define (don't used '-' characters)
+#BOARD    = r2c2
+#MCU      = cortex-m3
+#CHIP     = LPC1758
+
+BOARD    = smoothieboard
 MCU      = cortex-m3
-CHIP     = LPC1758
-BOARD    = USER
+CHIP     = LPC1769
 
 # *** This example only supports "FLASH_RUN" ***
 # RUN_MODE is passed as define and used for the linker-script filename,
@@ -126,19 +130,25 @@ VECTOR_TABLE_LOCATION=VECT_TAB_FLASH
 #VECTOR_TABLE_LOCATION=VECT_TAB_RAM
 
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.)
-OUTDIR = $(RUN_MODE)
+OUTDIR = FLASH_$(BOARD)
 
 # Target file name (without extension).
-TARGET = project
+TARGET = bootloader
 
 # Utility variables
-APPLIBDIR   = ../R2C2-RepRap_firmware/libraries
-ARCH_DIR    = ../R2C2-RepRap_firmware/arch/lpc17xx
+APPLIBDIR   = ../Firmware/libraries
+ARCH_DIR    = ../Firmware/arch/lpc17xx
+
+BOOT_ARCH_DIR = arch/lpc17xx
+BOOT_USB_DIR = arch/lpc17xx/LPCUSB
+
 INCLUDES = $(ARCH_DIR)/CMSISv1p30/inc \
 	 $(ARCH_DIR)/LPCUSB/inc \
 	 $(ARCH_DIR)/Drivers/include \
 	 $(APPLIBDIR)/FatFs/src \
-	 inc \
+	 $(BOOT_ARCH_DIR) \
+	 $(BOOT_USB_DIR) \
+	 board/$(BOARD)
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
@@ -156,17 +166,17 @@ SRC =	$(ARCH_DIR)/LPCUSB/src/usbcontrol.c \
 	$(ARCH_DIR)/Drivers/source/lpc17xx_ssp.c \
 	$(APPLIBDIR)/FatFs/src/ff.c \
 	$(APPLIBDIR)/FatFs/src/fattime.c \
-	main.c	\
-	blockdev_sd.c \
-	blockdev_fat.c \
-	msc_bot.c \
-	msc_scsi.c \
-	msc_usb_start.c \
-	sbl_iap.c \
-	spi.c \
+	main.c \
 	debug.c \
-	uart.c \
-	ios.c
+	$(BOOT_USB_DIR)/blockdev_sd.c \
+	$(BOOT_USB_DIR)/blockdev_fat.c \
+	$(BOOT_USB_DIR)/msc_bot.c \
+	$(BOOT_USB_DIR)/msc_scsi.c \
+	$(BOOT_USB_DIR)/msc_usb_start.c \
+	$(BOOT_ARCH_DIR)/sbl_iap.c \
+	$(BOOT_ARCH_DIR)/spi.c \
+	$(BOOT_ARCH_DIR)/uart.c \
+	$(BOOT_ARCH_DIR)/ios.c
 
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files
@@ -189,7 +199,7 @@ CPPSRCARM =
 # Even though the DOS/Win* filesystem matches both .s and .S the same,
 # it will preserve the spelling of the filenames, and gcc itself does
 # care about how the name is spelled on its command-line.
-ASRC = startup_LPC17xx.S
+ASRC = $(BOOT_ARCH_DIR)/startup_LPC17xx.S
 
 # List Assembler source files here which must be assembled in ARM-Mode.
 ASRCARM  =
@@ -223,7 +233,7 @@ EXTRA_LIBS =
 BUILDONCHANGE = Makefile
 
 # Path to linker-scripts (see -T option)
-LINKERSCRIPTPATH = .
+LINKERSCRIPTPATH = $(BOOT_ARCH_DIR)
 
 # List any directories with files included from linker-scripts.
 #    Each directory must be seperated by a space.
@@ -249,7 +259,7 @@ EXTRA_LIBDIRS =
 #OPT = 1
 #OPT = 2
 #OPT = 3
-OPT = 0
+OPT = s
 
 # Debugging format.
 #DEBUG = stabs
@@ -585,7 +595,7 @@ endif
 	@echo "  LINK  " $@
 # use $(CC) for C-only projects or $(CPP) for C++-projects:
 ifeq "$(strip $(CPPSRC)$(CPPARM))" ""
-	@$(CC) $(THUMB) $(CFLAGS) $(ALLOBJ) --output $@ -nostartfiles $(LDFLAGS)
+	$(CC) $(THUMB) $(CFLAGS) $(ALLOBJ) --output $@ -nostartfiles $(LDFLAGS)
 else
 	@$(CPP) $(THUMB) $(CFLAGS) $(ALLOBJ) --output $@ $(LDFLAGS)
 endif
