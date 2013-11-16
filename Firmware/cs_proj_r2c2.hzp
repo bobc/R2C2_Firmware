@@ -68,6 +68,7 @@
       <file file_name="libraries/R2C2/nk_heap.c"/>
       <file file_name="libraries/R2C2/mcp4451.c"/>
       <file file_name="libraries/R2C2/motor_current_limit.c"/>
+      <file file_name="libraries/R2C2/buzzer.c"/>
     </folder>
     <folder Name="app_reprap">
       <file file_name="app/alerter.c"/>
@@ -107,21 +108,20 @@
       </file>
     </folder>
     <folder Name="lib_lwip"/>
-    <folder Name="arch_hal">
+    <folder Name="arch_hal" file_name="">
       <file file_name="arch/hal/str_buffer.c"/>
       <file file_name="arch/lpc17xx/hal/adc.c"/>
       <file file_name="arch/lpc17xx/hal/ios.c"/>
       <file file_name="arch/lpc17xx/hal/spi.c"/>
-      <file file_name="arch/lpc17xx/hal/uart.c"/>
       <file file_name="arch/hal/timer.c"/>
       <file file_name="arch/lpc17xx/hal/timer_lld.c"/>
       <file file_name="arch/lpc17xx/hal/pwm.c"/>
       <file file_name="arch/hal/sys_util.c"/>
       <file file_name="arch/lpc17xx/hal/sys_util_lld.c"/>
-      <file file_name="arch/hal/buzzer.c"/>
       <file file_name="arch/hal/hal.c"/>
       <file file_name="arch/hal/i2c.c"/>
       <file file_name="arch/lpc17xx/hal/i2c_lld.c"/>
+      <file file_name="arch/lpc17xx/hal/hal_uart.c"/>
     </folder>
     <folder Name="arch_lpc17xx">
       <file file_name="arch/lpc17xx/startup.S"/>
