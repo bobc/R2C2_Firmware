@@ -1,5 +1,6 @@
-/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -25,55 +26,38 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#include "hal_uart.h"
+#ifndef _CONFIG_HAL_H
+#define _CONFIG_HAL_H
 
-#include "rtos_api.h"
+// --------------------------------------------------------------------------
+// Includes
+// --------------------------------------------------------------------------
 
-#include "gcode_parse.h"
-#include "gcode_task.h"
-#include "eth_shell_task.h"
+// Do not include anything here!
 
-#include "enc28j60.h"
+// --------------------------------------------------------------------------
+// Defines
+// --------------------------------------------------------------------------
 
-#define DBG uart_writestr
+#define F_CPU 84000000 /* 84 MHz */
 
-static volatile tLineBuffer LineBuf;
-static tGcodeInputMsg GcodeInputMsg;
+//! Enable the UART
+#define CFG_HAL_USE_UART	TRUE
 
-void eth_shell_task_init ( void *pvParameters )
-{
-    // TASK INIT
-    //NetInit();
+#define CFG_HAL_USE_UART0   TRUE
+#define CFG_HAL_USE_UART1   FALSE
+#define CFG_HAL_USE_UART2   FALSE
+#define CFG_HAL_USE_UART3   FALSE
 
-    GcodeInputMsg.pLineBuf = &LineBuf;
+// --------------------------------------------------------------------------
+//
+// --------------------------------------------------------------------------
 
-    // say hi to host
-    //serial_writestr("Start\r\nOK\r\n");
-}
-
-void eth_shell_task_poll ( void *pvParameters )
-{
-    uint8_t c;
-    eParseResult parse_result;
-
-    // no-op
-
-}
-
-void EthShellTask( void *pvParameters )
-{
-    (void) pvParameters; /* Just to prevent compiler warnings about the unused parameter. */
-
-    eth_shell_task_init (pvParameters);
-
-    // TASK BODY
-
-    // process received data
-    for( ;; )
-    {
-        eth_shell_task_poll (pvParameters);
-    }
-}
+#endif // _CONFIG_HAL_H
 

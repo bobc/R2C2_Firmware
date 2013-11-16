@@ -64,9 +64,13 @@ void disable_all_axes (void);
 #define e_unstep_fast() axis_unstep(E_AXIS)
 
 
-// aux power header (J24)
-#define extruder_fan_on()     write_pin(config.extruder_ctc[0].pin_cooler, ENABLE);
-#define extruder_fan_off()    write_pin(config.extruder_ctc[0].pin_cooler, DISABLE);
+// TODO: aux outputs
+#define aux_output_on(index)     write_pin(config.aux_output[index].pin_output, ENABLE);
+#define aux_output_off(index)    write_pin(config.aux_output[index].pin_output, DISABLE);
+
+
+#define extruder_fan_on()   aux_output_on(0)  
+#define extruder_fan_off()  aux_output_off(0)    
 
 
 // other functions

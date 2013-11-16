@@ -80,8 +80,20 @@ typedef struct
 
   int32_t dir_invert;     // reverse direction of movement, same effect as setting active low/high on direction pin
   
-  // IO pin configuration
+  bool    have_min_limit;
+  bool    have_max_limit;
+  
+  int32_t motor_index;    // motors attached to this axis (TODO: geometries)
 
+  // IO pin configuration
+  tPinDef pin_min_limit;
+  tPinDef pin_max_limit;
+  
+} tAxisSettings;
+
+
+typedef struct 
+{
   // step, dir, enable, reset
   // polarity: active low/high
   // pulse len low,high
@@ -90,13 +102,7 @@ typedef struct
   tPinDef pin_enable;
   tPinDef pin_reset;
 
-  bool    have_min_limit;
-  bool    have_max_limit;
-  
-  tPinDef pin_min_limit;
-  tPinDef pin_max_limit;
-  
-} tAxisSettings;
+} tMotorDriverSettings;
 
 typedef struct {
     // e.g. heater output, fan
@@ -113,6 +119,7 @@ typedef struct {
     // type: adc, thermocouple
     tPinDef pin;
     int     adc_channel;
+    int     table_index;
 
 } tSensorInput;
 
@@ -125,13 +132,21 @@ typedef struct
     tPinDef   pin_heater;   // pindef includes polarity
 
     // cooling output
-    tPinDef pin_cooler;
+//!    tPinDef pin_cooler;
 
     // ** input sensor index
-    tPinDef pin_temp_sensor;
-    int     sensor_adc_channel;
+    int     sensor_index;
+
+//    tPinDef pin_temp_sensor;
+//    int     sensor_adc_channel;
 
 } tCtcSettings;
+
+typedef struct
+{
+    tPinDef pin_output;
+
+} tAuxOutput;
 
 // configuration for system
 typedef struct
@@ -141,13 +156,17 @@ typedef struct
 
   // axis/motor control    
   int32_t       num_axes;
-  tAxisSettings axis[MAX_AXES];
+  tAxisSettings        axis [CFG_MAX_AXES];
+  tMotorDriverSettings motor_driver [CFG_MAX_MOTORS];
+
   tPinDef       pin_all_steppers_reset;
 
   int32_t       have_digipot;
   int32_t       digipot_i2c_channel;
   tPinDef       digipot_i2c_scl;
   tPinDef       digipot_i2c_sda;
+
+  tAuxOutput    aux_output [CFG_MAX_AUX_OUTPUTS];
 
   // machine control
   double  acceleration;   // global default
@@ -185,7 +204,7 @@ typedef struct
   // input buttons
   // buttons - direct, active low
   // on shift reg etc
-  tPinDef interface_cp_btn_pin [MAX_BUTTONS];
+  tPinDef interface_cp_btn_pin [CFG_MAX_BUTTONS];
 
   // TCP/IP - ethernet
   int32_t interface_tcp_ip_enabled;
@@ -217,11 +236,15 @@ typedef struct
   // more machine config  
   // The following are specific to printers
 
-  int32_t num_extruders;
-  // pin config for extruder temperature control 
-  tCtcSettings extruder_ctc [MAX_EXTRUDERS];
+  int32_t num_sensors;
+  tSensorInput sensor [CFG_MAX_SENSORS];
 
-  // pin config for heated bed temperature control
+  int32_t num_extruders;
+
+  // config for extruder temperature control 
+  tCtcSettings extruder_ctc [CFG_MAX_EXTRUDERS];
+
+  // config for heated bed temperature control
   tCtcSettings heated_bed_ctc;
 
   // dump pos

@@ -39,7 +39,6 @@
 #include   <ctype.h>  // for tolower
 
 //HAL
-#include "buzzer.h"
 #include "ios.h"
 #include "sys_util.h"
 #include "timer.h"
@@ -48,6 +47,7 @@
 
 // lib_r2c2
 //#include "debug.h"
+#include "buzzer.h"
 #include "lw_io.h"
 #include "soundplay.h"
 
@@ -899,13 +899,13 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
           }
           else
           {
-            ctc_set_target_temp (EXTRUDER_0, gcode_command.S);
+            ctc_set_target_temp (CTC_EXTRUDER_0, gcode_command.S);
             result = enqueue_wait_for_temperatures( _BV(WE_WAIT_TEMP_EXTRUDER_0) );
           }
         }
         else
         {
-          ctc_set_target_temp (EXTRUDER_0, gcode_command.S);
+          ctc_set_target_temp (CTC_EXTRUDER_0, gcode_command.S);
         }
       }
       break;
@@ -916,22 +916,29 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
         uint16_t extruder0_temp;
         uint16_t heated_bed_temp;
 
-        extruder0_temp = temp_get (EXTRUDER_0);
-        heated_bed_temp = temp_get (HEATED_BED_0);
+        extruder0_temp = ctc_get_current_temp (CTC_EXTRUDER_0);
+        heated_bed_temp = ctc_get_current_temp (CTC_HEATBED_0);
 
-        lw_fprintf (pGcodeInputMsg->out_file, "ok T:%u.0 B:%u.0\r\n", extruder0_temp, heated_bed_temp); /* for RepRap software */
+//        lw_fprintf (pGcodeInputMsg->out_file, "ok T:%u.0 B:%u.0\r\n", extruder0_temp, heated_bed_temp); /* for RepRap software */
+
+        lw_fprintf (pGcodeInputMsg->out_file, "ok T:%u.0 B:%u.0 %u %u\r\n", extruder0_temp, heated_bed_temp,
+          temp_get_raw(0), temp_get_raw(1)
+          ); /* for RepRap software */
+
         reply_sent = true;
       }
       break;
 
       // M106- fan on
       case 106:
-      extruder_fan_on();
+        extruder_fan_on();
+        //aux_output_on (0);
       break;
       
       // M107- fan off
       case 107:
-      extruder_fan_off();
+        extruder_fan_off();
+        //aux_output_off (0);
       break;
 
       // M108 - set extruder speed
@@ -948,7 +955,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       case 109:
       if (config.enable_extruder_0)
       {
-        ctc_set_target_temp (EXTRUDER_0, gcode_command.S);
+        ctc_set_target_temp (CTC_EXTRUDER_0, gcode_command.S);
         result = enqueue_wait_for_temperatures(_BV(WE_WAIT_TEMP_EXTRUDER_0));
       }
       break;
@@ -1088,7 +1095,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
 
       /* M140 - Bed Temperature (Fast) */
       case 140:
-        ctc_set_target_temp(HEATED_BED_0, gcode_command.S);
+        ctc_set_target_temp(CTC_HEATBED_0, gcode_command.S);
       break;
 
       /* M141 - Chamber Temperature (Fast) */
@@ -1101,7 +1108,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
 
       // M190: Wait for bed temperature to reach target temp 
       case 190:
-        ctc_set_target_temp(HEATED_BED_0, gcode_command.S);
+        ctc_set_target_temp(CTC_HEATBED_0, gcode_command.S);
         result = enqueue_wait_for_temperatures(_BV(WE_WAIT_TEMP_HEATED_BED));
       break;
 
@@ -1125,7 +1132,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       }
       break;
 
-      // M200 - set steps per mm
+      // M200 - get/set steps per mm
       case 200:
       if ((gcode_command.seen_X | gcode_command.seen_Y | gcode_command.seen_Z | gcode_command.seen_E) == 0)
       {
@@ -1152,7 +1159,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       }
       break;
       
-      // M202 - set max speed in mm/min
+      // M202 - get/set max speed in mm/min
       case 202:
       if ((gcode_command.seen_X | gcode_command.seen_Y | gcode_command.seen_Z | gcode_command.seen_E) == 0)
       {
@@ -1177,7 +1184,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       }
       break;
 
-      // M206 - set accel in mm/sec^2
+      // M206 - get/set accel in mm/sec^2
       case 206:
       if ((gcode_command.seen_X | gcode_command.seen_Y | gcode_command.seen_Z | gcode_command.seen_E) == 0)
       {
@@ -1246,6 +1253,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       }
       break;
 
+#ifdef HAVE_BUZZER
       // M300 - beep
       // S: frequency
       // P: duration
@@ -1265,11 +1273,6 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       }  
       break;
       
-      case 301:
-      {
-      }
-      break;
-
       // Plays Music from command line:
       // Usage:
       //   M302 "music" P"tempo"
@@ -1284,6 +1287,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
         play_music_string(gcode_command.str_param);    
       }
       break;
+#endif
     
       case 401:
       	// reset
@@ -1291,30 +1295,32 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       break;
 
       // M500 - set/get adc value for temperature
+      // table 0
       // S: temperature (degrees C, 0-300)
       // P: ADC val
       case 500:
       if (gcode_command.seen_S && gcode_command.seen_P)
-        temp_set_table_entry (EXTRUDER_0, gcode_command.S, gcode_command.P);
+        temp_set_table_entry (0, gcode_command.S, gcode_command.P);
       else if (gcode_command.seen_S)
       {
         reply_sent = true;
-        lw_fprintf (pGcodeInputMsg->out_file, "ok [%d] = %d\r\n", gcode_command.S, temp_get_table_entry (EXTRUDER_0, gcode_command.S));
+        lw_fprintf (pGcodeInputMsg->out_file, "ok [%d] = %d\r\n", gcode_command.S, temp_get_table_entry (0, gcode_command.S));
       }
       else
         lw_fputs ("E: bad param\r\n", pGcodeInputMsg->out_file);
       break;
 
       // M501 - set/get adc value for temperature
+      // table 1
       // S: temperature (degrees C, 0-300)
       // P: ADC val
       case 501:
         if (gcode_command.seen_S && gcode_command.seen_P)
-          temp_set_table_entry (HEATED_BED_0, gcode_command.S, gcode_command.P);
+          temp_set_table_entry (1, gcode_command.S, gcode_command.P);
         else if (gcode_command.seen_S)
         {
           reply_sent = true;
-          lw_fprintf (pGcodeInputMsg->out_file, "ok [%d] = %d\r\n", gcode_command.S, temp_get_table_entry (HEATED_BED_0, gcode_command.S));
+          lw_fprintf (pGcodeInputMsg->out_file, "ok [%d] = %d\r\n", gcode_command.S, temp_get_table_entry (1, gcode_command.S));
         }
         else
           lw_fputs ("E: bad param\r\n", pGcodeInputMsg->out_file);

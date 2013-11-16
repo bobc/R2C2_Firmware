@@ -59,7 +59,7 @@
 #endif
 
 // lib_hal
-#include "uart.h"
+#include "hal_uart.h"
 #ifdef HAVE_USB_SERIAL
 #include "usb_serial.h"
 #endif
@@ -76,6 +76,10 @@ extern LW_FILE file_table [];
 
 #ifndef EBADF
 #define     EBADF 9
+#endif
+
+#ifndef EINVAL
+#define EINVAL  22
 #endif
 
 // this is a mini /dev
@@ -133,7 +137,7 @@ static tDeviceDesc Devices[] = {
 // TODO: dev_minor
 static tDriverDesc DriverTable[] = {
   
-  {0, uart_init, uart_send, uart_receive, uart_data_available}, 
+  {0, hal_uart_init, hal_uart_send, hal_uart_receive, hal_uart_data_available}, 
 
 #ifdef HAVE_USB_SERIAL   
   {1, usb_serial_init, usb_serial_writechar, usb_serial_popchar, usb_serial_rxchars}, // USB serial

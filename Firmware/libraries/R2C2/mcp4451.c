@@ -35,8 +35,6 @@
 // Includes
 // --------------------------------------------------------------------------
 
-#include "LPC17xx.h"
-
 #include "i2c.h"
 
 #include "app_config.h"

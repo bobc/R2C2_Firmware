@@ -38,7 +38,7 @@
 #include "spi.h"
 #include "sys_util.h"
 #include "timer.h"
-#include "uart.h"
+#include "hal_uart.h"
 
 #ifdef HAVE_USB_SERIAL
 #include "usb_serial.h"
@@ -106,17 +106,33 @@ void app_SysTick(void)
 }
 
 //
+void aux_init (uint8_t index)
+{
+    // set output pin
+    set_pin_mode (config.aux_output[index].pin_output, OUTPUT);
+    write_pin (config.aux_output[index].pin_output, DISABLE);
+}
+
+
+//
 static void machine_init(void)
 {
-  int axis;
+  int axis, j;
 
-  /* Extruder 0 */
-  ctc_init_channel (&config.extruder_ctc[0]);
+  // Note: the order of initialization is important
 
-  //TODO: extruder 1
+  for (j=0; j < CFG_MAX_AUX_OUTPUTS; j++)
+    aux_init (j);
+
 
   /* Heated Bed */
   ctc_init_channel (&config.heated_bed_ctc);
+
+  /* Extruders */
+  for (j=0; j < CFG_MAX_EXTRUDERS; j++)
+    ctc_init_channel (&config.extruder_ctc[j]);
+
+
 
   ctc_init();
 
@@ -132,21 +148,27 @@ static void machine_init(void)
   if (config.have_digipot)
     motor_current_init ();  
   
-  for (axis = 0; axis < MAX_AXES; axis++)
+  for (axis = 0; axis < CFG_MAX_AXES; axis++)
   {
     if (config.axis [axis].is_configured)
     {
-      set_pin_mode (config.axis [axis].pin_step, OUTPUT);
-      set_pin_mode (config.axis [axis].pin_dir, OUTPUT);
-      set_pin_mode (config.axis [axis].pin_enable, OUTPUT);
-      
-      set_pin_mode (config.axis [axis].pin_min_limit, INPUT);
-    
-      // could be shared?
-      axis_enable(axis);
+      unsigned motor = config.axis [axis].motor_index;
 
-      if (config.have_digipot)
-        motor_current_set (axis, 0.25);
+      if (motor != -1)
+      {
+        set_pin_mode (config.motor_driver [motor].pin_step, OUTPUT);
+        set_pin_mode (config.motor_driver [motor].pin_dir, OUTPUT);
+        set_pin_mode (config.motor_driver [motor].pin_enable, OUTPUT);
+      
+        set_pin_mode (config.axis [axis].pin_min_limit, INPUT);
+        set_pin_mode (config.axis [axis].pin_max_limit, INPUT);
+    
+        // could be shared?
+        axis_enable(axis);
+
+        if (config.have_digipot)
+          motor_current_set (axis, 0.25);
+      }
     }
   }
 }
@@ -268,7 +290,7 @@ void printer_task_poll( void *pvParameters )
       }
     }
 
-#ifdef USE_BOOT_BUTTON
+#ifdef CFG_APP_USE_BOOT_BUTTON
     // OPTION: enter bootloader on "Boot" button
     check_boot_request();
 #endif

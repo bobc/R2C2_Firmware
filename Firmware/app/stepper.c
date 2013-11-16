@@ -38,7 +38,8 @@
 
 #include "app_config.h"
 
-#define TICKS_PER_MICROSECOND (F_CPU/1000000)
+//#define TICKS_PER_MICROSECOND (F_CPU/1000000)
+#define TICKS_PER_MICROSECOND HAL_HW_TICKS_PER_MICROSECOND
 #define CYCLES_PER_ACCELERATION_TICK ((TICKS_PER_MICROSECOND*1000000)/ACCELERATION_TICKS_PER_SECOND)
 
 // Globals
@@ -135,17 +136,20 @@ static inline void  set_direction_pins (void)
 {
   int dir;
   
+  //TODO: performance?
+
   dir = (direction_bits & _BV(X_AXIS)) ? 0 : 1;
-  write_pin (config.axis[X_AXIS].pin_dir, dir ^ config.axis[X_AXIS].dir_invert);
+  write_pin (config.motor_driver[config.axis[X_AXIS].motor_index].pin_dir, dir ^ config.axis[X_AXIS].dir_invert);
   
   dir = (direction_bits & _BV(Y_AXIS)) ? 0 : 1;
-  write_pin (config.axis[Y_AXIS].pin_dir, dir ^ config.axis[Y_AXIS].dir_invert);
+  write_pin (config.motor_driver[config.axis[Y_AXIS].motor_index].pin_dir, dir ^ config.axis[Y_AXIS].dir_invert);
 
   dir = (direction_bits & _BV(Z_AXIS)) ? 0 : 1;
-  write_pin (config.axis[Z_AXIS].pin_dir, dir ^ config.axis[Z_AXIS].dir_invert);
+  write_pin (config.motor_driver[config.axis[Z_AXIS].motor_index].pin_dir, dir ^ config.axis[Z_AXIS].dir_invert);
 
+//TODO: multi extruder
   dir = (direction_bits & _BV(E_AXIS)) ? 0 : 1;
-  write_pin (config.axis[E_AXIS].pin_dir, dir ^ config.axis[E_AXIS].dir_invert);    
+  write_pin (config.motor_driver[config.axis[E_AXIS].motor_index].pin_dir, dir ^ config.axis[E_AXIS].dir_invert);    
 }
 
 // step selected pins (output set to 'active' state)
@@ -160,7 +164,7 @@ static inline void  set_step_pins (void)
       if (step_bits & _BV(axis))
       {
         inc_led_count (&led_count[axis], _BV(axis));
-        write_pin (config.axis[axis].pin_step, ACTIVE);
+        write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, ACTIVE);
       }
     }
   }
@@ -170,7 +174,7 @@ static inline void  set_step_pins (void)
     {
       if (step_bits & _BV(axis))
       {
-        write_pin (config.axis[axis].pin_step, ACTIVE);
+        write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, ACTIVE);
       }
     }
   
@@ -185,7 +189,7 @@ static inline void  clear_all_step_pins (void)
   
   for (axis=0; axis < NUM_AXES; axis++)
   {
-    write_pin (config.axis[axis].pin_step, INACTIVE);
+    write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
   }
 }
 
@@ -197,7 +201,7 @@ static inline void  clear_step_pins (void)
   for (axis=0; axis < NUM_AXES; axis++)
   {
     if (step_bits & _BV(axis))
-      write_pin (config.axis [axis].pin_step, INACTIVE);
+      write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
   }
 }
 
@@ -212,7 +216,7 @@ static inline void  clear_step_pins_by_state (void)
   for (axis=0; axis < NUM_AXES; axis++)
   {
     if ( (led_on & _BV(axis)) == 0)
-      write_pin (config.axis [axis].pin_step, INACTIVE);
+      write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
   }
 
 }
@@ -486,11 +490,11 @@ void st_interrupt (void)
       step_bits = 0;
       // TODO: multi_extruder
 
-      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_EXTRUDER_0)) && !ctc_temp_achieved(EXTRUDER_0))
+      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_EXTRUDER_0)) && !ctc_temp_achieved(CTC_EXTRUDER_0))
           reached_temps = false;
 //      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_EXTRUDER_1)) && !temp_achieved(EXTRUDER_1))
 //          reached_temps = false;
-      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_HEATED_BED)) && !ctc_temp_achieved(HEATED_BED_0))
+      if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_HEATED_BED)) && !ctc_temp_achieved(CTC_HEATBED_0))
           reached_temps = false;
 
       if (reached_temps)

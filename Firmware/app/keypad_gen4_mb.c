@@ -49,7 +49,7 @@
 
 void keypad_init (void)
 {
-    for (int j=0; j < MAX_BUTTONS; j++)
+    for (int j=0; j < CFG_MAX_BUTTONS; j++)
     {
       set_pin_mode (config.interface_cp_btn_pin[j], INPUT);
     }
@@ -63,7 +63,7 @@ uint16_t keypad_get_key_state (void)
 
     // get current states
     key_state = 0;
-    for (int j=0; j < MAX_BUTTONS; j++)
+    for (int j=0; j < CFG_MAX_BUTTONS; j++)
     {
       if (read_pin (config.interface_cp_btn_pin[j]))
         key_state |= _BV(j);

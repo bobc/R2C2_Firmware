@@ -103,8 +103,9 @@ USE_THUMB_MODE = YES
 #############################################################################
 # Define board
 # - BOARD 	also passed as define (don't used '-' characters)
+BOARD    = due
 #BOARD    = r2c2
-BOARD    = smoothieboard
+#BOARD    = smoothieboard
 
 # get MCU, CHIP, ARCH_FAMILY, 
 include board/${BOARD}/board.mk
@@ -130,7 +131,7 @@ VECTOR_TABLE_LOCATION=VECT_TAB_FLASH
 OUTDIR = FLASH_${BOARD}
 
 # Target file name (without extension).
-TARGET = project
+TARGET = firmware
 
 #############################################################################
 # FreeRTOS paths
@@ -183,6 +184,7 @@ APPSRC = \
 	$(APPDIR)/stepper.c \
 	$(APPDIR)/packed_gcode.c \
 	$(APPDIR)/temp.c \
+	$(APPDIR)/thermistor_tables.c \
 	$(APPDIR)/temp_controller.c \
 	$(APPDIR)/endstops.c \
 	$(APPDIR)/pin_control.c \
@@ -215,8 +217,23 @@ APPINC = $(APPDIR)
 APPLIBDIR = libraries
 
 APPLIBINC = $(APPLIBDIR)/R2C2/
-APPLIBSRC = $(wildcard $(APPLIBDIR)/R2C2/*.c)
+#APPLIBSRC = $(wildcard $(APPLIBDIR)/R2C2/*.c)
 
+APPLIBSRC = \
+    $(APPLIBDIR)/R2C2/config.c \
+    $(APPLIBDIR)/R2C2/debug.c \
+    $(APPLIBDIR)/R2C2/LiquidCrystal.c \
+    $(APPLIBDIR)/R2C2/lw_heap.c \
+    $(APPLIBDIR)/R2C2/lw_io.c \
+    $(APPLIBDIR)/R2C2/lw_queue.c \
+    $(APPLIBDIR)/R2C2/lw_rtos.c \
+    $(APPLIBDIR)/R2C2/lw_syscalls.c \
+    $(APPLIBDIR)/R2C2/lw_task.c \
+    $(APPLIBDIR)/R2C2/mcp4451.c \
+    $(APPLIBDIR)/R2C2/motor_current_limit.c \
+    $(APPLIBDIR)/R2C2/nk_heap.c \
+    $(APPLIBDIR)/R2C2/sermsg.c \
+    $(APPLIBDIR)/R2C2/sersendf.c
 
 ifeq ($(USE_FILESYSTEM),YES)
 APPLIBINC += $(APPLIBDIR)/FatFs/src 
@@ -232,13 +249,16 @@ APPLIBINC += $(APPLIBDIR)/ethernet/ \
 APPLIBSRC += $(wildcard $(APPLIBDIR)/ethernet/*.c)
 endif
 
+ifeq ($(USE_BUZZER),YES) 
+APPLIBSRC += $(APPLIBDIR)/R2C2/buzzer.c \
+    $(APPLIBDIR)/R2C2/soundplay.c
+endif
 
-	
 
 #############################################################################
 HALDIR = arch/hal
 HALINC = $(HALDIR)
-HALSRC = $(wildcard $(HALDIR)/*.c)
+HALSRC = $(filter-out %/hal_test.c, $(wildcard $(HALDIR)/*.c))
 
 #############################################################################
 include arch/$(ARCH_FAMILY)/platform.mk
@@ -283,7 +303,8 @@ CPPSRCARM =
 # care about how the name is spelled on its command-line.
 
 # ***
-ASRC = $(ARCHLIBDIR)/startup.S
+#ASRC = $(ARCHLIBDIR)/startup.S
+ASRC = $(ARCHLIB_ASRC)
 
 # List Assembler source files here which must be assembled in ARM-Mode.
 ASRCARM  = 
@@ -306,6 +327,10 @@ endif
 
 ifeq ($(USE_ETHERNET),YES)
 CDEFS += -DHAVE_ETHERNET
+endif
+
+ifeq ($(USE_BUZZER),YES)
+CDEFS += -DHAVE_BUZZER
 endif
 
 # Place project-specific -D and/or -U options for 
@@ -449,7 +474,7 @@ CDEFS += -D$(VECTOR_TABLE_LOCATION)
 ADEFS += -D$(VECTOR_TABLE_LOCATION)
 endif
 
-CDEFS += -D$(RUN_MODE) -D$(CHIP) -D$(BOARD)
+CDEFS += -D$(RUN_MODE) -D$(CHIP) -D$(BOARD) $(BOARD_FLAGS)
 ADEFS += -D$(RUN_MODE) -D$(CHIP) -D$(BOARD)
 
 
@@ -570,6 +595,7 @@ OBJDUMP = $(TCHAIN_PREFIX)objdump
 SIZE    = $(TCHAIN_PREFIX)size
 NM      = $(TCHAIN_PREFIX)nm
 REMOVE  = $(REMOVE_CMD) -f
+LD      = $(TCHAIN_PREFIX)g++ 
 
 # Define Messages
 # English
@@ -699,7 +725,8 @@ endif
 	@echo $(MSG_LINKING) $@
 # use $(CC) for C-only projects or $(CPP) for C++-projects:
 ifeq "$(strip $(CPPSRC)$(CPPARM))" ""
-	$(CC) $(THUMB) $(CFLAGS) $(ALLOBJ) --output $@ -nostartfiles $(LDFLAGS)
+#	$(CC) $(THUMB) $(CFLAGS) $(ALLOBJ) --output $@ -nostartfiles $(LDFLAGS)
+	$(CC) $(THUMB) $(CFLAGS) $(ALLOBJ) --output $@ $(LDFLAGS)
 else
 	$(CPP) $(THUMB) $(CFLAGS) $(ALLOBJ) --output $@ $(LDFLAGS)
 endif

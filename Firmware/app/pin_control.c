@@ -33,27 +33,37 @@
 
 void axis_enable    (unsigned axis)
 {
-  write_pin (config.axis [axis].pin_enable, ENABLE); 
+  unsigned motor = config.axis[axis].motor_index;
+
+  write_pin (config.motor_driver[motor].pin_enable, ENABLE); 
 }
 
 void axis_disable   (unsigned axis)
 {
-  write_pin (config.axis [axis].pin_enable, DISABLE); 
+  unsigned motor = config.axis[axis].motor_index;
+
+  write_pin (config.motor_driver[motor].pin_enable, DISABLE); 
 }
 
 void axis_step      (unsigned axis)
 {
-  write_pin (config.axis [axis].pin_step, ACTIVE); 
+  unsigned motor = config.axis[axis].motor_index;
+
+  write_pin (config.motor_driver[motor].pin_step, ACTIVE); 
 }
 
 void axis_unstep    (unsigned axis)
 {
-  write_pin (config.axis [axis].pin_step, INACTIVE); 
+  unsigned motor = config.axis[axis].motor_index;
+
+  write_pin (config.motor_driver[motor].pin_step, INACTIVE); 
 }
 
 void axis_set_direction (unsigned axis, unsigned dir)
 {
-  write_pin (config.axis [axis].pin_dir, dir);  // may be inverted by pin definition
+  unsigned motor = config.axis[axis].motor_index;
+
+  write_pin (config.motor_driver[motor].pin_dir, dir);  // may be inverted by pin definition
 }
 
 bool axis_min (unsigned axis)

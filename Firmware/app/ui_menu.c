@@ -711,19 +711,19 @@ void menu_poll (void)
             break;
         }
 
-        val = temp_get (EXTRUDER_0);
+        val = temp_get (config.extruder_ctc[0].sensor_index);
         lcd_setCursor (6,2);
         fserwrite_int32_wz (lcdf, val, 3, 0);
 
-        val = ctc_get_target_temp (EXTRUDER_0);
+        val = ctc_get_target_temp (CTC_EXTRUDER_0);
         lcd_setCursor (10,2);
         fserwrite_int32_wz (lcdf, val, 3, 0);
 
-        val = temp_get (HEATED_BED_0);
+        val = temp_get (config.heated_bed_ctc.sensor_index);
         lcd_setCursor (6,3);
         fserwrite_int32_wz (lcdf, val, 3, 0);
 
-        val = ctc_get_target_temp (HEATED_BED_0);
+        val = ctc_get_target_temp (CTC_HEATBED_0);
         lcd_setCursor (10,3);
         fserwrite_int32_wz (lcdf, val, 3, 0);
     }

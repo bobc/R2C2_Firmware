@@ -45,6 +45,16 @@
 // Defines
 // --------------------------------------------------------------------------
 
+// number of heatbeds + extruders
+#define NUMBER_OF_CTCS    4   
+
+#define CTC_HEATBED_0     0
+
+#define CTC_EXTRUDER_0    1
+
+#define CTC_EXTRUDER_1    2
+#define CTC_EXTRUDER_2    3
+
 // --------------------------------------------------------------------------
 // Types
 // --------------------------------------------------------------------------
@@ -62,13 +72,16 @@ void ctc_init ();
 void ctc_init_channel (tCtcSettings *ctc_config);
 
 // set target temperature
-void ctc_set_target_temp (uint8_t sensor_number, uint16_t temperature );
+void ctc_set_target_temp (uint8_t ctc_number, uint16_t temperature );
+
+// get current temp
+uint16_t ctc_get_current_temp (uint8_t ctc_number);
 
 // return target temperature
-uint16_t ctc_get_target_temp (uint8_t sensor_number);
+uint16_t ctc_get_target_temp (uint8_t ctc_number);
 
 // true if last read temp is close to target temp, false otherwise
-uint8_t ctc_temp_achieved (uint8_t sensor_number);
+uint8_t ctc_temp_achieved (uint8_t ctc_number);
 
 //TODO: and update heater with PID
 

@@ -72,8 +72,8 @@ static eLedState led_state [NUM_LEDS];
 static uint16_t key_last_state;
 static uint16_t key_state;
 
-static uint8_t key_timer [MAX_BUTTONS];
-static uint8_t key_event [MAX_BUTTONS];
+static uint8_t key_timer [CFG_MAX_BUTTONS];
+static uint8_t key_event [CFG_MAX_BUTTONS];
 
 
 // --------------------------------------------------------------------------
@@ -153,7 +153,7 @@ void ui_task_poll (void *pvParameters)
       key_state = keypad_get_key_state ();
 
       // compare to previous
-      for (int j=0; j < MAX_BUTTONS; j++)
+      for (int j=0; j < CFG_MAX_BUTTONS; j++)
       {
         if ( (key_last_state & _BV(j)) == 0)
         {

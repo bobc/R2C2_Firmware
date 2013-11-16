@@ -29,7 +29,7 @@
 */
 
 // hal
-#include "adc.h"
+#include "hal_adc.h"
 #include "timer.h"
 
 // app
@@ -37,55 +37,65 @@
 #include "temp.h"
 #include "debug.h"
 
-// config
 #include "thermistor_tables.h"
 
-// todo:
-tTempLookupEntry temptable [NUMBER_OF_SENSORS] [NUM_TEMPS] = 
-{
-    #include "thermistor_extruder.h"
-,
-    #include "thermistor_heatbed.h"
-};
+typedef struct {
+    uint8_t adc_channel;
+    uint8_t table_index;
 
-uint16_t current_temp [NUMBER_OF_SENSORS] = {0};
+    uint16_t current_temp;    
+    uint32_t adc_filtered;
+} tSensor;
 
+static tSensor sensor_data [CFG_MAX_SENSORS];
 
-static uint8_t adc_channel [NUMBER_OF_SENSORS] = {0};
-static uint32_t adc_filtered [NUMBER_OF_SENSORS] = {0};
+static tTimer  temperatureTimer;
 
 #ifndef	ABSDELTA
 #define	ABSDELTA(a, b)	(((a) >= (b))?((a) - (b)):((b) - (a)))
 #endif
 
-static uint16_t read_temp(uint8_t sensor_number);
+static uint16_t read_temp (uint8_t sensor_number);
 
-
-
-static tTimer  temperatureTimer;
 
 
 void temperatureTimerCallback (tTimer *pTimer)
 {
   /* Read and average temperatures */
-  for (int j=0; j < NUMBER_OF_SENSORS; j++)
-    current_temp[j] = read_temp(j);
+  for (int j=0; j < CFG_MAX_SENSORS; j++)
+    sensor_data[j].current_temp = read_temp(j);
 }
 
 
 uint16_t temp_get(uint8_t sensor_number)
 {
-  return current_temp[sensor_number];
+  return sensor_data[sensor_number].current_temp;
+}
+
+uint16_t temp_get_raw (uint8_t sensor_number)
+{
+  return sensor_data[sensor_number].adc_filtered;
 }
 
 
 void temp_init (void)
 {
-  adc_channel [EXTRUDER_0]   = config.extruder_ctc[0].sensor_adc_channel;
-  adc_channel [HEATED_BED_0] = config.heated_bed_ctc.sensor_adc_channel;
+  uint16_t j;
 
+//TODO:
+  for (j=0; j < CFG_MAX_SENSORS; j++)
+  {
+    sensor_data [j].adc_channel = config.sensor[j].adc_channel;
+    sensor_data [j].table_index = config.sensor[j].table_index;
+
+    // setup ADC
+    hal_adc_configure_pin (config.sensor[j].pin);
+  }
+
+
+//
   AddSlowTimer (&temperatureTimer);
-  StartSlowTimer (&temperatureTimer, 10, temperatureTimerCallback);
+  StartSlowTimer (&temperatureTimer, 10, temperatureTimerCallback); // every 10 ms
   temperatureTimer.AutoReload = 1;
 }
 
@@ -95,33 +105,36 @@ static uint16_t read_temp (uint8_t sensor_number)
   int32_t raw = 0;
   int16_t celsius = 0;
   uint8_t i;
+  tTempLookupEntry *pTempTable = thermistor_table[sensor_data[sensor_number].table_index];
 
-  raw = analog_read(adc_channel[sensor_number]);
+  raw = hal_analog_read(sensor_data[sensor_number].adc_channel);
   
   // filter the ADC values with simple IIR
-  adc_filtered[sensor_number] = ((adc_filtered[sensor_number] * 7) + raw) / 8;
+  sensor_data[sensor_number].adc_filtered = ((sensor_data[sensor_number].adc_filtered * 7) + raw) / 8;
   
-  raw = adc_filtered[sensor_number];
+  raw = sensor_data[sensor_number].adc_filtered;
   
+  pTempTable = thermistor_table[sensor_data[sensor_number].table_index];
+
   /* Go and use the temperature table to math the temperature value... */
-  if (raw < temptable[sensor_number][0].adc_value) /* Limit the smaller value... */
+  if (raw < pTempTable[0].adc_value) /* Limit the smaller value... */
   {
-    celsius = temptable[sensor_number][0].temperature;
+    celsius = pTempTable[0].temperature;
   }
-  else if (raw >= temptable[sensor_number][NUM_TEMPS-1].adc_value) /* Limit the higher value... */
+  else if (raw >= pTempTable[NUM_TEMPS-1].adc_value) /* Limit the higher value... */
   {
-    celsius = temptable[sensor_number][NUM_TEMPS-1].temperature;
+    celsius = pTempTable[NUM_TEMPS-1].temperature;
   }
   else
   {
     for (i=1; i<NUM_TEMPS; i++)
     {
-      if (raw < temptable[sensor_number][i].adc_value)
+      if (raw < pTempTable[i].adc_value)
       {
-        celsius = temptable[sensor_number][i-1].temperature +
-            (raw - temptable[sensor_number][i-1].adc_value) *
-            (temptable[sensor_number][i].temperature - temptable[sensor_number][i-1].temperature) /
-            (temptable[sensor_number][i].adc_value - temptable[sensor_number][i-1].adc_value);
+        celsius = pTempTable[i-1].temperature +
+            (raw - pTempTable[i-1].adc_value) *
+            (pTempTable[i].temperature - pTempTable[i-1].temperature) /
+            (pTempTable[i].adc_value - pTempTable[i-1].adc_value);
 
         break;
       }
@@ -131,15 +144,17 @@ static uint16_t read_temp (uint8_t sensor_number)
   return celsius;
 }
 
-bool temp_set_table_entry (uint8_t sensor_number, uint16_t temp, uint16_t adc_val)
+bool temp_set_table_entry (uint8_t table_number, uint16_t temp, uint16_t adc_val)
 {
-  if (sensor_number < NUMBER_OF_SENSORS)
+  if (table_number < NUMBER_OF_TABLES)
   {
+    tTempLookupEntry *pTempTable = thermistor_table[table_number];
+
     for (int entry=0; entry < NUM_TEMPS; entry++)
     {
-      if (temptable[sensor_number][entry].temperature == temp)
+      if (pTempTable[entry].temperature == temp)
       {
-        temptable[sensor_number][entry].adc_value = adc_val;
+        pTempTable[entry].adc_value = adc_val;
         return true;
       }
     }
@@ -149,17 +164,19 @@ bool temp_set_table_entry (uint8_t sensor_number, uint16_t temp, uint16_t adc_va
     return false;
 }
 
-uint16_t temp_get_table_entry (uint8_t sensor_number, uint16_t temp)
+uint16_t temp_get_table_entry (uint8_t table_number, uint16_t temp)
 {
   uint16_t result = 0xffff;
   
-  if (sensor_number < NUMBER_OF_SENSORS)
+  if (table_number < NUMBER_OF_TABLES)
   {
+    tTempLookupEntry *pTempTable = thermistor_table[table_number];
+
     for (int entry=0; entry < NUM_TEMPS; entry++)
     {
-      if (temptable[sensor_number][entry].temperature == temp)
+      if (pTempTable[entry].temperature == temp)
       {
-        result = temptable[sensor_number][entry].adc_value;
+        result = pTempTable[entry].adc_value;
         break;
       }
     }

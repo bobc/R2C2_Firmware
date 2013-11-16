@@ -32,55 +32,45 @@
 //
 // **************************************************************************
 
-#ifndef _CONFIG_APP_H
-#define _CONFIG_APP_H
+// No guard because this file may be included more than once
 
-// --------------------------------------------------------------------------
-// Includes
-// --------------------------------------------------------------------------
+/* table for Extruder */ 
+/* Table for NTC EPCOS B57560G104F (100k) and R1 = 274R for Extruder0 */
+  
+/* {ADC value, temperature} */
 
-// --------------------------------------------------------------------------
-// Defines
-// --------------------------------------------------------------------------
-
-
-// defines number of stepper axes (including extruders)
-#define MAX_AXES        4
-
-// defines number of extruders
-#define MAX_EXTRUDERS   1
-
-// defines number of buttons (external Control Panel hardware)
-#define MAX_BUTTONS     10
-
-
-// TODO: sort out use of max number vs actual number configured
-#define NUM_AXES    MAX_AXES
-
-// axis map for 3D printer with 1 extruder for compatibility with existing code
-#define X_AXIS      0
-#define Y_AXIS      1
-#define Z_AXIS      2
-#define E_AXIS      3
-
-// --------------------------------------------------------------------------
-// firmware build options
-// --------------------------------------------------------------------------
-
-#define F_CPU 100000000 /* 100MHz */
-
-#define CFG_APP_USE_BOOT_BUTTON
-
-//#define CFG_APP_USE_UI
-
-//#define CFG_APP_USE_UART_SHELL
-#define CFG_APP_UART_SHELL_NAME "uart0"
-
-#define CFG_APP_HAVE_BUZZER
-//#define USE_FREERTOS
-
-// --------------------------------------------------------------------------
-//
-// --------------------------------------------------------------------------
-
-#endif // _CONFIG_APP_H
+{
+   {0, 0} , // 0.00 C
+   {128, 0} , // 0.00 C
+   {256, 0} , // 0.00 C
+   {384, 0} , // 0.00 C
+   {512, 0} , // 0.00 C
+   {640, 0} , // 0.00 C
+   {768, 0} , // 0.00 C
+   {896, 0} , // 0.00 C
+   {1024, 0} , // 0.00 C
+   {1152, 0} , // 0.00 C
+   {1280, 289} , // 289.70 C
+   {1408, 279} , // 279.85 C
+   {1536, 270} , // 270.77 C
+   {1664, 262} , // 262.23 C
+   {1792, 254} , // 254.12 C
+   {1920, 246} , // 246.38 C
+   {2048, 238} , // 238.92 C
+   {2176, 231} , // 231.63 C
+   {2304, 224} , // 224.49 C
+   {2432, 217} , // 217.42 C
+   {2560, 210} , // 210.37 C
+   {2688, 203} , // 203.27 C
+   {2816, 196} , // 196.06 C
+   {2944, 188} , // 188.65 C
+   {3072, 180} , // 180.97 C
+   {3200, 172} , // 172.86 C
+   {3328, 164} , // 164.18 C
+   {3456, 154} , // 154.69 C
+   {3584, 143} , // 143.92 C
+   {3712, 131} , // 131.22 C
+   {3840, 115} , // 115.04 C
+   {3968, 90} , // 90.63 C
+   {4096, 0} , // 0.00 C
+}

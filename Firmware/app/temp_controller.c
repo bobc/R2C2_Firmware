@@ -37,7 +37,7 @@
 
 
 // hal
-#include "adc.h"
+#include "hal_adc.h"
 #include "ios.h"
 #include "timer.h"
 
@@ -55,8 +55,8 @@
 
 static tTimer       ctcTimer;
 static int          num_ctcs;
-static tCtcSettings *ctc_configs [NUMBER_OF_SENSORS]; // max ctcs
-static uint16_t     target_temp  [NUMBER_OF_SENSORS] = {0};
+static tCtcSettings *ctc_configs [NUMBER_OF_CTCS]; // max ctcs
+static uint16_t     target_temp  [NUMBER_OF_CTCS] = {0};
 
 
 void ctcTimerCallback (tTimer *pTimer)
@@ -65,7 +65,7 @@ void ctcTimerCallback (tTimer *pTimer)
 
   for (int j=0; j < num_ctcs; j++)
   {
-    if (current_temp[j] < target_temp[j])
+    if (ctc_get_current_temp(j) < target_temp[j])
     {
       write_pin(ctc_configs[j]->pin_heater, ENABLE);
     }
@@ -94,18 +94,10 @@ void ctc_init_channel (tCtcSettings *ctc_config)
   set_pin_mode (ctc_config->pin_heater, OUTPUT);
   write_pin (ctc_config->pin_heater, DISABLE);
 
-  // fan output pin
-  set_pin_mode(ctc_config->pin_cooler, OUTPUT);
-  write_pin (ctc_config->pin_cooler, DISABLE);
-
-  adc_configure_pin (ctc_config->pin_temp_sensor);
-
   num_ctcs++;
 }
 
-
-
-void ctc_set_target_temp (uint8_t sensor_number, uint16_t temperature )
+void ctc_set_target_temp (uint8_t ctc_number, uint16_t temperature )
 {
   if (temperature > 0)
   {
@@ -113,17 +105,22 @@ void ctc_set_target_temp (uint8_t sensor_number, uint16_t temperature )
 //?    power_on();
   }
 
-  target_temp[sensor_number] = temperature;
+  target_temp[ctc_number] = temperature;
 }
 
-uint16_t ctc_get_target_temp (uint8_t sensor_number)
+uint16_t ctc_get_target_temp (uint8_t ctc_number)
 {
-  return target_temp[sensor_number];
+  return target_temp[ctc_number];
 }
 
-uint8_t	ctc_temp_achieved(uint8_t sensor_number)
+uint16_t ctc_get_current_temp (uint8_t ctc_number)
 {
-  if (current_temp[sensor_number] >= target_temp[sensor_number] - 2 )
+  return temp_get(ctc_configs[ctc_number]->sensor_index);
+}
+
+uint8_t	ctc_temp_achieved(uint8_t ctc_number)
+{
+  if (temp_get(ctc_configs[ctc_number]->sensor_index) >= target_temp[ctc_number] - 2 )
     return 255;
 
   return 0;

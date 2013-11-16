@@ -35,20 +35,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "thermistor_tables.h"
+//#include "thermistor_tables.h"
 
-#define EXTRUDER_0                      0
-#define HEATED_BED_0                    1
+//#define NUMBER_OF_SENSORS   2
 
-typedef struct {
-    uint16_t adc_value; 
-    uint16_t temperature;
-    } tTempLookupEntry; 
+//#define SENSOR_EXTRUDER_0          0
+//#define SENSOR_HEATED_BED_0        1
 
 
-//extern tTempLookupEntry temptable[NUMBER_OF_SENSORS][NUM_TEMPS];
 
-extern uint16_t current_temp [NUMBER_OF_SENSORS];
+// extern tTempLookupEntry temptable[NUMBER_OF_SENSORS][NUM_TEMPS];
+// extern uint16_t current_temp [NUMBER_OF_SENSORS];
 
 
 // --------------------------------
@@ -58,8 +55,8 @@ void temp_init (void);
 uint16_t temp_get (uint8_t sensor_number);
 
 // 
-bool      temp_set_table_entry (uint8_t sensor_number, uint16_t temp, uint16_t adc_val);
-uint16_t  temp_get_table_entry (uint8_t sensor_number, uint16_t temp);
+bool      temp_set_table_entry (uint8_t table_number, uint16_t temp, uint16_t adc_val);
+uint16_t  temp_get_table_entry (uint8_t table_number, uint16_t temp);
 
 
-#endif	/* _TIMER_H */
+#endif	/* _TEMP_H */

@@ -1,5 +1,6 @@
-/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com       */
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -25,55 +26,26 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#include "hal_uart.h"
+#ifndef _THERMISTOR_TABLE_H
+#define _THERMISTOR_TABLE_H
 
-#include "rtos_api.h"
+#include "stdint.h"
 
-#include "gcode_parse.h"
-#include "gcode_task.h"
-#include "eth_shell_task.h"
+#define NUMBER_OF_TABLES                2
+#define NUM_TEMPS                       32+1
 
-#include "enc28j60.h"
+typedef struct {
+    uint16_t adc_value; 
+    uint16_t temperature;
+    } tTempLookupEntry; 
 
-#define DBG uart_writestr
 
-static volatile tLineBuffer LineBuf;
-static tGcodeInputMsg GcodeInputMsg;
+extern tTempLookupEntry thermistor_table [NUMBER_OF_TABLES] [NUM_TEMPS];
 
-void eth_shell_task_init ( void *pvParameters )
-{
-    // TASK INIT
-    //NetInit();
-
-    GcodeInputMsg.pLineBuf = &LineBuf;
-
-    // say hi to host
-    //serial_writestr("Start\r\nOK\r\n");
-}
-
-void eth_shell_task_poll ( void *pvParameters )
-{
-    uint8_t c;
-    eParseResult parse_result;
-
-    // no-op
-
-}
-
-void EthShellTask( void *pvParameters )
-{
-    (void) pvParameters; /* Just to prevent compiler warnings about the unused parameter. */
-
-    eth_shell_task_init (pvParameters);
-
-    // TASK BODY
-
-    // process received data
-    for( ;; )
-    {
-        eth_shell_task_poll (pvParameters);
-    }
-}
-
+#endif

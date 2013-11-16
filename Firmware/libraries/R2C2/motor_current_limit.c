@@ -84,7 +84,7 @@ struct {
 
 = { 113.33, mcp4451_init, mcp4451_set_pot  };
 
-static float current_limit [MAX_AXES];
+static float current_limit [CFG_MAX_AXES];
 
 // --------------------------------------------------------------------------
 // Function prototypes

@@ -22,7 +22,8 @@
 #ifndef planner_h
 #define planner_h
                  
-#include <inttypes.h>
+//#include <inttypes.h>
+#include <stdint.h>
 
 typedef enum {
   AT_MOVE,

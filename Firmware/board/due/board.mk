@@ -4,14 +4,14 @@
 # - CHIP		used for linker script name and passed as define	
 
 MCU      	= cortex-m3
-ARCH_FAMILY = lpc17xx
-CHIP     	= LPC1758
+ARCH_FAMILY = atmel_asf
+CHIP     	= sam3x8e
 
-BOARDINC = board/r2c2
+BOARD_FLAGS = -D __SAM3X8E__ -D NDEBUG
+BOARDINC = board/due
 
 # options
 
-USE_FILESYSTEM = YES
+# USE_FILESYSTEM = YES
 # USE_ETHERNET = YES
-USE_USB = YES
-USE_BUZZER = YES
+# USE_USB = YES

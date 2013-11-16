@@ -62,8 +62,10 @@ void fatal_error (void)
 {
   for( ;; )
   {
+#ifdef HAVE_BUZZER
     buzzer_play_sync (FREQ_B4, 1000);
     buzzer_play_sync (FREQ_A4, 1000);
+#endif
   }
 }
 
@@ -97,8 +99,6 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName
 
 static void configure_hal (void)
 {
-  // initialise some drivers useful for debugging
-  buzzer_init (PinDef (BUZZER_PORT, BUZZER_PIN_NUMBER,0,0) );	// [hal: requires io pins]
 }
 
 void lib_printer_init (void)
@@ -107,6 +107,11 @@ void lib_printer_init (void)
   tPinDef sd_spi_mosi = SD_SPI_MOSI; 
   tPinDef sd_spi_miso = SD_SPI_MISO; 
   tPinDef sd_spi_ssel = SD_SPI_SSEL;
+
+#ifdef HAVE_BUZZER
+    // initialise some drivers useful for debugging
+  buzzer_init (PinDef (BUZZER_PORT, BUZZER_PIN_NUMBER,0,0) );	// [hal: requires io pins]
+#endif
 
   // initialize low-level USB serial and UART drivers [hal]
   _sys_init_devices();
@@ -120,6 +125,31 @@ void lib_printer_init (void)
   /* initialize SPI for SDCard */
   spi_configure (sd_spi_sck, sd_spi_mosi, sd_spi_miso, sd_spi_ssel);
   spi_init(SD_SPI_CHANNEL);
+}
+
+///
+static int flag;
+void timerCallback (tHwTimer *pTimer, uint32_t int_mask)
+{
+  (void)pTimer;
+  flag = !flag;
+
+  if (flag)
+    digital_write (1, _BV(18), 1);
+  else
+    digital_write (1, _BV(18), 0);
+
+}
+
+static test (void)
+{
+  setupHwTimer (0, timerCallback);
+
+  enableHwTimer (0);
+
+  pin_mode (1, _BV(18), OUTPUT);
+
+  while (1);
 }
 
 /**********************************************************************
@@ -144,6 +174,8 @@ int main(void)
   */
   //TODO: Check stack usage
   
+//  test();
+
   res = lw_TaskCreate (printer_task_init, printer_task_poll,  "Print", 512, ( void * ) NULL, LWR_IDLE_PRIORITY, NULL );
   if (res != LWR_OK)
     debug ("error starting PrinterTask\n");
