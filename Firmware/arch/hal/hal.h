@@ -39,8 +39,7 @@
 // Includes
 // --------------------------------------------------------------------------
 
-#include "adc.h"
-#include "buzzer.h"
+#include "hal_adc.h"
 #include "dac.h"
 #include "i2c.h"
 #include "ios.h"
@@ -49,7 +48,7 @@
 #include "str_buffer.h"
 #include "sys_util.h"
 #include "timer.h"
-#include "uart.h"
+#include "hal_uart.h"
 
 #ifdef HAVE_USB_SERIAL
 #include "usb_serial.h"

@@ -98,4 +98,9 @@ void  write_pin (tPinDef pin, uint8_t state)
   }
 }
 
+void ios_init (void)
+{
+}
+
+
 

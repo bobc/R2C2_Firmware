@@ -547,8 +547,8 @@ void USBHwISR(void)
 		
 	This function assumes that the hardware is connected as shown in
 	section 10.1 of the LPC2148 data sheet:
-	* P0.31 controls a switch to connect a 1.5k pull-up to D+ if low.
-	* P0.23 is connected to USB VCC.
+	* USB_CONNECT [P0.31] controls a switch to connect a 1.5k pull-up to D+ if low.
+	* VBUS [P0.23] is connected to USB VCC.
 	
 	Embedded artists board: make sure to disconnect P0.23 LED as it
 	acts as a pull-up and so prevents detection of USB disconnect.
@@ -561,17 +561,17 @@ BOOL USBHwInit(void)
 
   // P2.9 -> USB_CONNECT
   LPC_PINCON->PINSEL4 &= ~0x000C0000;
-  LPC_PINCON->PINSEL4 |= 0x00040000;
+  LPC_PINCON->PINSEL4 |=  0x00040000;
 
-  // P1.18 -> USB_UP_LED
+  // [P1.18] -> USB_UP_LED
   // P1.30 -> VBUS
   LPC_PINCON->PINSEL3 &= ~0x30000030;
-  LPC_PINCON->PINSEL3 |= 0x20000010;
+  LPC_PINCON->PINSEL3 |=  0x20000010;
 
   // P0.29 -> USB_D+
   // P0.30 -> USB_D-
   LPC_PINCON->PINSEL1 &= ~0x3C000000;
-  LPC_PINCON->PINSEL1 |= 0x14000000;
+  LPC_PINCON->PINSEL1 |=  0x14000000;
 
   // enable PUSB
   LPC_SC->PCONP |= (1 << 31);

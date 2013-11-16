@@ -6,6 +6,8 @@ ARCHLIBINC = \
 	$(ARCHLIBDIR)/hal
 
 
+ARCHLIB_ASRC = $(ARCHLIBDIR)/startup.S
+
 ARCHLIBSRC = \
 	$(ARCHLIBDIR)/CMSISv1p30/src/system_LPC17xx.c \
 	$(wildcard $(ARCHLIBDIR)/Drivers/source/lpc17xx_*.c) \

@@ -27,13 +27,13 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "uart.h"
+#include "hal_uart.h"
 #include "lpc17xx_uart.h"
 #include "lpc17xx_pinsel.h"
 
 #include "config_pins.h"
 
-void uart_init(void)
+void hal_uart_init(void)
 {
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;
@@ -84,26 +84,26 @@ void uart_init(void)
 	UART_TxCmd((LPC_UART_TypeDef *)DBG_UART, ENABLE);
 }
 
-char uart_data_available(void)
+char hal_uart_data_available(void)
 {
 	return (DBG_UART->LSR & UART_LSR_RDR);
 }
 
-char uart_receive(void)
+char hal_uart_receive(void)
 {
 	return (UART_ReceiveByte((LPC_UART_TypeDef *)DBG_UART));
 }
 
-void uart_send(char byte)
+void hal_uart_send(char byte)
 {
 	while (!(DBG_UART->LSR & UART_LSR_THRE)) ;
 	UART_SendByte((LPC_UART_TypeDef *)DBG_UART, byte);
 }
 
-void serial_writestr(unsigned char *data)
+void hal_serial_writestr(unsigned char *data)
 {
 	char i = 0, r;
 
 	while ((r = data[i++]))
-		uart_send(r);
+		hal_uart_send(r);
 }

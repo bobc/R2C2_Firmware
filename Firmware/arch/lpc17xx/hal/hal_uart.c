@@ -35,7 +35,7 @@
 
 #include "str_buffer.h"
 
-#include "uart.h"
+#include "hal_uart.h"
 
 
 
@@ -502,14 +502,14 @@ static bool _uart_init (int uart_num)
   return true;
 }
 
-bool uart_get_config (int uart_num, tPortSettings *port_settings_p)
+bool hal_uart_get_config (int uart_num, tPortSettings *port_settings_p)
 {
   //TODO: get the current UART settings
 
   return false;
 }
 
-bool uart_configure(int uart_num, tPortSettings *port_settings_p)
+bool hal_uart_configure(int uart_num, tPortSettings *port_settings_p)
 {
   tUartControl *pControl;
   LPC_UART_TypeDef *pUart;
@@ -631,27 +631,27 @@ static void _uart_writestr(int uart_num, char *data)
 // Public functions, UART n
 // ---------------------------------------------------------------------------
 
-void uart_init (int uart_num)
+void hal_uart_init (int uart_num)
 {
   _uart_init (uart_num);
 }
 
-int  uart_data_available (int uart_num)
+int  hal_uart_data_available (int uart_num)
 {	
   return _uart_data_available (uart_num);
 }
 
-char uart_receive (int uart_num)
+char hal_uart_receive (int uart_num)
 {
   return _uart_receive (uart_num);
 }
 
-void uart_send (int uart_num, char byte)
+void hal_uart_send (int uart_num, char byte)
 {
   _uart_send (uart_num, byte);
 }
 
-void uart_writestr(int uart_num, char *data)
+void hal_uart_writestr(int uart_num, char *data)
 {
   _uart_writestr (uart_num, data);
 }
@@ -715,22 +715,22 @@ void uart1_send(char byte)
 
 void uart2_init(void)
 {
-  uart_init (2);
+  _uart_init (2);
 }
 
 int  uart2_data_available(void)
 {	
-  return uart_data_available (2);
+  return _uart_data_available (2);
 }
 
 char uart2_receive(void)
 {
-  return uart_receive (2);
+  return _uart_receive (2);
 }
 
 void uart2_send(char byte)
 {
-  uart_send (2, byte);
+  _uart_send (2, byte);
 }
 
 // ---------------------------------------------------------------------------
@@ -739,17 +739,17 @@ void uart2_send(char byte)
 
 void uart3_init(void)
 {
-  uart_init (3);
+  _uart_init (3);
 }
 
 int  uart3_data_available(void)
 {	
-  return uart_data_available (3);
+  return _uart_data_available (3);
 }
 
 char uart3_receive(void)
 {
-  return uart_receive (3);
+  return _uart_receive (3);
 }
 
 void uart3_send(char byte)

@@ -37,6 +37,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "config_hal.h"
+
 #include "timer_lld.h"
 
 // --------------------------------------------------------------------------
@@ -44,11 +46,12 @@
 // --------------------------------------------------------------------------
 
 // time-related constants
+
 //#define	US	(F_CPU / 1000000)
-#define	MS	(F_CPU / 1000)
+//#define	MS	(F_CPU / 1000)
 
 // #define	DEFAULT_TICK	(100 US)
-#define	WAITING_DELAY  (10 * MS)
+//! #define	WAITING_DELAY  (10 * MS)   // not used?
 
 // --------------------------------------------------------------------------
 // Types

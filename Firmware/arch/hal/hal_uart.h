@@ -27,12 +27,13 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef	_UART_H
-#define	_UART_H
+#ifndef	_HAL_UART_H
+#define	_HAL_UART_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
-#include "uart_lld.h"
+#include "hal_uart_lld.h"
 
 typedef enum {
   parity_none,
@@ -48,18 +49,18 @@ typedef struct {
   uint8_t   stop_bits;
 } tPortSettings;
 
-void uart_init(int uart_num);
-bool uart_configure(int uart_num, tPortSettings *port_settings_p);
-int  uart_data_available(int uart_num);
-char uart_receive(int uart_num);
-void uart_send(int uart_num, char byte);
+void hal_uart_init(int uart_num);
+bool hal_uart_configure(int uart_num, tPortSettings *port_settings_p);
+int  hal_uart_data_available(int uart_num);
+char hal_uart_receive(int uart_num);
+void hal_uart_send(int uart_num, char byte);
 
 #if 0
-void uart_writestr(char *data);
+void hal_uart_writestr(char *data);
 #endif
 
 
 
 // #define serial_writechar(x) uart_send(x)
 
-#endif	/* _UART_H */
+#endif	/* _HAL_UART_H */

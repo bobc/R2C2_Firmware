@@ -81,8 +81,9 @@ void hal_init(void)
   timer_init(); // start millisecond timers/callback
 #endif
 
-  adc_init();
+  hal_adc_init();
 
+  ios_init();
 }
 
 // --------------------------------------------------------------------------
