@@ -1,4 +1,6 @@
-/* All rights reserved.
+/* Copyright (c) 2012 Bob Cousins bobcousins42@googlemail.com              */
+/* **************************************************************************
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -24,20 +26,23 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-*/
+****************************************************************************/
+// **************************************************************************
+// Description:
+//
+// **************************************************************************
 
-#ifndef	_TIMER_LLD_H
-#define	_TIMER_LLD_H
+#ifndef _THERMISTOR_TABLE_DATA_H
+#define _THERMISTOR_TABLE_DATA_H
+
+#include "thermistor_tables.h"
+
+tTempLookupEntry thermistor_table [NUMBER_OF_TABLES] [NUM_TEMPS] = 
+{
+    #include "thermistor_extruder.h"
+,
+    #include "thermistor_heatbed.h"
+};
 
 
-#define NUM_HARDWARE_TIMERS 4
-
-// 
-#define HAL_HW_TICKS_PER_MICROSECOND (F_CPU/1000000)
-#define HAL_HW_TICKS_PER_MILLISECOND (F_CPU/1000)
-
-void timer_lld_init (void);
-
-
-#endif	/* _TIMER_LLD_H */
-
+#endif

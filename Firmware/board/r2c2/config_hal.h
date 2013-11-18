@@ -45,6 +45,8 @@
 // Defines
 // --------------------------------------------------------------------------
 
+#define F_CPU 100000000 /* 100 MHz */
+
 //! Enable the UART
 #define CFG_HAL_USE_UART	TRUE
 

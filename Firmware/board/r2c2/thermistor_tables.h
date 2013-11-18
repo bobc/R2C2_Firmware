@@ -34,13 +34,18 @@
 
 #ifndef _THERMISTOR_TABLE_H
 #define _THERMISTOR_TABLE_H
+                              
+#include "stdint.h"
 
-//#include "temp.h"
-
-#define NUMBER_OF_SENSORS               2
+#define NUMBER_OF_TABLES                2
 #define NUM_TEMPS                       32+1
 
+typedef struct {
+    uint16_t adc_value; 
+    uint16_t temperature;
+    } tTempLookupEntry; 
 
 
-
+extern tTempLookupEntry thermistor_table [NUMBER_OF_TABLES] [NUM_TEMPS];
+                                                                                                
 #endif

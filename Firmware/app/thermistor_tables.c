@@ -59,12 +59,7 @@
 
 
 // todo:
-tTempLookupEntry thermistor_table [NUMBER_OF_TABLES] [NUM_TEMPS] = 
-{
-    #include "thermistor_100k_4k7.h"
-,
-    #include "thermistor_heatbed.h"
-};
+#include "thermistor_table_data.h"
 
 // --------------------------------------------------------------------------
 // Private Variables

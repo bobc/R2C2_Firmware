@@ -200,15 +200,19 @@ static const tConfigItem config_lookup_pindef [] =
   { "e.pin_enable", &config.motor_driver[3].pin_enable, TYPE_PIN_DEF, {.val_pin_def = S3_ENABLE_PIN }},
   { "e.pin_reset",  &config.motor_driver[3].pin_reset,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
 
+#if ( CFG_MAX_EXTRUDERS > 2)  
   { "e1.pin_step",   &config.motor_driver[4].pin_step,   TYPE_PIN_DEF, {.val_pin_def = S4_STEP_PIN   }},
   { "e1.pin_dir",    &config.motor_driver[4].pin_dir,    TYPE_PIN_DEF, {.val_pin_def = S4_DIR_PIN    }},
   { "e1.pin_enable", &config.motor_driver[4].pin_enable, TYPE_PIN_DEF, {.val_pin_def = S4_ENABLE_PIN }},
   { "e1.pin_reset",  &config.motor_driver[4].pin_reset,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+#endif
 
+#if ( CFG_MAX_EXTRUDERS > 3)  
   { "e2.pin_step",   &config.motor_driver[5].pin_step,   TYPE_PIN_DEF, {.val_pin_def = S5_STEP_PIN   }},
   { "e2.pin_dir",    &config.motor_driver[5].pin_dir,    TYPE_PIN_DEF, {.val_pin_def = S5_DIR_PIN    }},
   { "e2.pin_enable", &config.motor_driver[5].pin_enable, TYPE_PIN_DEF, {.val_pin_def = S5_ENABLE_PIN }},
   { "e2.pin_reset",  &config.motor_driver[5].pin_reset,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+#endif
 
 //
   { "x.motor",         &config.axis[X_AXIS].motor_index,  TYPE_INT, {.val_i = X_MOTOR }},
@@ -231,16 +235,19 @@ static const tConfigItem config_lookup_pindef [] =
   { "e.pin_min_limit", &config.axis[E_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
   { "e.pin_max_limit", &config.axis[E_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
 
+#if ( CFG_MAX_EXTRUDERS > 1)  
   // E1 Axis
   { "e1.motor",         &config.axis[E1_AXIS].motor_index,  TYPE_INT, {.val_i = E1_MOTOR }},
   { "e1.pin_min_limit", &config.axis[E1_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
   { "e1.pin_max_limit", &config.axis[E1_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
+#endif
 
+#if ( CFG_MAX_EXTRUDERS > 2)  
   // E2 Axis
   { "e2.motor",         &config.axis[E2_AXIS].motor_index,  TYPE_INT, {.val_i = E2_MOTOR }},
   { "e2.pin_min_limit", &config.axis[E2_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
   { "e2.pin_max_limit", &config.axis[E2_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
-
+#endif
 
 
   { "all_steppers.reset",  &config.pin_all_steppers_reset,  TYPE_PIN_DEF, {.val_pin_def = STEPPERS_RESET_PIN}},
@@ -252,8 +259,12 @@ static const tConfigItem config_lookup_pindef [] =
   { "digipot_i2c_sda",  &config.digipot_i2c_sda,  TYPE_PIN_DEF, {.val_pin_def = CFG_PIN_DIGIPOT_I2C_SDA}},
 //
 
+#ifdef AUX_0_OUTPUT_PIN
   { "aux_0.pin_output",             &config.aux_output[0].pin_output,           TYPE_PIN_DEF, {.val_pin_def = AUX_0_OUTPUT_PIN}},
+#endif
+#ifdef AUX_1_OUTPUT_PIN
   { "aux_1.pin_output",             &config.aux_output[1].pin_output,           TYPE_PIN_DEF, {.val_pin_def = AUX_1_OUTPUT_PIN}},
+#endif
 
 //
   { "num_sensors",    &config.num_sensors, TYPE_INT,    {.val_i = CFG_MAX_SENSORS}},
@@ -266,14 +277,17 @@ static const tConfigItem config_lookup_pindef [] =
   { "sensor_1.adc_channel",         &config.sensor[1].adc_channel,   TYPE_INT,     {.val_i       = SENSOR_1_ADC_CHANNEL}},
   { "sensor_1.temp_table",          &config.sensor[1].table_index,   TYPE_INT,     {.val_i       = SENSOR_1_TABLE_INDEX}},
 
+#if CFG_MAX_SENSORS > 2
   { "sensor_2.temp_sensor",         &config.sensor[2].pin,           TYPE_PIN_DEF, {.val_pin_def = SENSOR_2_ADC_PIN}},      
   { "sensor_2.adc_channel",         &config.sensor[2].adc_channel,   TYPE_INT,     {.val_i       = SENSOR_2_ADC_CHANNEL}},
   { "sensor_2.temp_table",          &config.sensor[2].table_index,   TYPE_INT,     {.val_i       = SENSOR_2_TABLE_INDEX}},
+#endif
 
+#if CFG_MAX_SENSORS > 3
   { "sensor_3.temp_sensor",         &config.sensor[3].pin,           TYPE_PIN_DEF, {.val_pin_def = SENSOR_3_ADC_PIN}},      
   { "sensor_3.adc_channel",         &config.sensor[3].adc_channel,   TYPE_INT,     {.val_i       = SENSOR_3_ADC_CHANNEL}},
   { "sensor_3.temp_table",          &config.sensor[3].table_index,   TYPE_INT,     {.val_i       = SENSOR_3_TABLE_INDEX}},
-
+#endif
 
   // CTC #1 / Extruder 0
   { "extruder_0.heater",              &config.extruder_ctc[0].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_HEATER_PIN}},
@@ -291,16 +305,16 @@ static const tConfigItem config_lookup_pindef [] =
 //  { "heated_bed.temp_sensor",         &config.heated_bed_ctc.pin_temp_sensor,       TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_ADC_PIN}},
 //  { "heated_bed.sensor_adc_channel",  &config.heated_bed_ctc.sensor_adc_channel,    TYPE_INT,     {.val_i = HEATED_BED_0_SENSOR_ADC_CHANNEL}},
 
-#if ( MAX_EXTRUDERS > 1)  
+#if ( CFG_MAX_EXTRUDERS > 1)  
   // Extruder 1
   { "extruder_1.heater",              &config.extruder_ctc[1].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_1_HEATER_PIN}},
-  { "extruder_1.temp_sensor",         &config.extruder_ctc[1].pin_temp_sensor,      TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_1_SENSOR_INDEX}},
+  { "extruder_1.temp_sensor",         &config.extruder_ctc[1].sensor_index,      TYPE_PIN_DEF, {.val_i = EXTRUDER_1_SENSOR_INDEX}},
 #endif
 
-#if ( MAX_EXTRUDERS > 2)  
+#if ( CFG_MAX_EXTRUDERS > 2)  
   // Extruder 2
   { "extruder_2.heater",              &config.extruder_ctc[2].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_2_HEATER_PIN}},
-  { "extruder_2.temp_sensor",         &config.extruder_ctc[2].pin_temp_sensor,      TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_2_SENSOR_INDEX}},
+  { "extruder_2.temp_sensor",         &config.extruder_ctc[2].sensor_index,      TYPE_PIN_DEF, {.val_i = EXTRUDER_2_SENSOR_INDEX}},
 #endif
 
   { "sd.spi.ssel0",         &config.sd_spi_ssel,   TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SSEL  }},

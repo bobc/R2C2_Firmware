@@ -31,16 +31,16 @@
 #include "lpc17xx_adc.h"
 #include "lpc17xx_pinsel.h"
 
-#include "adc.h"
+#include "hal_adc.h"
 
 
 /* Initialize ADC for reading sensors */
-void adc_init(void)
+void hal_adc_init(void)
 {
   ADC_Init(LPC_ADC, 200000); /* ADC conversion rate = 200Khz */
 }
 
-void adc_configure_pin (tPinDef pindef)
+void hal_adc_configure_pin (tPinDef pindef)
 {
   PINSEL_CFG_Type PinCfg;
 
@@ -52,7 +52,7 @@ void adc_configure_pin (tPinDef pindef)
   PINSEL_ConfigPin(&PinCfg);
 }  
   
-uint16_t analog_read(uint8_t adc_channel)
+uint16_t hal_analog_read(uint8_t adc_channel)
 {
   ADC_ChannelCmd(LPC_ADC, adc_channel, ENABLE);
 
