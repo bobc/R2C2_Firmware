@@ -217,7 +217,7 @@ int main()
     configure_boot_button();
     
     #ifdef  UARTDEBUG
-        uart_init();
+        hal_uart_init();
     #endif
 
     DBG("== USB_Bootloader V1.1 ==" );

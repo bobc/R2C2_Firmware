@@ -36,6 +36,6 @@ char uart_receive(void);
 void uart_send(char byte);
 void serial_writestr(unsigned char *data);
 
-#define serial_writechar(x) uart_send(x)
+#define serial_writechar(x) hal_uart_send(x)
 
 #endif	/* _UART_H */
