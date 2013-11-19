@@ -1,0 +1,84 @@
+<!DOCTYPE CrossStudio_for_ARM_Session_File>
+<session>
+ <Bookmarks/>
+ <Breakpoints/>
+ <ETMWindow>
+  <ETMRegister number="0" value="800" />
+  <ETMRegister number="8" value="6f" />
+  <ETMRegister number="9" value="1000000" />
+ </ETMWindow>
+ <ExecutionCountWindow/>
+ <Memory1>
+  <MemoryWindow autoEvaluate="0" addressText="0x10008000" numColumns="8" sizeText="1024" dataSize="4" radix="16" addressSpace="" />
+ </Memory1>
+ <Memory2>
+  <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" addressSpace="" />
+ </Memory2>
+ <Memory3>
+  <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" addressSpace="" />
+ </Memory3>
+ <Memory4>
+  <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" addressSpace="" />
+ </Memory4>
+ <Project>
+  <ProjectSessionItem path="cs_proj" name="unnamed" />
+  <ProjectSessionItem path="cs_proj;cs_proj" name="unnamed" />
+  <ProjectSessionItem path="cs_proj;cs_proj;app_reprap" name="unnamed" />
+  <ProjectSessionItem path="cs_proj;cs_proj;arch_lpc17xx" name="unnamed" />
+  <ProjectSessionItem path="cs_proj;cs_proj;arch_lpc17xx;LPCUSB" name="unnamed" />
+  <ProjectSessionItem path="cs_proj;cs_proj;Source Files" name="unnamed" />
+ </Project>
+ <Register1>
+  <RegisterWindow openNodes="SSP1;SSP1/SSP1CR0;SSP1/SSP1CR1;SSP1/SSP1SR" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="CPU;SSP1" decimalNodes="" octalNodes="" asciiNodes="" />
+ </Register1>
+ <Register2>
+  <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
+ </Register2>
+ <Register3>
+  <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
+ </Register3>
+ <Register4>
+  <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
+ </Register4>
+ <TargetWindow programAction="" uploadFileType="" programLoadAddress="" programSize="" uploadFileName="" uploadMemoryInterface="" programFileName="" uploadStartAddress="" programFileType="" uploadSize="" programMemoryInterface="" />
+ <TraceWindow>
+  <Trace enabled="Yes" />
+ </TraceWindow>
+ <Watch1>
+  <Watches active="1" update="Never" >
+   <Watchpoint evalMode="1" linenumber="204" evalType="1" radix="-1" name="pCurTask" expression="pCurTask" filename="c:/git_bobc/r2c2_firmware/r2c2-reprap_firmware/libraries/r2c2/lw_task.c" />
+   <Watchpoint linenumber="0" radix="16" name="FIO0PINU" expression="*(unsigned short *)0x2009c016" filename="" />
+   <Watchpoint evalMode="1" linenumber="0" evalType="1" radix="16" name="pTimer" expression="pTimer" filename="" />
+   <Watchpoint evalMode="1" linenumber="143" evalType="1" radix="-1" name="SlowTimerHead" expression="SlowTimerHead" filename="c:/git_bobc/r2c2_firmware/r2c2-reprap_firmware/arch/hal/timer.c" />
+  </Watches>
+ </Watch1>
+ <Watch2>
+  <Watches active="0" update="Never" />
+ </Watch2>
+ <Watch3>
+  <Watches active="0" update="Never" />
+ </Watch3>
+ <Watch4>
+  <Watches active="0" update="Never" />
+ </Watch4>
+ <Files>
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\main.c" y="128" path="C:\git_bobc\R2C2_Firmware\Firmware\main.c" left="0" selected="0" name="unnamed" top="109" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\printer_task.c" y="275" path="C:\git_bobc\R2C2_Firmware\Firmware\app\printer_task.c" left="0" selected="0" name="unnamed" top="257" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\gcode_process.c" y="0" path="C:\git_bobc\R2C2_Firmware\Firmware\app\gcode_process.c" left="0" selected="0" name="unnamed" top="971" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\temp_controller.c" y="69" path="C:\git_bobc\R2C2_Firmware\Firmware\app\temp_controller.c" left="0" selected="0" name="unnamed" top="56" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbhw_lpc.c" y="213" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbhw_lpc.c" left="0" selected="1" name="unnamed" top="195" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbinit.c" y="0" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbinit.c" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbstdreq.c" y="0" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbstdreq.c" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbcontrol.c" y="0" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usbcontrol.c" left="0" selected="0" name="unnamed" top="196" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\serial_fifo.c" y="0" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\serial_fifo.c" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usb_cdc_driver.c" y="331" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\lpc17xx\LPCUSB\src\usb_cdc_driver.c" left="0" selected="0" name="unnamed" top="313" />
+ </Files>
+ <ARMCrossStudioWindow activeProject="cs_proj" autoConnectTarget="USB CrossConnect for ARM" debugSearchFileMap="\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__int32_to_float32.s
+
+\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__int32_to_float64.s
+
+\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__uint32_to_float32.s
+
+\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__uint32_to_float64.s
+" fileDialogInitialDirectory="C:\git_bobc\R2C2_Firmware\R2C2-RepRap_firmware\arch\hal" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
+</session>

@@ -1,0 +1,118 @@
+<!DOCTYPE CrossStudio_for_ARM_Session_File>
+<session>
+ <Bookmarks/>
+ <Breakpoints/>
+ <ExecutionProfileWindow/>
+ <Memory1>
+  <MemoryWindow autoEvaluate="0" addressText="0x10008000" numColumns="8" sizeText="1024" dataSize="4" radix="16" name="cs_proj_due" addressSpace="" />
+ </Memory1>
+ <Memory2>
+  <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" name="cs_proj_due" addressSpace="" />
+ </Memory2>
+ <Memory3>
+  <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" name="cs_proj_due" addressSpace="" />
+ </Memory3>
+ <Memory4>
+  <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" name="cs_proj_due" addressSpace="" />
+ </Memory4>
+ <Project>
+  <ProjectSessionItem path="cs_proj_due" name="unnamed" />
+  <ProjectSessionItem path="cs_proj_due;cs_proj_due" name="unnamed" />
+  <ProjectSessionItem path="cs_proj_due;cs_proj_due;app" name="unnamed" />
+  <ProjectSessionItem path="cs_proj_due;cs_proj_due;app_lib" name="unnamed" />
+  <ProjectSessionItem path="cs_proj_due;cs_proj_due;hal" name="unnamed" />
+  <ProjectSessionItem path="cs_proj_due;cs_proj_due;hal;atmel_asf" name="unnamed" />
+ </Project>
+ <Register1>
+  <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="CPU;SSP1;TC0" decimalNodes="" octalNodes="" asciiNodes="" name="cs_proj_due" />
+ </Register1>
+ <Register2>
+  <RegisterWindow openNodes="CPU - Current Context" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" name="cs_proj_due" />
+ </Register2>
+ <Register3>
+  <RegisterWindow openNodes="CPU - Current Context" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" name="cs_proj_due" />
+ </Register3>
+ <Register4>
+  <RegisterWindow openNodes="CPU - Current Context" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" name="cs_proj_due" />
+ </Register4>
+ <TargetWindow programAction="" uploadFileType="" programLoadAddress="" programSize="" uploadFileName="" uploadMemoryInterface="" programFileName="" uploadStartAddress="" programFileType="" uploadSize="" programMemoryInterface="" />
+ <TraceWindow>
+  <Trace enabled="Yes" />
+ </TraceWindow>
+ <Watch1>
+  <Watches active="1" update="Never" />
+ </Watch1>
+ <Watch2>
+  <Watches active="0" update="Never" />
+ </Watch2>
+ <Watch3>
+  <Watches active="0" update="Never" />
+ </Watch3>
+ <Watch4>
+  <Watches active="0" update="Never" />
+ </Watch4>
+ <Files>
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\hal\timer.h" y="19" path="C:\git_bobc\r2c2_firmware\firmware\arch\hal\timer.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\utils\cmsis\sam3x\source\templates\gcc\startup_sam3x.c" y="213" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\utils\cmsis\sam3x\source\templates\gcc\startup_sam3x.c" left="0" selected="0" name="unnamed" top="10" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\hal_uart.c" y="61" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\hal_uart.c" left="0" selected="0" name="unnamed" top="46" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\uart\uart.c" y="379" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\uart\uart.c" left="0" selected="0" name="unnamed" top="354" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\sys_util_lld.c" y="95" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\sys_util_lld.c" left="0" selected="0" name="unnamed" top="70" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\pio\pio.h" y="137" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\pio\pio.h" left="0" selected="0" name="unnamed" top="111" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\timer_lld.c" y="16" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\timer_lld.c" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\hal\hal.c" y="83" path="C:\git_bobc\r2c2_firmware\firmware\arch\hal\hal.c" left="0" selected="0" name="unnamed" top="64" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\pio\pio.c" y="116" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\pio\pio.c" left="0" selected="0" name="unnamed" top="90" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\sam\boards\arduino_due_x\init.c" y="65" path="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\sam\boards\arduino_due_x\init.c" left="0" selected="0" name="unnamed" top="47" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\sam\drivers\gpio\gpio.h" y="95" path="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\sam\drivers\gpio\gpio.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\sam\drivers\gpio\gpio.c" y="102" path="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\sam\drivers\gpio\gpio.c" left="0" selected="0" name="unnamed" top="26" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\common\services\ioport\ioport.h" y="118" path="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\asf\common\services\ioport\ioport.h" left="0" selected="0" name="unnamed" top="150" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\common\services\ioport\sam\ioport_gpio.h" y="0" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\common\services\ioport\sam\ioport_gpio.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\ios.c" y="129" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\ios.c" left="0" selected="0" name="unnamed" top="112" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\hal\str_buffer.c" y="102" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\hal\str_buffer.c" left="0" selected="0" name="unnamed" top="78" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\libraries\r2c2\lw_syscalls.c" y="175" path="C:\git_bobc\r2c2_firmware\firmware\libraries\r2c2\lw_syscalls.c" left="0" selected="0" name="unnamed" top="96" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Program Files\Rowley Associates Limited\CrossWorks for ARM 2.3\include\errno.h" y="0" path="C:\Program Files\Rowley Associates Limited\CrossWorks for ARM 2.3\include\errno.h" left="0" selected="0" name="unnamed" top="9" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\app\planner.h" y="25" path="C:\git_bobc\r2c2_firmware\firmware\app\planner.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\app\planner.c" y="23" path="C:\git_bobc\r2c2_firmware\firmware\app\planner.c" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\hal\timer.c" y="45" path="C:\git_bobc\r2c2_firmware\firmware\arch\hal\timer.c" left="0" selected="0" name="unnamed" top="33" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\main.c" y="158" path="C:\git_bobc\R2C2_Firmware\Firmware\main.c" left="0" selected="1" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\common\services\clock\sam3x\sysclk.c" y="243" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\common\services\clock\sam3x\sysclk.c" left="0" selected="0" name="unnamed" top="226" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\libraries\R2C2\debug.c" y="77" path="C:\git_bobc\R2C2_Firmware\Firmware\libraries\R2C2\debug.c" left="0" selected="0" name="unnamed" top="56" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\spi.c" y="82" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\spi.c" left="0" selected="0" name="unnamed" top="64" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\libraries\R2C2\lw_task.c" y="186" path="C:\git_bobc\R2C2_Firmware\Firmware\libraries\R2C2\lw_task.c" left="0" selected="0" name="unnamed" top="160" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\printer_task.c" y="129" path="C:\git_bobc\R2C2_Firmware\Firmware\app\printer_task.c" left="0" selected="0" name="unnamed" top="114" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="124" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\app_config.c" y="302" path="C:\git_bobc\R2C2_Firmware\Firmware\app\app_config.c" left="0" selected="0" name="unnamed" top="277" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="54" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\board\due\config_pins.h" y="42" path="C:\git_bobc\R2C2_Firmware\Firmware\board\due\config_pins.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\board\due\config_hal.h" y="0" path="C:\git_bobc\R2C2_Firmware\Firmware\board\due\config_hal.h" left="0" selected="0" name="unnamed" top="27" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\timer_lld.h" y="41" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\hal\timer_lld.h" left="0" selected="0" name="unnamed" top="21" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\stepper.c" y="163" path="C:\git_bobc\R2C2_Firmware\Firmware\app\stepper.c" left="0" selected="0" name="unnamed" top="153" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\tc\tc.c" y="363" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\tc\tc.c" left="0" selected="0" name="unnamed" top="340" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\hal\hal_test.c" y="10" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\hal\hal_test.c" left="0" selected="0" name="unnamed" top="1" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\hal\hal.h" y="41" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\hal\hal.h" left="0" selected="0" name="unnamed" top="31" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="60" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\gcode_process.c" y="1097" path="C:\git_bobc\R2C2_Firmware\Firmware\app\gcode_process.c" left="0" selected="0" name="unnamed" top="1083" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\adc\adc.c" y="693" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\adc\adc.c" left="0" selected="0" name="unnamed" top="677" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\hal\hal_adc.c" y="97" path="C:\git_bobc\r2c2_firmware\firmware\arch\atmel_asf\hal\hal_adc.c" left="0" selected="0" name="unnamed" top="68" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\adc\adc.h" y="163" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\drivers\adc\adc.h" left="0" selected="0" name="unnamed" top="148" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\temp.c" y="76" path="C:\git_bobc\R2C2_Firmware\Firmware\app\temp.c" left="0" selected="0" name="unnamed" top="52" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\temp.h" y="23" path="C:\git_bobc\R2C2_Firmware\Firmware\app\temp.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\thermistor_tables.c" y="60" path="C:\git_bobc\R2C2_Firmware\Firmware\app\thermistor_tables.c" left="0" selected="0" name="unnamed" top="34" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\app\temp_controller.c" y="117" path="C:\git_bobc\r2c2_firmware\firmware\app\temp_controller.c" left="0" selected="0" name="unnamed" top="98" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="27" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\temp_controller.h" y="52" path="C:\git_bobc\R2C2_Firmware\Firmware\app\temp_controller.h" left="0" selected="0" name="unnamed" top="35" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="47" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\app_config.h" y="168" path="C:\git_bobc\R2C2_Firmware\Firmware\app\app_config.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\app\ui_menu.c" y="725" path="C:\git_bobc\r2c2_firmware\firmware\app\ui_menu.c" left="0" selected="0" name="unnamed" top="701" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\app\pin_control.c" y="73" path="C:\git_bobc\r2c2_firmware\firmware\app\pin_control.c" left="0" selected="0" name="unnamed" top="45" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="33" debugPath="C:\git_bobc\r2c2_firmware\firmware\board\due\config_app.h" y="53" path="C:\git_bobc\r2c2_firmware\firmware\board\due\config_app.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\libraries\r2c2\motor_current_limit.c" y="86" path="C:\git_bobc\r2c2_firmware\firmware\libraries\r2c2\motor_current_limit.c" left="0" selected="0" name="unnamed" top="75" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\app\keypad_gen4_mb.c" y="65" path="C:\git_bobc\r2c2_firmware\firmware\app\keypad_gen4_mb.c" left="0" selected="0" name="unnamed" top="49" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\r2c2_firmware\firmware\app\ui_task.c" y="155" path="C:\git_bobc\r2c2_firmware\firmware\app\ui_task.c" left="0" selected="0" name="unnamed" top="129" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\gcode_task.c" y="148" path="C:\git_bobc\R2C2_Firmware\Firmware\app\gcode_task.c" left="0" selected="0" name="unnamed" top="134" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="49" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\app\pin_control.h" y="72" path="C:\git_bobc\R2C2_Firmware\Firmware\app\pin_control.h" left="0" selected="0" name="unnamed" top="49" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\utils\cmsis\sam3x\source\templates\exceptions.c" y="227" path="C:\git_bobc\R2C2_Firmware\Firmware\arch\atmel_asf\asf\sam\utils\cmsis\sam3x\source\templates\exceptions.c" left="0" selected="0" name="unnamed" top="213" />
+ </Files>
+ <ARMCrossStudioWindow activeProject="cs_proj_due" autoConnectTarget="USB CrossConnect for ARM" debugSearchFileMap="\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__int32_to_float32.s
+
+\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__int32_to_float64.s
+
+\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__uint32_to_float32.s
+
+\home\products\build\crossworks\arm\crossworks_v2\shared\target\libm_fast\arm\__uint32_to_float64.s
+" fileDialogInitialDirectory="C:\git_bobc\R2C2_Firmware\Firmware\app" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
+</session>

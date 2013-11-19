@@ -1,0 +1,113 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="cs_proj_due" target="8" version="2">
+  <project Name="cs_proj_due">
+    <configuration Name="Common" Target="SAM3X8E" arm_architecture="v7M" arm_core_type="Cortex-M3" arm_fpu_type="None" arm_gcc_target="arm-unknown-eabi" arm_interwork="No" arm_linker_heap_size="128" arm_linker_process_stack_size="0" arm_linker_stack_size="256" arm_simulator_memory_simulation_filename="$(TargetsDir)/SAM/SAMSimulatorMemory.dll" arm_simulator_memory_simulation_parameter="SAM3X;0x80000;0x0;0x10000;0x8000;0;0;0;0" arm_target_debug_interface_type="ADIv5" c_preprocessor_definitions="USE_PROCESS_STACK;_CROSSWORKS;NDEBUG" c_user_include_directories="$(TargetsDir)/SAM/CMSIS/Device/ATMEL;$(TargetsDir)/SAM/CMSIS/Device/ATMEL/$(SAM_Series)/include;$(TargetsDir)/CMSIS_3/CMSIS/Include;$(TargetsDir)/SAM" gcc_entry_point="Reset_Handler" link_include_standard_libraries="No" link_include_startup_code="No" linker_additional_files="C:\\Programs\\CodeSourcery\\lib\\gcc\\arm-none-eabi\\4.5.2\\thumb2\\libgcc.a;C:\\Programs\\CodeSourcery\\arm-none-eabi\\lib\\thumb2\\libm.a;C:\\Programs\\CodeSourcery\\arm-none-eabi\\lib\\thumb2\\libc.a" linker_memory_map_file="$(TargetsDir)/SAM/SAM3X8E_MemoryMap.xml" linker_output_format="bin" macros="SAM_Series=sam3xa" package_dependencies="Atmel_SAM3X_EK" project_directory="" project_type="Executable" property_groups_file_path="$(TargetsDir)/SAM/propertyGroups.xml" target_get_partname_script="GetPartName()" target_match_partname_script="MatchPartName(&quot;$(Target)&quot;)" target_reset_script="SAM3XA_Reset()"/>
+    <configuration Name="Flash" Placement="Flash" arm_target_flash_loader_file_path="$(TargetsDir)/SAM/Release/Loader_$(SAM_Series).elf" arm_target_flash_loader_type="LIBMEM RPC Loader" linker_section_placement_file="$(TargetsDir)/SAM/flash_placement.xml"/>
+    <configuration Name="RAM" Placement="RAM" linker_section_placement_file="$(TargetsDir)/SAM/ram_placement.xml"/>
+    <folder Name="Source Files" file_name="">
+      <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc"/>
+      <file file_name="arch/hal/hal_test.c">
+        <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+      </file>
+    </folder>
+    <folder Name="System Files" file_name="">
+      <file file_name="$(StudioDir)/source/thumb_crt0.s">
+        <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+      </file>
+      <file file_name="$(TargetsDir)/SAM/SAM_Startup.s">
+        <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+      </file>
+      <file file_name="$(TargetsDir)/SAM/SAM_Target.js">
+        <configuration Name="Common" file_type="Reset Script"/>
+      </file>
+      <file file_name="arch/atmel_asf/asf/sam3x8e_flash.ld">
+        <configuration Name="Common" file_type="Linker Script"/>
+      </file>
+    </folder>
+    <folder Name="CMSIS Files">
+      <file file_name="$(TargetsDir)/SAM/system_sam.c">
+        <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+      </file>
+    </folder>
+    <folder Name="hal" file_name="">
+      <file file_name="arch/hal/hal.c"/>
+      <file file_name="arch/hal/i2c.c"/>
+      <file file_name="arch/hal/str_buffer.c"/>
+      <file file_name="arch/hal/sys_util.c"/>
+      <file file_name="arch/hal/timer.c"/>
+      <folder Name="atmel_asf" file_name="">
+        <file file_name="arch/atmel_asf/asf/common/services/clock/sam3x/sysclk.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/pio/pio.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/pio/pio_handler.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/pmc/pmc.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/tc/tc.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/uart/uart.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/usart/usart.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/utils/cmsis/sam3x/source/templates/exceptions.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/utils/cmsis/sam3x/source/templates/system_sam3x.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/utils/cmsis/sam3x/source/templates/gcc/startup_sam3x.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/boards/arduino_due_x/init.c">
+          <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+        </file>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/gpio/gpio.c">
+          <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+        </file>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/adc/adc.c"/>
+      </folder>
+      <folder Name="hal_asf" file_name="">
+        <file file_name="arch/atmel_asf/hal/hal_uart.c"/>
+        <file file_name="arch/atmel_asf/hal/i2c_lld.c"/>
+        <file file_name="arch/atmel_asf/hal/ios.c"/>
+        <file file_name="arch/atmel_asf/hal/spi.c"/>
+        <file file_name="arch/atmel_asf/hal/sys_util_lld.c"/>
+        <file file_name="arch/atmel_asf/hal/timer_lld.c"/>
+        <file file_name="arch/atmel_asf/hal/hal_adc.c"/>
+      </folder>
+    </folder>
+    <folder Name="app_lib" file_name="">
+      <file file_name="libraries/R2C2/config.c"/>
+      <file file_name="libraries/R2C2/debug.c"/>
+      <file file_name="libraries/R2C2/LiquidCrystal.c"/>
+      <file file_name="libraries/R2C2/lw_heap.c"/>
+      <file file_name="libraries/R2C2/lw_io.c"/>
+      <file file_name="libraries/R2C2/lw_queue.c"/>
+      <file file_name="libraries/R2C2/lw_rtos.c"/>
+      <file file_name="libraries/R2C2/lw_syscalls.c"/>
+      <file file_name="libraries/R2C2/lw_task.c"/>
+      <file file_name="libraries/R2C2/mcp4451.c"/>
+      <file file_name="libraries/R2C2/motor_current_limit.c"/>
+      <file file_name="libraries/R2C2/sermsg.c"/>
+      <file file_name="libraries/R2C2/sersendf.c"/>
+      <file file_name="libraries/R2C2/nk_heap.c"/>
+    </folder>
+    <folder Name="app" file_name="">
+      <file file_name="app/alerter.c"/>
+      <file file_name="app/app_config.c"/>
+      <file file_name="app/endstops.c"/>
+      <file file_name="app/gcode_parse.c"/>
+      <file file_name="app/gcode_process.c"/>
+      <file file_name="app/geometry.c"/>
+      <file file_name="app/keypad_gen4_mb.c"/>
+      <file file_name="app/packed_gcode.c"/>
+      <file file_name="app/pin_control.c"/>
+      <file file_name="app/planner.c"/>
+      <file file_name="app/printer_task.c"/>
+      <file file_name="app/stepper.c"/>
+      <file file_name="app/temp.c"/>
+      <file file_name="app/temp_controller.c"/>
+      <file file_name="app/uart_shell_task.c"/>
+      <file file_name="app/ui_menu.c"/>
+      <file file_name="app/ui_task.c"/>
+      <file file_name="main.c"/>
+      <file file_name="app/gcode_task.c"/>
+      <file file_name="app/thermistor_tables.c"/>
+    </folder>
+  </project>
+  <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
+  <configuration Name="THUMB" Platform="ARM" arm_instruction_set="THUMB" arm_library_instruction_set="THUMB" c_preprocessor_definitions="__THUMB" hidden="Yes"/>
+  <configuration Name="Flash" c_preprocessor_definitions="__FLASH_BUILD" hidden="Yes"/>
+  <configuration Name="Debug" c_preprocessor_definitions="DEBUG" gcc_debugging_level="Level 2" gcc_optimization_level="None" hidden="Yes"/>
+  <configuration Name="THUMB Flash Release" inherited_configurations="THUMB;Flash;Release"/>
+  <configuration Name="Release" c_preprocessor_definitions="NDEBUG" gcc_debugging_level="Level 1" gcc_optimization_level="Level 1" hidden="Yes"/>
+  <configuration Name="Common" build_quietly="Yes" c_user_include_directories=".;arch/hal;arch/atmel_asf/hal;arch/atmel_asf/asf/common/services/clock;arch/atmel_asf/asf/common/services/gpio;arch/atmel_asf/asf/common/services/ioport;arch/atmel_asf/asf/common/utils;arch/atmel_asf/asf/sam/drivers/adc;arch/atmel_asf/asf/sam/drivers/pio;arch/atmel_asf/asf/sam/drivers/pmc;arch/atmel_asf/asf/sam/drivers/tc;arch/atmel_asf/asf/sam/drivers/uart;arch/atmel_asf/asf/sam/drivers/usart;arch/atmel_asf/asf/sam;arch/atmel_asf/asf/sam/utils;arch/atmel_asf/asf/sam/utils/cmsis/sam3x/include;arch/atmel_asf/asf/sam/utils/cmsis/sam3x/source/templates;arch/atmel_asf/asf/sam/utils/header_files;arch/atmel_asf/asf/sam/utils/preprocessor;arch/atmel_asf/asf/thirdparty/CMSIS/Include;libraries/r2c2;board/due;app" gcc_entry_point="Reset_Handler"/>
+</solution>

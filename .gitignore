@@ -1,8 +1,7 @@
 *~
 *.bak
-FLASH_RUN/
-THUMB\ Flash\ Debug/
-THUMB\ Flash\ Release/
+FLASH_*/
+THUMB\ Flash\ */
 *.orig
 *.merge
 
