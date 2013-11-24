@@ -39,12 +39,12 @@ Fully working
 Ports in progress
 -----------------
 
+* Arduino Due http://arduino.cc/en/Main/ArduinoBoardDue with RAMPS-FD http://reprap.org/wiki/RAMPS-FD
 * Smoothieboard by Arthur Wolf http://smoothieware.org/smoothieboard
 
 Planned/considered
 ----------------
 
-* Arduino Due http://arduino.cc/en/Main/ArduinoBoardDue with RAMPS-FD http://reprap.org/wiki/RAMPS-FD
 * 4pi by Kliment http://reprap.org/wiki/4pi
 * Sango-bc by Bob Cousins http://reprap.org/wiki/Sango_bc
 * STMF4Discovery 
