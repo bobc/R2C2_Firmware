@@ -2,7 +2,7 @@ ARCHLIBDIR = arch/lpc17xx
 
 ARCHLIBINC = \
 	$(ARCHLIBDIR)/CMSISv1p30/inc \
-	$(ARCHLIBDIR)/drivers/include \
+	$(ARCHLIBDIR)/Drivers/include \
 	$(ARCHLIBDIR)/hal
 
 
