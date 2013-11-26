@@ -200,14 +200,14 @@ static const tConfigItem config_lookup_pindef [] =
   { "e.pin_enable", &config.motor_driver[3].pin_enable, TYPE_PIN_DEF, {.val_pin_def = S3_ENABLE_PIN }},
   { "e.pin_reset",  &config.motor_driver[3].pin_reset,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
 
-#if ( CFG_MAX_EXTRUDERS > 2)  
+#if ( CFG_MAX_EXTRUDERS > 1)  
   { "e1.pin_step",   &config.motor_driver[4].pin_step,   TYPE_PIN_DEF, {.val_pin_def = S4_STEP_PIN   }},
   { "e1.pin_dir",    &config.motor_driver[4].pin_dir,    TYPE_PIN_DEF, {.val_pin_def = S4_DIR_PIN    }},
   { "e1.pin_enable", &config.motor_driver[4].pin_enable, TYPE_PIN_DEF, {.val_pin_def = S4_ENABLE_PIN }},
   { "e1.pin_reset",  &config.motor_driver[4].pin_reset,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
 #endif
 
-#if ( CFG_MAX_EXTRUDERS > 3)  
+#if ( CFG_MAX_EXTRUDERS > 2)  
   { "e2.pin_step",   &config.motor_driver[5].pin_step,   TYPE_PIN_DEF, {.val_pin_def = S5_STEP_PIN   }},
   { "e2.pin_dir",    &config.motor_driver[5].pin_dir,    TYPE_PIN_DEF, {.val_pin_def = S5_DIR_PIN    }},
   { "e2.pin_enable", &config.motor_driver[5].pin_enable, TYPE_PIN_DEF, {.val_pin_def = S5_ENABLE_PIN }},
@@ -386,11 +386,15 @@ void app_config_set_defaults(void)
   config.axis[3].letter_code = 'E';
   config.axis[3].is_configured = true;
 
+#if CFG_MAX_AXES > 4
   config.axis[4].letter_code = 'B';
   config.axis[4].is_configured = true;
+#endif
 
+#if CFG_MAX_AXES > 5
   config.axis[5].letter_code = 'C';
   config.axis[5].is_configured = true;
+#endif
 }
 
 
