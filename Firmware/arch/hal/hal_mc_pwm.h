@@ -32,8 +32,8 @@
 //
 // **************************************************************************
 
-#ifndef _PWM_H
-#define _PWM_H
+#ifndef _HAL_PWM_H
+#define _HAL_PWM_H
 
 // --------------------------------------------------------------------------
 // Includes
@@ -42,7 +42,6 @@
 #include <stdint.h>
 
 #include "ios.h"
-#include "pwm.h"
 
 // --------------------------------------------------------------------------
 // Defines
@@ -69,16 +68,16 @@
 // Public functions
 // --------------------------------------------------------------------------
 
-void pwm_init (void);
+void hal_pwm_init (void);
 
-void pwm_set_frequency (uint32_t frequency);
-void pwm_start         (void);
-void pwm_stop          (void);
+void hal_pwm_set_frequency (uint32_t frequency);
+void hal_pwm_start         (void);
+void hal_pwm_stop          (void);
 
-void pwm_chan_configure     (uint16_t channel, tPinDef pindef);
-void pwm_chan_set_duty      (uint16_t channel, uint16_t duty_cycle);
-void pwm_chan_start         (uint16_t channel);
-void pwm_chan_stop          (uint16_t channel);
+void hal_pwm_chan_configure     (uint16_t channel, tPinDef pindef);
+void hal_pwm_chan_set_duty      (uint16_t channel, uint16_t duty_cycle);
+void hal_pwm_chan_start         (uint16_t channel);
+void hal_pwm_chan_stop          (uint16_t channel);
 
 // --------------------------------------------------------------------------
 //

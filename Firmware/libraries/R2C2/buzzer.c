@@ -31,7 +31,7 @@
 
 #include "buzzer.h"
 #include "timer.h"
-#include "pwm.h"
+#include "hal_pwm.h"
 
 static tTimer buzzerTimer;
 
@@ -42,20 +42,20 @@ static uint16_t pwm_channel = 3;    // r2c2
 
 static void buzzer_pwm_set_frequency (uint16_t frequency)
 {
-    pwm_set_frequency (frequency);
-    pwm_chan_set_duty      (pwm_channel, Q15_50_PERCENT);
+    hal_pwm_set_frequency (frequency);
+    hal_pwm_chan_set_duty      (pwm_channel, Q15_50_PERCENT);
 }
 
 static void buzzer_pwm_start (void)
 {
-    pwm_start ();
-    pwm_chan_start (pwm_channel);
+    hal_pwm_start ();
+    hal_pwm_chan_start (pwm_channel);
 }
 
 static void buzzer_pwm_stop (void)
 {
-    pwm_chan_stop (pwm_channel);
-    pwm_stop ();
+    hal_pwm_chan_stop (pwm_channel);
+    hal_pwm_stop ();
 }
 
 //
@@ -99,7 +99,7 @@ void buzzer_play_sync (uint16_t frequency, uint32_t duration)
 //TODO: pin config
 void buzzer_init (tPinDef pindef)
 {
-    pwm_chan_configure (pwm_channel, pindef);
+    hal_pwm_chan_configure (pwm_channel, pindef);
   
     AddSlowTimer (&buzzerTimer);
 }

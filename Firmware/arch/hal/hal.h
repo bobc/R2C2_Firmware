@@ -43,7 +43,7 @@
 #include "dac.h"
 #include "i2c.h"
 #include "ios.h"
-#include "pwm.h"
+#include "hal_pwm.h"
 #include "spi.h"
 #include "str_buffer.h"
 #include "sys_util.h"

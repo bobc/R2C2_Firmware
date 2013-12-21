@@ -35,10 +35,6 @@
 // Includes
 // --------------------------------------------------------------------------
 
-#include "LPC17xx.h"
-#include "lpc17xx_pinsel.h"
-#include "lpc17xx_pwm.h"
-
 #include "hal_pwm.h"
 
 // --------------------------------------------------------------------------
@@ -53,18 +49,6 @@
 // Types
 // --------------------------------------------------------------------------
 
-typedef struct 
-{
-    LPC_PWM_TypeDef *pPWM;
-    uint32_t        match_value;  // 1/frequency, us
-} tPwmData;
-
-/*
-    uint8_t         channel;
-    uint32_t        frequency;
-    uint16_t        duty_cycle;        
-*/
-    
 // --------------------------------------------------------------------------
 // Variables
 // --------------------------------------------------------------------------
@@ -76,10 +60,6 @@ typedef struct
 // --------------------------------------------------------------------------
 // Private Variables
 // --------------------------------------------------------------------------
-
-static tPwmData PwmData [1] = {
-    {LPC_PWM1, 1000}
-    };
 
 // --------------------------------------------------------------------------
 // Function prototypes
@@ -111,117 +91,34 @@ void hal_pwm_init (void)
 
 void hal_pwm_set_frequency (uint32_t frequency)
 {
-  PWM_TIMERCFG_Type PWMCfgDat;
-  PWM_MATCHCFG_Type PWMMatchCfgDat;
-  uint32_t match_value = (((float) 1/frequency)) * 1000000; // us
-
-  PwmData[0].match_value = match_value;
-
-  /* PWM block section -------------------------------------------- */
-  /* Initialize PWM peripheral, timer mode
-   * PWM prescale value = 1 (absolute value - tick value) */
-  PWMCfgDat.PrescaleOption = PWM_TIMER_PRESCALE_USVAL;
-  PWMCfgDat.PrescaleValue = 1;
-  PWM_Init(LPC_PWM1, PWM_MODE_TIMER, (void *) &PWMCfgDat);
-
-  /* Set match value for PWM match channel 0 = match_value, update immediately */
-  PWM_MatchUpdate(LPC_PWM1, 0, match_value, PWM_MATCH_UPDATE_NOW);
-  /* PWM Timer/Counter will be reset when channel 0 matching
-   * no interrupt when match
-   * no stop when match */
-  PWMMatchCfgDat.IntOnMatch = DISABLE;
-  PWMMatchCfgDat.MatchChannel = 0;
-  PWMMatchCfgDat.ResetOnMatch = ENABLE;
-  PWMMatchCfgDat.StopOnMatch = DISABLE;
-  PWM_ConfigMatch(LPC_PWM1, &PWMMatchCfgDat);
-
 }
 
-//
 void hal_pwm_start ()
 {
-  /* Reset and Start counter */
-  PWM_ResetCounter (PwmData[0].pPWM);
-  PWM_CounterCmd   (PwmData[0].pPWM, ENABLE);
-
-  /* Start PWM now */
-  PWM_Cmd (PwmData[0].pPWM, ENABLE);
 }
 
 void hal_pwm_stop ()
 {
-  /* Stop counter */
-  PWM_CounterCmd(LPC_PWM1, DISABLE);
-
-  /* Stop PWM now */
-  PWM_Cmd(LPC_PWM1, DISABLE);
 }
-
-// --------------------------------------------------------------------------
-
-///
 
 void hal_pwm_chan_configure     (uint16_t channel, tPinDef pindef)
 {
-  PINSEL_CFG_Type PinCfg;
-
-  /*
-   * Initialize pin
-   */
-  PinCfg.Funcnum = PINSEL_FUNC_1;
-  PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
-  PinCfg.Pinmode = PINSEL_PINMODE_PULLUP;
-  PinCfg.Portnum = pindef.port;
-  PinCfg.Pinnum  = pindef.pin_number;
-  PINSEL_ConfigPin(&PinCfg);
 }
-
-
 
 void hal_pwm_chan_set_duty      (uint16_t channel, uint16_t duty_cycle)
 {
-  PWM_MATCHCFG_Type PWMMatchCfgDat;
-
-  /* Configure PWM channel: --------------------------------------------- */
-  /* - Single edge
-   * - PWM Duty on each PWM channel determined by
-   * the match on channel 0 to the match of that match channel.
-   * Example: PWM Duty on PWM channel 1 determined by
-   * the match on channel 0 to the match of match channel 1.
-   */
-
-  /* Configure PWM channel edge option
-   * Note: PWM Channel 1 is in single mode as default state and
-   * can not be changed to double edge mode */
-  PWM_ChannelConfig(LPC_PWM1, channel, PWM_CHANNEL_SINGLE_EDGE);
-
-  /* Set up match value */
-  PWM_MatchUpdate(LPC_PWM1, channel, PwmData[0].match_value * duty_cycle/32768, PWM_MATCH_UPDATE_NOW);
-  
-  /* Configure match option */
-  PWMMatchCfgDat.IntOnMatch = DISABLE;
-  PWMMatchCfgDat.MatchChannel = channel;
-  PWMMatchCfgDat.ResetOnMatch = DISABLE;
-  PWMMatchCfgDat.StopOnMatch  = DISABLE;
-  PWM_ConfigMatch(LPC_PWM1, &PWMMatchCfgDat);
 }
 
-
-//
-
+/* Enable PWM Channel Output */
 void hal_pwm_chan_start         (uint16_t channel)
 {
-  /* Enable PWM Channel Output */
-  PWM_ChannelCmd(LPC_PWM1, channel, ENABLE);
 }
 
 void hal_pwm_chan_stop          (uint16_t channel)
 {
-  PWM_ChannelCmd(LPC_PWM1, channel, DISABLE);
 }
 
-
-
 //
+// --------------------------------------------------------------------------
 
 

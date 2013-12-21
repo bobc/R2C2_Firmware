@@ -37,6 +37,9 @@
 #include "lw_io.h"
 #include "lw_syscalls.h"
 #include "soundplay.h"
+#ifdef HAVE_BUZZER
+#include "buzzer.h"
+#endif
 
 // app
 #include "printer_task.h"
