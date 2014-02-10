@@ -48,8 +48,8 @@
 #define PIN_D6        PIN_DEF (PORT_C, 24, ACTIVE_HIGH)
 #define PIN_D7        PIN_DEF (PORT_C, 23, ACTIVE_HIGH)
 
-#define PIN_D8        PIN_DEF (PORT_C, 22, ACTIVE_LOW)
-#define PIN_D9        PIN_DEF (PORT_C, 21, ACTIVE_LOW)
+#define PIN_D8        PIN_DEF_EX (PORT_C, 22, ACTIVE_LOW, 0)
+#define PIN_D9        PIN_DEF_EX (PORT_C, 21, ACTIVE_LOW, 0)
 #define PIN_D10       PIN_DEF (PORT_C, 29, ACTIVE_LOW)
 #define PIN_D11       PIN_DEF (PORT_D, 7, ACTIVE_LOW)
 
@@ -76,7 +76,7 @@
 */
 
 /* ==========================================================================
-  Defaults for RAMPS-FS Ver 1 Rev A
+  Defaults for RAMPS-FD Ver 1 Rev A
   
   NB *** User pin configuration in config_pin.txt overrides these defaults ***           
 ========================================================================== */
@@ -124,19 +124,19 @@
 
 
 // sensors
-#define SENSOR_0_ADC_PIN          PIN_DEF_EX (PORT_A, 16, ACTIVE_HIGH, 2)  // AD0
+#define SENSOR_0_ADC_PIN          PIN_DEF_EX (PORT_A, 16, ACTIVE_HIGH, 0)  // AD0
 #define SENSOR_0_ADC_CHANNEL      7
 #define SENSOR_0_TABLE_INDEX      0
 
-#define SENSOR_1_ADC_PIN          PIN_DEF_EX (PORT_A, 24, ACTIVE_HIGH, 2)  // AD1
+#define SENSOR_1_ADC_PIN          PIN_DEF_EX (PORT_A, 24, ACTIVE_HIGH, 0)  // AD1
 #define SENSOR_1_ADC_CHANNEL      6
 #define SENSOR_1_TABLE_INDEX      0
 
-#define SENSOR_2_ADC_PIN          PIN_DEF_EX (PORT_A, 23, ACTIVE_HIGH, 2)  // AD2
+#define SENSOR_2_ADC_PIN          PIN_DEF_EX (PORT_A, 23, ACTIVE_HIGH, 0)  // AD2
 #define SENSOR_2_ADC_CHANNEL      5
 #define SENSOR_2_TABLE_INDEX      0
 
-#define SENSOR_3_ADC_PIN          PIN_DEF_EX (PORT_A, 22, ACTIVE_HIGH, 2)  // AD3
+#define SENSOR_3_ADC_PIN          PIN_DEF_EX (PORT_A, 22, ACTIVE_HIGH, 0)  // AD3
 #define SENSOR_3_ADC_CHANNEL      4
 #define SENSOR_3_TABLE_INDEX      0
 
@@ -145,23 +145,36 @@
 
 //
 #define AUX_0_OUTPUT_PIN              PIN_D12
+#define AUX_0_OUTPUT_PWM              hal_pwm_bang_bang
+#define AUX_0_OUTPUT_CHANNEL          0
+
 #define AUX_1_OUTPUT_PIN              PIN_D2
+#define AUX_1_OUTPUT_PWM              hal_pwm_bang_bang
+#define AUX_1_OUTPUT_CHANNEL          0
 //
 
-// CTC #1 / Extruder 0
-#define EXTRUDER_0_HEATER_PIN           PIN_D9
-#define EXTRUDER_0_SENSOR_INDEX         1
-
-// CTC #2 / Heated Bed
+// Heated Bed
 #define HEATED_BED_0_HEATER_PIN         PIN_D8
+#define HEATED_BED_0_HEATER_PWM         hal_pwm_hw_pwm
+#define HEATED_BED_0_HEATER_CHANNEL     5
 #define HEATED_BED_0_SENSOR_INDEX       0
+
+// Extruder 0
+#define EXTRUDER_0_HEATER_PIN           PIN_D9
+#define EXTRUDER_0_HEATER_PWM           hal_pwm_hw_pwm
+#define EXTRUDER_0_HEATER_CHANNEL       4
+#define EXTRUDER_0_SENSOR_INDEX         1
 
 //
 #define EXTRUDER_1_HEATER_PIN           PIN_D10
+#define EXTRUDER_1_HEATER_PWM           hal_pwm_bang_bang
+#define EXTRUDER_1_HEATER_CHANNEL       0
 #define EXTRUDER_1_SENSOR_INDEX         2
 
 //
 #define EXTRUDER_2_HEATER_PIN           PIN_D11
+#define EXTRUDER_2_HEATER_PWM           hal_pwm_bang_bang
+#define EXTRUDER_2_HEATER_CHANNEL       0
 #define EXTRUDER_2_SENSOR_INDEX         3
 
 
@@ -185,5 +198,9 @@
 #define CFG_DIGIPOT_I2C_CHAN            0
 #define CFG_PIN_DIGIPOT_I2C_SCL         UNDEFINED_PIN_DEF 
 #define CFG_PIN_DIGIPOT_I2C_SDA         UNDEFINED_PIN_DEF
+
+//
+#define DEBUG_PIN_0   PIN_D7
+#define DEBUG_PIN_1   PIN_D6
 
 #endif  /* _CONFIG_PINS_H */

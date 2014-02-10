@@ -43,26 +43,31 @@
 // Defines
 // --------------------------------------------------------------------------
 
+// defines number of stepper motor channels (including extruders)
+#define CFG_MAX_MOTORS          6
 
 // defines number of coordinate axes (including extruders)
 #define CFG_MAX_AXES            6
 
-// defines number of stepper motor channels (including extruders)
-#define CFG_MAX_MOTORS          6
+// defines number of movement axes (not extruders)
+#define CFG_MAX_MOTION_AXES     3
 
 // defines number of extruders
 #define CFG_MAX_EXTRUDERS       3
 
-// defines number of buttons (external Control Panel hardware)
-#define CFG_MAX_BUTTONS         10
-
 // defines number of temperature sensors
 #define CFG_MAX_SENSORS         4
 
-// TODO: sort out use of max number vs actual number configured
-#define NUM_AXES    CFG_MAX_AXES
-
+// defines number of aux outputs
 #define CFG_MAX_AUX_OUTPUTS     2
+
+// defines number of buttons (external Control Panel hardware)
+#define CFG_MAX_BUTTONS         10
+
+
+// TODO: sort out use of max number vs actual number configured
+//#define NUM_AXES                CFG_MAX_AXES
+
 
 // --------------------------------------------------------------------------
 // Config defaults
@@ -83,10 +88,10 @@
 #define CFG_STEPS_PER_MM_Z      2560
 #define CFG_STEPS_PER_MM_E      3360
 
-#define CFG_MAX_FEEDRATE_X      30000     // mm/sec
-#define CFG_MAX_FEEDRATE_Y      30000     // mm/sec
-#define CFG_MAX_FEEDRATE_Z      120       // mm/sec
-#define CFG_MAX_FEEDRATE_E      6000      // mm/sec
+#define CFG_MAX_FEEDRATE_X      30000     // mm/min
+#define CFG_MAX_FEEDRATE_Y      30000     // mm/min
+#define CFG_MAX_FEEDRATE_Z      120       // mm/min
+#define CFG_MAX_FEEDRATE_E      6000      // mm/min
 
 #define CFG_SEARCH_FEEDRATE_X   120
 #define CFG_SEARCH_FEEDRATE_Y   120
@@ -118,7 +123,9 @@
 // --------------------------------------------------------------------------
 
 // axis numbers 
-// for 3D printer with n extruders 
+// motion axes must start at 0 and be < extruders
+
+// for 3D printer with 3 extruders 
 #define X_AXIS      0
 #define Y_AXIS      1
 #define Z_AXIS      2
@@ -127,20 +134,18 @@
 #define E1_AXIS     4
 #define E2_AXIS     5
 
-// mapping of axis to stepper motor channel
-// TODO: multiple channels per axis
 // TODO: run time config ? XYZ ABC UVW E<n> etc
 // XYZ ABC UVW
 // XYZ E6
 // tool definitions
 
-#define X_MOTOR      0
-#define Y_MOTOR      1
-#define Z_MOTOR      2
+#define X_MOTORS      _BV(0)
+#define Y_MOTORS      _BV(1)
+#define Z_MOTORS      _BV(2)
 
-#define E0_MOTOR     3
-#define E1_MOTOR     -1
-#define E2_MOTOR     -1
+#define E0_MOTORS     _BV(3)
+#define E1_MOTORS     _BV(4)
+#define E2_MOTORS     _BV(5)
 
 
 
@@ -148,6 +153,7 @@
 // firmware build options
 // --------------------------------------------------------------------------
 
+#define CFG_MAX_DUTY_CYCLE 255
 
 //#define CFG_APP_USE_BOOT_BUTTON
 

@@ -53,6 +53,8 @@
           <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
         </file>
         <file file_name="arch/atmel_asf/asf/sam/drivers/adc/adc.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/twi/twi.c"/>
+        <file file_name="arch/atmel_asf/asf/sam/drivers/pwm/pwm.c"/>
       </folder>
       <folder Name="hal_asf" file_name="">
         <file file_name="arch/atmel_asf/hal/hal_uart.c"/>
@@ -62,6 +64,7 @@
         <file file_name="arch/atmel_asf/hal/sys_util_lld.c"/>
         <file file_name="arch/atmel_asf/hal/timer_lld.c"/>
         <file file_name="arch/atmel_asf/hal/hal_adc.c"/>
+        <file file_name="arch/atmel_asf/hal/hal_pwm.c"/>
       </folder>
     </folder>
     <folder Name="app_lib" file_name="">
@@ -103,11 +106,11 @@
       <file file_name="app/thermistor_tables.c"/>
     </folder>
   </project>
-  <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
+  <configuration Name="THUMB Flash Debug" build_intermediate_directory="$(Configuration)-$(ProjectName)" build_output_directory="$(Configuration)-$(ProjectName)" inherited_configurations="THUMB;Flash;Debug"/>
   <configuration Name="THUMB" Platform="ARM" arm_instruction_set="THUMB" arm_library_instruction_set="THUMB" c_preprocessor_definitions="__THUMB" hidden="Yes"/>
   <configuration Name="Flash" c_preprocessor_definitions="__FLASH_BUILD" hidden="Yes"/>
-  <configuration Name="Debug" c_preprocessor_definitions="DEBUG" gcc_debugging_level="Level 2" gcc_optimization_level="None" hidden="Yes"/>
+  <configuration Name="Debug" c_preprocessor_definitions="DEBUG" gcc_debugging_level="Level 2" gcc_optimization_level="Level 1" hidden="Yes"/>
   <configuration Name="THUMB Flash Release" inherited_configurations="THUMB;Flash;Release"/>
   <configuration Name="Release" c_preprocessor_definitions="NDEBUG" gcc_debugging_level="Level 1" gcc_optimization_level="Level 1" hidden="Yes"/>
-  <configuration Name="Common" build_quietly="Yes" c_user_include_directories=".;arch/hal;arch/atmel_asf/hal;arch/atmel_asf/asf/common/services/clock;arch/atmel_asf/asf/common/services/gpio;arch/atmel_asf/asf/common/services/ioport;arch/atmel_asf/asf/common/utils;arch/atmel_asf/asf/sam/drivers/adc;arch/atmel_asf/asf/sam/drivers/pio;arch/atmel_asf/asf/sam/drivers/pmc;arch/atmel_asf/asf/sam/drivers/tc;arch/atmel_asf/asf/sam/drivers/uart;arch/atmel_asf/asf/sam/drivers/usart;arch/atmel_asf/asf/sam;arch/atmel_asf/asf/sam/utils;arch/atmel_asf/asf/sam/utils/cmsis/sam3x/include;arch/atmel_asf/asf/sam/utils/cmsis/sam3x/source/templates;arch/atmel_asf/asf/sam/utils/header_files;arch/atmel_asf/asf/sam/utils/preprocessor;arch/atmel_asf/asf/thirdparty/CMSIS/Include;libraries/r2c2;board/due;app" gcc_entry_point="Reset_Handler"/>
+  <configuration Name="Common" build_quietly="Yes" c_user_include_directories=".;arch/hal;arch/atmel_asf/hal;arch/atmel_asf/asf/common/services/clock;arch/atmel_asf/asf/common/services/gpio;arch/atmel_asf/asf/common/services/ioport;arch/atmel_asf/asf/common/utils;arch/atmel_asf/asf/sam/drivers/adc;arch/atmel_asf/asf/sam/drivers/pio;arch/atmel_asf/asf/sam/drivers/pmc;arch/atmel_asf/asf/sam/drivers/pwm;arch/atmel_asf/asf/sam/drivers/tc;arch/atmel_asf/asf/sam/drivers/twi;arch/atmel_asf/asf/sam/drivers/uart;arch/atmel_asf/asf/sam/drivers/usart;arch/atmel_asf/asf/sam;arch/atmel_asf/asf/sam/utils;arch/atmel_asf/asf/sam/utils/cmsis/sam3x/include;arch/atmel_asf/asf/sam/utils/cmsis/sam3x/source/templates;arch/atmel_asf/asf/sam/utils/header_files;arch/atmel_asf/asf/sam/utils/preprocessor;arch/atmel_asf/asf/thirdparty/CMSIS/Include;libraries/r2c2;board/due;app" gcc_entry_point="Reset_Handler"/>
 </solution>

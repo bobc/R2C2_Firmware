@@ -65,8 +65,8 @@ void disable_all_axes (void);
 
 
 // TODO: aux outputs
-#define aux_output_on(index)     write_pin(config.aux_output[index].pin_output, ENABLE);
-#define aux_output_off(index)    write_pin(config.aux_output[index].pin_output, DISABLE);
+#define aux_output_on(index)     write_pin(config.aux_output[index].pin, ENABLE);
+#define aux_output_off(index)    write_pin(config.aux_output[index].pin, DISABLE);
 
 
 #define extruder_fan_on()   aux_output_on(0)  

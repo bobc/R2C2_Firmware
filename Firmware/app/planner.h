@@ -43,7 +43,12 @@ typedef  struct {
   double  x;
   double  y;
   double  z;
+  double  A;
+  double  B;
+  double  C;
+
   double  e;
+
   double  feed_rate;
   uint8_t invert_feed_rate;
 } tTarget;
@@ -54,9 +59,12 @@ typedef struct {
   eActionType action_type;
   
   // Fields used by the Bresenham algorithm for tracing the line
-  uint32_t steps_x, steps_y, steps_z; // Step count along each axis
+  uint32_t steps_x;                   // Step count along each axis
+  uint32_t steps_y; 
+  uint32_t steps_z; 
   uint32_t steps_e; 
-  uint32_t direction_bits;            // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
+  //uint32_t direction_bits;            // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
+  uint32_t axis_direction;
   int32_t  step_event_count;          // The number of step events required to complete this block
   uint32_t nominal_rate;              // The nominal step rate for this block in step_events/minute
   
@@ -94,6 +102,9 @@ typedef struct {
   
 } tActionRequest;
 
+typedef struct {
+  //
+} tMachineState;
 
 // startpoint is start point for the NEXT move to be queued - it is the 
 // end point of the LAST move in the queue.
@@ -109,12 +120,16 @@ void plan_init();
 // millimeters. Feed rate specifies the speed of the motion. If feed rate is inverted, the feed
 // rate is taken to mean "frequency" and would complete the operation in 1/feed_rate minutes.
 //void plan_buffer_line(double x, double y, double z, double feed_rate, uint8_t invert_feed_rate);
+
+/* need to know which extruders (tools) selected
+  if >1, then percentage of each to use
+*/
 void plan_buffer_line (tActionRequest *pAction);
 
 void plan_buffer_action(tActionRequest *pAction);
 
 // Called when the current block is no longer needed. Discards the block and makes the memory
-// availible for new blocks.
+// available for new blocks.
 void plan_discard_current_block();
 
 // Gets the current block. Returns NULL if buffer empty
@@ -128,9 +143,7 @@ int plan_is_acceleration_manager_enabled();
 
 // Reset the position vector
 void plan_set_current_position(tTarget *new_position); 
-
 void plan_set_current_position_xyz(double x, double y, double z); 
-
 void plan_set_feed_rate (tTarget *new_position);
 
 uint8_t plan_queue_full (void);

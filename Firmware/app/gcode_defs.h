@@ -128,9 +128,6 @@ typedef struct {
   };
   
   // command words, parameters
-  double          A;
-  double          B;
-  double          C;
 
 	uint8_t         G;
 	uint8_t					G_fraction;

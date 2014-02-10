@@ -243,7 +243,7 @@ void gcode_parse_init(void)
   steps_per_in_z = ((double) (25.4 * config.steps_per_mm_z));
   steps_per_in_e = ((double) (25.4 * config.steps_per_mm_e));
 #endif  
-  gcode_command.target.feed_rate = config.axis[Z_AXIS].homing_feedrate;
+  gcode_command.target.feed_rate = config.motion_axis[Z_AXIS].homing_feedrate;
 }
 
 

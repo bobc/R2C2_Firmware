@@ -60,37 +60,46 @@
 #define MM_REPRAP_MENDEL  0
 #define MM_RAPMAN         1
 
-
-// configuration settings for one axis
 typedef struct
 {
   bool    is_configured;
-  char    letter_code;      // X,Y,Z,A,B,C
-  
+  char    letter_code;      // A-Z
+  int8_t  dir_invert;       // reverse direction of movement, same effect as setting active low/high on direction pins
+
   double  steps_per_mm;
   int32_t maximum_feedrate;
   double  acceleration;
   
-  int32_t home_direction;   // -1 or +1, 0 if no homing
+  int32_t motor_map;        // motors attached to this axis
+
+} tAxisSettings;
+
+
+// configuration settings for motion axis
+typedef struct
+{
+  bool    have_min_limit;
+  bool    have_max_limit;
+  
+  int8_t  home_direction;   // -1 or +1, 0 if no homing
+
   int32_t homing_feedrate;
   int32_t search_feedrate;
   int32_t home_pos;
   
-  int32_t printing_vol;   // axis max travel
-
-  int32_t dir_invert;     // reverse direction of movement, same effect as setting active low/high on direction pin
-  
-  bool    have_min_limit;
-  bool    have_max_limit;
-  
-  int32_t motor_index;    // motors attached to this axis (TODO: geometries)
-
+  int32_t max_travel;     // axis max travel
+   
   // IO pin configuration
   tPinDef pin_min_limit;
   tPinDef pin_max_limit;
   
-} tAxisSettings;
+} tMotionAxis;
 
+typedef struct
+{
+  uint8_t axis_number; 
+
+} tExtruderConfig;
 
 typedef struct 
 {
@@ -107,21 +116,26 @@ typedef struct
 typedef struct {
     // e.g. heater output, fan
     tPinDef   pin;
-    int32_t   output_polarity; // 0 = inverted, 1=normal
+//    uint8_t   output_polarity; // 0 = inverted, 1=normal  ??
 
-    // pwm - method (hard,soft)
-    // channel, duty cycle
+    // pwm - max duty cycle
+    uint8_t    pwm_method;
+    uint8_t    channel;
+
 } tControlOutput;
 
 // sensor input
 typedef struct {
     //e.g. temp sensor
     // type: adc, thermocouple
-    tPinDef pin;
-    int     adc_channel;
-    int     table_index;
+    tPinDef     pin;
+    uint8_t     adc_channel;
+    uint8_t     table_index;
 
 } tSensorInput;
+
+typedef 
+  uint8_t tAxisMap [26]; // A-Z
 
 // configuration settings for Temperature Control Channel (CTC)
 typedef struct 
@@ -129,53 +143,51 @@ typedef struct
   // ** heater (ControlOutput) index
 
     // heater output
-    tPinDef   pin_heater;   // pindef includes polarity
+    //!tPinDef   pin_heater;   // pindef includes polarity
+    tControlOutput  output;
 
     // cooling output
 //!    tPinDef pin_cooler;
 
     // ** input sensor index
-    int     sensor_index;
-
-//    tPinDef pin_temp_sensor;
-//    int     sensor_adc_channel;
+    uint8_t     sensor_index;
 
 } tCtcSettings;
 
-typedef struct
-{
-    tPinDef pin_output;
-
-} tAuxOutput;
 
 // configuration for system
 typedef struct
 {
   // machine config
-  int32_t       machine_model;
+  int32_t             machine_model;
 
   // axis/motor control    
-  int32_t       num_axes;
-  tAxisSettings        axis [CFG_MAX_AXES];
+  int32_t             num_axes;
+
   tMotorDriverSettings motor_driver [CFG_MAX_MOTORS];
 
-  tPinDef       pin_all_steppers_reset;
+  tAxisSettings       axis [CFG_MAX_AXES];
 
-  int32_t       have_digipot;
-  int32_t       digipot_i2c_channel;
-  tPinDef       digipot_i2c_scl;
-  tPinDef       digipot_i2c_sda;
+  tMotionAxis         motion_axis [CFG_MAX_MOTION_AXES];
+  tExtruderConfig     extruder_config [CFG_MAX_EXTRUDERS];
 
-  tAuxOutput    aux_output [CFG_MAX_AUX_OUTPUTS];
+  tPinDef             pin_all_steppers_reset;
+
+  int32_t             have_digipot;
+  int32_t             digipot_i2c_channel;
+  tPinDef             digipot_i2c_scl;
+  tPinDef             digipot_i2c_sda;
+
+  tControlOutput      aux_output [CFG_MAX_AUX_OUTPUTS];
 
   // machine control
-  double  acceleration;   // global default
-  double  junction_deviation;
+  double              acceleration;   // global default
+  double              junction_deviation;
 
-  int32_t auto_power_off_time; // seconds
-  int32_t step_led_flash_method; // how we control the Step pin to flash the stepper LED
+  int32_t             auto_power_off_time; // seconds
+  int32_t             step_led_flash_method; // how we control the Step pin to flash the stepper LED
 
-  int32_t beep_on_events;
+  int32_t             beep_on_events;
 
   // -- interfaces --
   tPinDef sd_spi_ssel;
@@ -236,40 +248,40 @@ typedef struct
   // more machine config  
   // The following are specific to printers
 
-  int32_t num_sensors;
-  tSensorInput sensor [CFG_MAX_SENSORS];
+  int32_t         num_sensors;
+  tSensorInput    sensor [CFG_MAX_SENSORS];
 
-  int32_t num_extruders;
+  int32_t         num_extruders;
 
   // config for extruder temperature control 
-  tCtcSettings extruder_ctc [CFG_MAX_EXTRUDERS];
+  tCtcSettings    extruder_ctc [CFG_MAX_EXTRUDERS];
 
   // config for heated bed temperature control
-  tCtcSettings heated_bed_ctc;
+  tCtcSettings    heated_bed_ctc;
 
   // dump pos
-  int32_t have_dump_pos;
-  int32_t dump_pos_x;
-  int32_t dump_pos_y;
+  int32_t         have_dump_pos;
+  int32_t         dump_pos_x;
+  int32_t         dump_pos_y;
   
   // rest pos
-  int32_t have_rest_pos;
-  int32_t rest_pos_x;
-  int32_t rest_pos_y;
+  int32_t         have_rest_pos;
+  int32_t         rest_pos_x;
+  int32_t         rest_pos_y;
 
   // wipe pos
-  int32_t have_wipe_pos;
-  int32_t wipe_entry_pos_x;
-  int32_t wipe_entry_pos_y;
-  int32_t wipe_exit_pos_x;
-  int32_t wipe_exit_pos_y;
+  int32_t         have_wipe_pos;
+  int32_t         wipe_entry_pos_x;
+  int32_t         wipe_entry_pos_y;
+  int32_t         wipe_exit_pos_x;
+  int32_t         wipe_exit_pos_y;
   
   //
-  int32_t steps_per_revolution_e;
+  int32_t         steps_per_revolution_e;
   
   // options
-  int32_t wait_on_temp;
-  int32_t enable_extruder_0;
+  int32_t         wait_on_temp;
+  int32_t         enable_extruder_0;
   
 } tApplicationConfiguration;
 

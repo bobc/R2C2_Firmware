@@ -36,6 +36,7 @@
 #include "planner.h"
 #include "endstops.h"
 
+#include "config_pins.h"
 #include "app_config.h"
 
 //#define TICKS_PER_MICROSECOND (F_CPU/1000000)
@@ -45,7 +46,7 @@
 // Globals
       
 
-static uint8_t  led_count [NUM_AXES];
+static uint8_t  led_count [CFG_MAX_AXES];
 static uint8_t  led_on;         // a bit mask
 static uint8_t  leds_enabled;
 static uint16_t led_on_time;
@@ -56,7 +57,11 @@ static tTimer blinkTimer;
 
 // Locals
 
-// #define STEPPER_DEBUG
+#define STEPPER_DEBUG
+#ifdef  STEPPER_DEBUG
+tPinDef DebugPin = DEBUG_PIN_0;
+#endif
+
 
 // DAC scale is calculated as voltage range * 10 (3.3V=33/10) and seconds, steps per mm, and finally mm/s per volt divided by DAC range (10 bits)
 const uint32_t mm_per_sec_per_volt = 200;
@@ -67,13 +72,18 @@ static block_t *current_block;  // A pointer to the block currently being traced
 
 // Variables used by The Stepper Driver Interrupt
 //static uint8_t out_bits;        // The next stepping-bits to be output
-static uint32_t direction_bits; // all axes (may be different ports)    
+
+static uint32_t axis_direction; // all axes
+static uint32_t axis_step;      // all axes
+
+//static uint32_t direction_bits; // all axes (may be different ports)    
 static uint32_t step_bits;      // all axes (may be different ports)    
 
 static int32_t counter_x,       // Counter variables for the bresenham line tracer
                counter_y, 
                counter_z;       
 static int32_t counter_e;       
+
 static uint32_t step_events_completed; // The number of step events executed in the current block
 static volatile int busy; // true when SIG_OUTPUT_COMPARE1A is being serviced. Used to avoid retriggering that handler.
 
@@ -135,9 +145,9 @@ static inline void  gpio_WriteValue (uint8_t portNum, uint32_t bitMask, uint8_t 
 static inline void  set_direction_pins (void) 
 {
   int dir;
+  uint32_t direction_bits;
   
-  //TODO: performance?
-
+#if 0
   dir = (direction_bits & _BV(X_AXIS)) ? 0 : 1;
   write_pin (config.motor_driver[config.axis[X_AXIS].motor_index].pin_dir, dir ^ config.axis[X_AXIS].dir_invert);
   
@@ -150,6 +160,49 @@ static inline void  set_direction_pins (void)
 //TODO: multi extruder
   dir = (direction_bits & _BV(E_AXIS)) ? 0 : 1;
   write_pin (config.motor_driver[config.axis[E_AXIS].motor_index].pin_dir, dir ^ config.axis[E_AXIS].dir_invert);    
+#endif
+
+  direction_bits = 0;
+  for (unsigned axis = 0; axis < CFG_MAX_AXES; axis++)
+  {
+    if (config.axis[axis].dir_invert)
+    {
+      if ((axis_direction & _BV(axis)) == 0)
+        direction_bits |= config.axis[axis].motor_map;
+    } 
+    else
+    {
+      if (axis_direction & _BV(axis))
+        direction_bits |= config.axis[axis].motor_map;
+    }
+  }
+
+  for (unsigned motor = 0; motor < CFG_MAX_MOTORS; motor++)
+  {
+    dir = (direction_bits & _BV(motor)) ? 0 : 1;
+    write_pin (config.motor_driver[motor].pin_dir, dir);
+  }
+
+}
+
+  //TODO: performance?
+
+static inline void set_motor_step (uint32_t motors)
+{
+  for (unsigned motor = 0; motor < CFG_MAX_MOTORS; motor++)
+  {
+    if (motors & _BV(motor))
+        write_pin (config.motor_driver[motor].pin_step, ACTIVE);
+  }
+}
+
+static inline void clear_motor_step (uint32_t motors)
+{
+  for (unsigned motor = 0; motor < CFG_MAX_MOTORS; motor++)
+  {
+    if (motors & _BV(motor))
+        write_pin (config.motor_driver[motor].pin_step, INACTIVE);
+  }
 }
 
 // step selected pins (output set to 'active' state)
@@ -159,25 +212,20 @@ static inline void  set_step_pins (void)
   
   if (config.step_led_flash_method == STEP_LED_FLASH_VARIABLE)
   {
-    for (axis=0; axis < NUM_AXES; axis++)
+    for (axis=0; axis < CFG_MAX_AXES; axis++)
     {
-      if (step_bits & _BV(axis))
+      if (axis_step & _BV(axis))
       {
         inc_led_count (&led_count[axis], _BV(axis));
-        write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, ACTIVE);
+
+        //write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, ACTIVE);
+        set_motor_step (config.axis[axis].motor_map);
       }
     }
   }
   else
   {
-    for (axis=0; axis < NUM_AXES; axis++)
-    {
-      if (step_bits & _BV(axis))
-      {
-        write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, ACTIVE);
-      }
-    }
-  
+    set_motor_step (step_bits);
   }
   
 }
@@ -185,11 +233,18 @@ static inline void  set_step_pins (void)
 // unstep all stepper pins (output inactive)
 static inline void  clear_all_step_pins (void) 
 {
+#if 0
   int axis;
   
-  for (axis=0; axis < NUM_AXES; axis++)
+  for (axis=0; axis < CFG_MAX_AXES; axis++)
   {
-    write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
+    //write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
+    clear_motor_step (config.axis[axis].motor_map);
+  }
+#endif
+  for (unsigned motor = 0; motor < CFG_MAX_MOTORS; motor++)
+  {
+    write_pin (config.motor_driver[motor].pin_step, INACTIVE);
   }
 }
 
@@ -198,10 +253,11 @@ static inline void  clear_step_pins (void)
 {
   int axis;
   
-  for (axis=0; axis < NUM_AXES; axis++)
+  for (axis=0; axis < CFG_MAX_AXES; axis++)
   {
-    if (step_bits & _BV(axis))
-      write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
+    if (axis_step & _BV(axis))
+      //write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
+      clear_motor_step (config.axis[axis].motor_map);
   }
 }
 
@@ -213,10 +269,11 @@ static inline void  clear_step_pins_by_state (void)
   // can turn stepper pins OFF but must NOT turn on 
   // stepper pins because it would cause an unwanted step
   
-  for (axis=0; axis < NUM_AXES; axis++)
+  for (axis=0; axis < CFG_MAX_AXES; axis++)
   {
     if ( (led_on & _BV(axis)) == 0)
-      write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
+      //write_pin (config.motor_driver[config.axis[axis].motor_index].pin_step, INACTIVE);
+      clear_motor_step (config.axis[axis].motor_map);
   }
 
 }
@@ -328,7 +385,7 @@ static uint8_t iterate_trapezoid_cycle_counter()
 // config_step_timer. It pops blocks from the block_buffer and executes them by pulsing the stepper pins appropriately. 
 // It is supported by The Stepper Port Reset Interrupt which it uses to reset the stepper port after each pulse. 
 // The bresenham line tracer algorithm controls all three stepper outputs simultaneously with these two interrupts.
-//SIGNAL(TIMER1_COMPA_vect)
+
 void st_interrupt (void)
 {        
   // TODO: Check if the busy-flag can be eliminated by just disabeling this interrupt while we are in it
@@ -366,9 +423,9 @@ void st_interrupt (void)
       counter_e = counter_x;
       step_events_completed = 0;     
       
-      direction_bits = current_block->direction_bits;
+      axis_direction = current_block->axis_direction;
       set_direction_pins ();
-      step_bits = 0;
+      step_bits = axis_step = 0;
     } else {
       st_go_idle();
     }    
@@ -380,26 +437,32 @@ void st_interrupt (void)
     if (current_block->action_type == AT_MOVE)
     {
       // Execute step displacement profile by bresenham line algorithm
+      axis_step = 0;
       step_bits = 0;
+
       counter_x += current_block->steps_x;
       if (counter_x > 0) {
-        step_bits |= _BV(X_AXIS);
+        axis_step |= _BV(X_AXIS);
+        step_bits |= config.axis[X_AXIS].motor_map;
         counter_x -= current_block->step_event_count;
       }
       counter_y += current_block->steps_y;
       if (counter_y > 0) {
-        step_bits |= _BV(Y_AXIS);
+        axis_step |= _BV(Y_AXIS);
+        step_bits |= config.axis[Y_AXIS].motor_map;
         counter_y -= current_block->step_event_count;
       }
       counter_z += current_block->steps_z;
       if (counter_z > 0) {
-        step_bits |= _BV(Z_AXIS);
+        axis_step |= _BV(Z_AXIS);
+        step_bits |= config.axis[Z_AXIS].motor_map;
         counter_z -= current_block->step_event_count;
       }
       
       counter_e += current_block->steps_e;
       if (counter_e > 0) {
-        step_bits |= _BV(E_AXIS);
+        axis_step |= _BV(E_AXIS);
+        step_bits |= config.axis[E_AXIS].motor_map;
         counter_e -= current_block->step_event_count;
       }
 
@@ -410,13 +473,13 @@ void st_interrupt (void)
 
       if (current_block->check_endstops)
       {
-        if ( (current_block->steps_x && hit_home_stop (X_AXIS, direction_bits & _BV(X_AXIS)) ) ||
-             (current_block->steps_y && hit_home_stop (Y_AXIS, direction_bits & _BV(Y_AXIS)) ) ||
-             (current_block->steps_z && hit_home_stop (Z_AXIS, direction_bits & _BV(Z_AXIS)) )
+        if ( (current_block->steps_x && hit_home_stop (X_AXIS, axis_direction & _BV(X_AXIS)) ) ||
+             (current_block->steps_y && hit_home_stop (Y_AXIS, axis_direction & _BV(Y_AXIS)) ) ||
+             (current_block->steps_z && hit_home_stop (Z_AXIS, axis_direction & _BV(Z_AXIS)) )
            )
         {
           step_events_completed = current_block->step_event_count;
-          step_bits = 0;
+          step_bits = axis_step = 0;
         }
       }
       
@@ -487,7 +550,7 @@ void st_interrupt (void)
     else if (current_block->action_type == AT_WAIT_TEMPERATURES) 
     {
       bool reached_temps = true;
-      step_bits = 0;
+      step_bits = axis_step = 0;
       // TODO: multi_extruder
 
       if ( (current_block->wait_param & _BV(WE_WAIT_TEMP_EXTRUDER_0)) && !ctc_temp_achieved(CTC_EXTRUDER_0))
@@ -505,7 +568,7 @@ void st_interrupt (void)
     }  
     else if (current_block->action_type == AT_WAIT_TIME) 
     {
-      step_bits = 0;
+      step_bits = axis_step = 0;
 
       if (current_block->wait_param <= 50)
       {
@@ -519,7 +582,7 @@ void st_interrupt (void)
     }  
     else if (current_block->action_type == AT_WAIT_USER_INPUT) 
     {
-      step_bits = 0;
+      step_bits = axis_step = 0;
 
       //TODO: wait user input
       current_block = NULL;
@@ -531,7 +594,7 @@ void st_interrupt (void)
   else 
   {
     // Still no block? Set the stepper pins to low before sleeping.
-    step_bits = 0;
+    step_bits = axis_step = 0;
   }          
   
   if (config.step_led_flash_method == STEP_LED_NONE)
@@ -554,11 +617,9 @@ void st_interrupt (void)
 
 // This interrupt is set up by SIG_OUTPUT_COMPARE1A when it sets the motor port bits. It resets
 // the motor port after a short period (settings.pulse_microseconds) completing one step cycle.
-//SIGNAL(TIMER2_OVF_vect)
 void st_reset_interrupt (void)
 {
   // reset stepping pins (leave the direction pins)
-  // STEPPING_PORT = (STEPPING_PORT & ~STEP_MASK) | (settings.invert_mask & STEP_MASK); 
   clear_all_step_pins ();
 }
 
@@ -573,7 +634,7 @@ void stepCallback (tHwTimer *pTimer, uint32_t int_mask)
   (void)pTimer;
 
 #ifdef STEPPER_DEBUG
-  digital_write (1, (1<<15), 1);
+  write_pin (DebugPin, 1);
 #endif
 
 //  if (int_mask & _BIT(TIM_MR0_INT))
@@ -583,7 +644,7 @@ void stepCallback (tHwTimer *pTimer, uint32_t int_mask)
   }
   
 #ifdef STEPPER_DEBUG
-  digital_write (1, (1<<15), 0);
+  write_pin (DebugPin, 0);
 #endif
 }
 
@@ -591,32 +652,11 @@ void stepCallback (tHwTimer *pTimer, uint32_t int_mask)
 // Initialize and start the stepper motor subsystem
 void st_init()
 {
-#if 0
-	// Configure directions of interface pins
-  STEPPING_DDR   |= STEPPING_MASK;
-  STEPPING_PORT = (STEPPING_PORT & ~STEPPING_MASK) | settings.invert_mask;
-  STEPPERS_DISABLE_DDR |= 1<<STEPPERS_DISABLE_BIT;
-  
-	// waveform generation = 0100 = CTC
-	TCCR1B &= ~(1<<WGM13);
-	TCCR1B |=  (1<<WGM12);
-	TCCR1A &= ~(1<<WGM11); 
-	TCCR1A &= ~(1<<WGM10);
-
-	// output mode = 00 (disconnected)
-	TCCR1A &= ~(3<<COM1A0); 
-	TCCR1A &= ~(3<<COM1B0); 
-	
-	// Configure Timer 2
-  TCCR2A = 0;         // Normal operation
-  TCCR2B = (1<<CS21); // Full speed, 1/8 prescaler
-  TIMSK2 |= (1<<TOIE2);      
-#else
 
 #ifdef STEPPER_DEBUG
-  init_dac();
+  //init_dac();
   // setup debug pin
-  pin_mode(1, (1 << 15), OUTPUT);
+  set_pin_mode(DebugPin, OUTPUT);
 #endif  
   // set up timers
   // use hardware timer 0 and 1
@@ -635,8 +675,6 @@ void st_init()
   AddSlowTimer (&blinkTimer);
 #endif
 
-    
-#endif
   
   set_step_events_per_minute(6000);
   trapezoid_tick_cycle_counter = 0;
@@ -710,7 +748,7 @@ static void set_step_events_per_minute(uint32_t steps_per_minute)
   cycles_per_step_event = config_step_timer((TICKS_PER_MICROSECOND*1000000*6)/steps_per_minute*10);
   
 #ifdef STEPPER_DEBUG
-  dac_output (steps_per_minute/dac_scale);
+//  dac_output (steps_per_minute/dac_scale);
 #endif
 }
 

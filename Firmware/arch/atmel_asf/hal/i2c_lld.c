@@ -35,7 +35,10 @@
 // Includes
 // --------------------------------------------------------------------------
 
+#include "asf.h"
+
 #include "ios.h"
+#include "twi.h"
 
 // --------------------------------------------------------------------------
 // Externals
@@ -44,6 +47,9 @@
 // --------------------------------------------------------------------------
 // Local defines
 // --------------------------------------------------------------------------
+
+/** TWI Bus Clock 400kHz */
+#define TWI_CLK     400000
 
 // --------------------------------------------------------------------------
 // Types
@@ -61,6 +67,8 @@
 // Private Variables
 // --------------------------------------------------------------------------
 
+Twi * twi_config [2] = {TWI0, TWI1};
+
 // --------------------------------------------------------------------------
 // Function prototypes
 // --------------------------------------------------------------------------
@@ -75,6 +83,26 @@
 
 void i2c_init (int channel, tPinDef scl, tPinDef sda)
 {
+	twi_options_t opt;
+
+  	/* Configure the options of TWI driver */
+	opt.master_clk = sysclk_get_cpu_hz();
+	opt.speed      = TWI_CLK;
+
+	/* Enable the peripheral clock for TWI */
+  switch (channel)
+  {
+  case 0:
+    pmc_enable_periph_clk(ID_TWI0);
+    twi_master_init(TWI0, &opt);
+    break;
+  case 1:
+    pmc_enable_periph_clk(ID_TWI1);
+    twi_master_init(TWI1, &opt);
+    break;
+  }
+
+
 }
 
 int i2c_start (int channel)
@@ -93,11 +121,30 @@ void i2c_reset (int channel)
 
 int i2c_read (int channel, int address, char *data, int length, int stop)
 {
+    twi_packet_t packet_rx;
+
+    packet_rx.chip        = address;
+    packet_rx.addr_length = 0;
+    packet_rx.buffer      = data;
+    packet_rx.length      = length;
+
+    twi_master_read(twi_config[channel], &packet_rx);
+
     return 0;
 }
 
 int i2c_write (int channel, int address, char *data, int length, int stop)
 {
+    twi_packet_t packet_tx;
+
+    packet_tx.chip        = address;
+//    packet_tx.addr[0]     = EEPROM_MEM_ADDR >> 8;
+    packet_tx.addr_length = 0;
+    packet_tx.buffer      = (uint8_t *) data;
+    packet_tx.length      = length;
+
+    twi_master_write(twi_config[channel], &packet_tx);
+
     return 0;
 }
 

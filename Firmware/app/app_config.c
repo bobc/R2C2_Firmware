@@ -32,6 +32,7 @@
 // hal
 //? #include "spi.h"
 #include "ios.h"    // pin defs
+#include "hal_pwm.h"
 
 //lib_fatfs
 #ifdef HAVE_FILESYSTEM
@@ -96,46 +97,59 @@ static const tConfigItem config_lookup [] =
   { "steps_per_mm_x", &config.axis[X_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= CFG_STEPS_PER_MM_X}},  // 80
   { "steps_per_mm_y", &config.axis[Y_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= CFG_STEPS_PER_MM_Y}},  // 80
   { "steps_per_mm_z", &config.axis[Z_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= CFG_STEPS_PER_MM_Z}},  // 6400
-  { "steps_per_mm_e", &config.axis[E_AXIS].steps_per_mm, TYPE_DOUBLE, {.val_d= CFG_STEPS_PER_MM_E }}, // 36 
 
   /* used for G0 rapid moves and as a cap for all other feedrates */
   { "maximum_feedrate_x", &config.axis[X_AXIS].maximum_feedrate, TYPE_INT, {.val_i= CFG_MAX_FEEDRATE_X}},   /* mm/min */
   { "maximum_feedrate_y", &config.axis[Y_AXIS].maximum_feedrate, TYPE_INT, {.val_i= CFG_MAX_FEEDRATE_Y}},   /* mm/min */
   { "maximum_feedrate_z", &config.axis[Z_AXIS].maximum_feedrate, TYPE_INT, {.val_i= CFG_MAX_FEEDRATE_Z}},   /* mm/min */
-  { "maximum_feedrate_e", &config.axis[E_AXIS].maximum_feedrate, TYPE_INT, {.val_i= CFG_MAX_FEEDRATE_E}},   /* mm/min */
 
   // if axis acceleration is 0, general default acceleration will be used
   { "x.acceleration", &config.axis[X_AXIS].acceleration, TYPE_INT, {.val_i= 0 }},
   { "y.acceleration", &config.axis[Y_AXIS].acceleration, TYPE_INT, {.val_i= 0 }},
   { "z.acceleration", &config.axis[Z_AXIS].acceleration, TYPE_INT, {.val_i= 0 }},
-  { "e.acceleration", &config.axis[E_AXIS].acceleration, TYPE_INT, {.val_i= 0 }},
 
-  { "x.dir.invert", &config.axis[X_AXIS].dir_invert, TYPE_INT, {.val_i= 0 }},
-  { "y.dir.invert", &config.axis[Y_AXIS].dir_invert, TYPE_INT, {.val_i= 0 }},
-  { "z.dir.invert", &config.axis[Z_AXIS].dir_invert, TYPE_INT, {.val_i= 0 }},
+  { "x.dir.invert", &config.axis[X_AXIS].dir_invert, TYPE_S8, {.val_s8 = 0 }},
+  { "y.dir.invert", &config.axis[Y_AXIS].dir_invert, TYPE_S8, {.val_s8 = 0 }},
+  { "z.dir.invert", &config.axis[Z_AXIS].dir_invert, TYPE_S8, {.val_s8 = 0 }},
+
+//
+  { "steps_per_mm_e",     &config.axis[E_AXIS].steps_per_mm, TYPE_DOUBLE,     {.val_d= CFG_STEPS_PER_MM_E }}, // 36 
+  { "maximum_feedrate_e", &config.axis[E_AXIS].maximum_feedrate, TYPE_INT,    {.val_i= CFG_MAX_FEEDRATE_E}},   /* mm/min */
+  { "e.acceleration",     &config.axis[E_AXIS].acceleration, TYPE_INT,        {.val_i= 0 }},
+  { "e.dir.invert",       &config.axis[E_AXIS].dir_invert, TYPE_S8,           {.val_s8 = 0 }},
+
+  { "e1.steps_per_mm",     &config.axis[E1_AXIS].steps_per_mm, TYPE_DOUBLE,     {.val_d= CFG_STEPS_PER_MM_E }}, // 36 
+  { "e1.maximum_feedrate", &config.axis[E1_AXIS].maximum_feedrate, TYPE_INT,    {.val_i= CFG_MAX_FEEDRATE_E}},   /* mm/min */
+  { "e1.acceleration",     &config.axis[E1_AXIS].acceleration, TYPE_INT,        {.val_i= 0 }},
+  { "e1.dir.invert",       &config.axis[E1_AXIS].dir_invert, TYPE_S8,           {.val_s8 = 0 }},
+
+  { "e2.steps_per_mm",     &config.axis[E2_AXIS].steps_per_mm, TYPE_DOUBLE,     {.val_d= CFG_STEPS_PER_MM_E }}, // 36 
+  { "e2.maximum_feedrate", &config.axis[E2_AXIS].maximum_feedrate, TYPE_INT,    {.val_i= CFG_MAX_FEEDRATE_E}},   /* mm/min */
+  { "e2.acceleration",     &config.axis[E2_AXIS].acceleration, TYPE_INT,        {.val_i= 0 }},
+  { "e2.dir.invert",       &config.axis[E2_AXIS].dir_invert, TYPE_S8,           {.val_s8 = 0 }},
+
 
   /* used when searching endstops and similar */
-  { "search_feedrate_x", &config.axis[X_AXIS].search_feedrate, TYPE_INT, {.val_i= CFG_SEARCH_FEEDRATE_X}},  //120
-  { "search_feedrate_y", &config.axis[Y_AXIS].search_feedrate, TYPE_INT, {.val_i= CFG_SEARCH_FEEDRATE_Y}},  //120
-  { "search_feedrate_z", &config.axis[Z_AXIS].search_feedrate, TYPE_INT, {.val_i= CFG_SEARCH_FEEDRATE_Z}},   //60
-  { "search_feedrate_e", &config.axis[E_AXIS].search_feedrate, TYPE_INT, {.val_i= 0}},
+  { "search_feedrate_x", &config.motion_axis[X_AXIS].search_feedrate, TYPE_INT, {.val_i = CFG_SEARCH_FEEDRATE_X}},  //120
+  { "search_feedrate_y", &config.motion_axis[Y_AXIS].search_feedrate, TYPE_INT, {.val_i = CFG_SEARCH_FEEDRATE_Y}},  //120
+  { "search_feedrate_z", &config.motion_axis[Z_AXIS].search_feedrate, TYPE_INT, {.val_i = CFG_SEARCH_FEEDRATE_Z}},   //60
   
-  { "homing_feedrate_x", &config.axis[X_AXIS].homing_feedrate, TYPE_INT, {.val_i= CFG_HOMING_FEEDRATE_X }}, //3000
-  { "homing_feedrate_y", &config.axis[Y_AXIS].homing_feedrate, TYPE_INT, {.val_i= CFG_HOMING_FEEDRATE_Y }}, //3000
-  { "homing_feedrate_z", &config.axis[Z_AXIS].homing_feedrate, TYPE_INT, {.val_i= CFG_HOMING_FEEDRATE_Z }},   //60
+  { "homing_feedrate_x", &config.motion_axis[X_AXIS].homing_feedrate, TYPE_INT, {.val_i = CFG_HOMING_FEEDRATE_X }}, //3000
+  { "homing_feedrate_y", &config.motion_axis[Y_AXIS].homing_feedrate, TYPE_INT, {.val_i = CFG_HOMING_FEEDRATE_Y }}, //3000
+  { "homing_feedrate_z", &config.motion_axis[Z_AXIS].homing_feedrate, TYPE_INT, {.val_i = CFG_HOMING_FEEDRATE_Z }},   //60
   
   // home pos is left front
-  { "home_direction_x", &config.axis[X_AXIS].home_direction, TYPE_INT, {.val_i= CFG_HOME_DIRECTION_X }}, 
-  { "home_direction_y", &config.axis[Y_AXIS].home_direction, TYPE_INT, {.val_i= CFG_HOME_DIRECTION_Y }},
-  { "home_direction_z", &config.axis[Z_AXIS].home_direction, TYPE_INT, {.val_i= CFG_HOME_DIRECTION_Z }},
+  { "home_direction_x", &config.motion_axis[X_AXIS].home_direction, TYPE_S8, {.val_s8 = CFG_HOME_DIRECTION_X }}, 
+  { "home_direction_y", &config.motion_axis[Y_AXIS].home_direction, TYPE_S8, {.val_s8 = CFG_HOME_DIRECTION_Y }},
+  { "home_direction_z", &config.motion_axis[Z_AXIS].home_direction, TYPE_S8, {.val_s8 = CFG_HOME_DIRECTION_Z }},
   
-  { "home_pos_x",       &config.axis[X_AXIS].home_pos, TYPE_INT, {.val_i= CFG_HOME_POS_X }},
-  { "home_pos_y",       &config.axis[Y_AXIS].home_pos, TYPE_INT, {.val_i= CFG_HOME_POS_Y }},
-  { "home_pos_z",       &config.axis[Z_AXIS].home_pos, TYPE_INT, {.val_i= CFG_HOME_POS_Z }},
+  { "home_pos_x",       &config.motion_axis[X_AXIS].home_pos, TYPE_INT, {.val_i= CFG_HOME_POS_X }},
+  { "home_pos_y",       &config.motion_axis[Y_AXIS].home_pos, TYPE_INT, {.val_i= CFG_HOME_POS_Y }},
+  { "home_pos_z",       &config.motion_axis[Z_AXIS].home_pos, TYPE_INT, {.val_i= CFG_HOME_POS_Z }},
 
-  { "printing_vol_x",   &config.axis[X_AXIS].printing_vol , TYPE_INT, {.val_i= CFG_PRINTING_VOL_X }},
-  { "printing_vol_y",   &config.axis[Y_AXIS].printing_vol , TYPE_INT, {.val_i= CFG_PRINTING_VOL_Y }},
-  { "printing_vol_z",   &config.axis[Z_AXIS].printing_vol , TYPE_INT, {.val_i= CFG_PRINTING_VOL_Z }},
+  { "printing_vol_x",   &config.motion_axis[X_AXIS].max_travel , TYPE_INT, {.val_i= CFG_PRINTING_VOL_X }},
+  { "printing_vol_y",   &config.motion_axis[Y_AXIS].max_travel , TYPE_INT, {.val_i= CFG_PRINTING_VOL_Y }},
+  { "printing_vol_z",   &config.motion_axis[Z_AXIS].max_travel , TYPE_INT, {.val_i= CFG_PRINTING_VOL_Z }},
   
   //  
   // config for printers
@@ -215,115 +229,119 @@ static const tConfigItem config_lookup_pindef [] =
 #endif
 
 //
-  { "x.motor",         &config.axis[X_AXIS].motor_index,  TYPE_INT, {.val_i = X_MOTOR }},
+  { "x.motors",         &config.axis[X_AXIS].motor_map,    TYPE_INT, {.val_i = X_MOTORS }},
+  { "y.motors",         &config.axis[Y_AXIS].motor_map,    TYPE_INT, {.val_i = Y_MOTORS }},
+  { "z.motors",         &config.axis[Z_AXIS].motor_map,    TYPE_INT, {.val_i = Z_MOTORS }},
 
-  { "x.pin_min_limit", &config.axis[X_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def = X_MIN_PIN}},
-  { "x.pin_max_limit", &config.axis[X_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+
+  { "x.pin_min_limit", &config.motion_axis[X_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def = X_MIN_PIN}},
+  { "x.pin_max_limit", &config.motion_axis[X_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
   
-  // Y Axis
-  { "y.motor",         &config.axis[Y_AXIS].motor_index,  TYPE_INT, {.val_i = Y_MOTOR }},
-  { "y.pin_min_limit", &config.axis[Y_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def = Y_MIN_PIN    }},
-  { "y.pin_max_limit", &config.axis[Y_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+  { "y.pin_min_limit", &config.motion_axis[Y_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def = Y_MIN_PIN    }},
+  { "y.pin_max_limit", &config.motion_axis[Y_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
 
-  // Z Axis
-  { "z.motor",         &config.axis[Z_AXIS].motor_index,  TYPE_INT, {.val_i = Z_MOTOR }},
-  { "z.pin_min_limit", &config.axis[Z_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def = Z_MIN_PIN        }},
-  { "z.pin_max_limit", &config.axis[Z_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
+  { "z.pin_min_limit", &config.motion_axis[Z_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def = Z_MIN_PIN        }},
+  { "z.pin_max_limit", &config.motion_axis[Z_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
 
-  // E Axis
-  { "e.motor",         &config.axis[E_AXIS].motor_index,  TYPE_INT, {.val_i = E0_MOTOR }},
-  { "e.pin_min_limit", &config.axis[E_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
-  { "e.pin_max_limit", &config.axis[E_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
+
+  { "e.motors",         &config.axis [E_AXIS].motor_map,    TYPE_INT, {.val_i = E0_MOTORS }},
+  { "e.axis",           &config.extruder_config [0].axis_number,   TYPE_INT, {.val_i = E_AXIS }},
+
 
 #if ( CFG_MAX_EXTRUDERS > 1)  
   // E1 Axis
-  { "e1.motor",         &config.axis[E1_AXIS].motor_index,  TYPE_INT, {.val_i = E1_MOTOR }},
-  { "e1.pin_min_limit", &config.axis[E1_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
-  { "e1.pin_max_limit", &config.axis[E1_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
+  { "e1.motors",         &config.axis[E1_AXIS].motor_map,  TYPE_INT, {.val_i = E1_MOTORS }},
+  { "e1.axis",           &config.extruder_config [1].axis_number,   TYPE_INT, {.val_i = E1_AXIS }},
 #endif
-
 #if ( CFG_MAX_EXTRUDERS > 2)  
   // E2 Axis
-  { "e2.motor",         &config.axis[E2_AXIS].motor_index,  TYPE_INT, {.val_i = E2_MOTOR }},
-  { "e2.pin_min_limit", &config.axis[E2_AXIS].pin_min_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
-  { "e2.pin_max_limit", &config.axis[E2_AXIS].pin_max_limit,  TYPE_PIN_DEF, {.val_pin_def=UNDEFINED_PIN_DEF}},
+  { "e2.motors",         &config.axis[E2_AXIS].motor_map,  TYPE_INT, {.val_i = E2_MOTORS }},
+  { "e2.axis",           &config.extruder_config [2].axis_number,   TYPE_INT, {.val_i = E2_AXIS }},
 #endif
 
 
   { "all_steppers.reset",  &config.pin_all_steppers_reset,  TYPE_PIN_DEF, {.val_pin_def = STEPPERS_RESET_PIN}},
   
-  { "have_digipot",         &config.have_digipot,  TYPE_INT, {.val_i = CFG_HAVE_DIGIPOT}},
-  { "digipot_i2c_channel",  &config.digipot_i2c_channel,  TYPE_INT, {.val_i = CFG_DIGIPOT_I2C_CHAN}},
+  { "have_digipot",         &config.have_digipot,           TYPE_INT, {.val_i = CFG_HAVE_DIGIPOT}},
+  { "digipot_i2c_channel",  &config.digipot_i2c_channel,    TYPE_INT, {.val_i = CFG_DIGIPOT_I2C_CHAN}},
   
-  { "digipot_i2c_scl",  &config.digipot_i2c_scl,  TYPE_PIN_DEF, {.val_pin_def = CFG_PIN_DIGIPOT_I2C_SCL}},
-  { "digipot_i2c_sda",  &config.digipot_i2c_sda,  TYPE_PIN_DEF, {.val_pin_def = CFG_PIN_DIGIPOT_I2C_SDA}},
+  { "digipot_i2c_scl",  &config.digipot_i2c_scl,            TYPE_PIN_DEF, {.val_pin_def = CFG_PIN_DIGIPOT_I2C_SCL}},
+  { "digipot_i2c_sda",  &config.digipot_i2c_sda,            TYPE_PIN_DEF, {.val_pin_def = CFG_PIN_DIGIPOT_I2C_SDA}},
 //
 
 #ifdef AUX_0_OUTPUT_PIN
-  { "aux_0.pin_output",             &config.aux_output[0].pin_output,           TYPE_PIN_DEF, {.val_pin_def = AUX_0_OUTPUT_PIN}},
+  { "aux_0.pin_output",             &config.aux_output[0].pin,           TYPE_PIN_DEF, {.val_pin_def = AUX_0_OUTPUT_PIN}},
 #endif
 #ifdef AUX_1_OUTPUT_PIN
-  { "aux_1.pin_output",             &config.aux_output[1].pin_output,           TYPE_PIN_DEF, {.val_pin_def = AUX_1_OUTPUT_PIN}},
+  { "aux_1.pin_output",             &config.aux_output[1].pin,           TYPE_PIN_DEF, {.val_pin_def = AUX_1_OUTPUT_PIN}},
 #endif
 
 //
   { "num_sensors",    &config.num_sensors, TYPE_INT,    {.val_i = CFG_MAX_SENSORS}},
 
   { "sensor_0.temp_sensor",         &config.sensor[0].pin,           TYPE_PIN_DEF, {.val_pin_def = SENSOR_0_ADC_PIN}},      
-  { "sensor_0.adc_channel",         &config.sensor[0].adc_channel,   TYPE_INT,     {.val_i       = SENSOR_0_ADC_CHANNEL}},
-  { "sensor_0.temp_table",          &config.sensor[0].table_index,   TYPE_INT,     {.val_i       = SENSOR_0_TABLE_INDEX}},
+  { "sensor_0.adc_channel",         &config.sensor[0].adc_channel,   TYPE_U8,     {.val_u8       = SENSOR_0_ADC_CHANNEL}},
+  { "sensor_0.temp_table",          &config.sensor[0].table_index,   TYPE_U8,     {.val_u8       = SENSOR_0_TABLE_INDEX}},
 
   { "sensor_1.temp_sensor",         &config.sensor[1].pin,           TYPE_PIN_DEF, {.val_pin_def = SENSOR_1_ADC_PIN}},      
-  { "sensor_1.adc_channel",         &config.sensor[1].adc_channel,   TYPE_INT,     {.val_i       = SENSOR_1_ADC_CHANNEL}},
-  { "sensor_1.temp_table",          &config.sensor[1].table_index,   TYPE_INT,     {.val_i       = SENSOR_1_TABLE_INDEX}},
+  { "sensor_1.adc_channel",         &config.sensor[1].adc_channel,   TYPE_U8,     {.val_u8       = SENSOR_1_ADC_CHANNEL}},
+  { "sensor_1.temp_table",          &config.sensor[1].table_index,   TYPE_U8,     {.val_u8       = SENSOR_1_TABLE_INDEX}},
 
 #if CFG_MAX_SENSORS > 2
   { "sensor_2.temp_sensor",         &config.sensor[2].pin,           TYPE_PIN_DEF, {.val_pin_def = SENSOR_2_ADC_PIN}},      
-  { "sensor_2.adc_channel",         &config.sensor[2].adc_channel,   TYPE_INT,     {.val_i       = SENSOR_2_ADC_CHANNEL}},
-  { "sensor_2.temp_table",          &config.sensor[2].table_index,   TYPE_INT,     {.val_i       = SENSOR_2_TABLE_INDEX}},
+  { "sensor_2.adc_channel",         &config.sensor[2].adc_channel,   TYPE_U8,     {.val_u8       = SENSOR_2_ADC_CHANNEL}},
+  { "sensor_2.temp_table",          &config.sensor[2].table_index,   TYPE_U8,     {.val_u8       = SENSOR_2_TABLE_INDEX}},
 #endif
 
 #if CFG_MAX_SENSORS > 3
   { "sensor_3.temp_sensor",         &config.sensor[3].pin,           TYPE_PIN_DEF, {.val_pin_def = SENSOR_3_ADC_PIN}},      
-  { "sensor_3.adc_channel",         &config.sensor[3].adc_channel,   TYPE_INT,     {.val_i       = SENSOR_3_ADC_CHANNEL}},
-  { "sensor_3.temp_table",          &config.sensor[3].table_index,   TYPE_INT,     {.val_i       = SENSOR_3_TABLE_INDEX}},
+  { "sensor_3.adc_channel",         &config.sensor[3].adc_channel,   TYPE_U8,     {.val_u8       = SENSOR_3_ADC_CHANNEL}},
+  { "sensor_3.temp_table",          &config.sensor[3].table_index,   TYPE_U8,     {.val_u8       = SENSOR_3_TABLE_INDEX}},
 #endif
 
-  // CTC #1 / Extruder 0
-  { "extruder_0.heater",              &config.extruder_ctc[0].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_HEATER_PIN}},
-//!  { "extruder_0.cooler",              &config.extruder_ctc[0].pin_cooler,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_FAN_PIN}},
-  { "extruder_0.temp_sensor",         &config.extruder_ctc[0].sensor_index,         TYPE_INT,     {.val_i = EXTRUDER_0_SENSOR_INDEX}},
+  // Heated Bed
+  { "heated_bed.heater",              &config.heated_bed_ctc.output.pin,            TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_HEATER_PIN}},
+  { "heated_bed.heater.pwm",          &config.heated_bed_ctc.output.pwm_method,     TYPE_U8,    {.val_u8 = HEATED_BED_0_HEATER_PWM}},
+  { "heated_bed.heater.channel",      &config.heated_bed_ctc.output.channel,        TYPE_U8,    {.val_u8 = HEATED_BED_0_HEATER_CHANNEL}},
 
-//  { "extruder_0.temp_sensor",         &config.extruder_ctc[0].pin_temp_sensor,      TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_SENSOR_ADC_PIN}},
-//  { "extruder_0.sensor_adc_channel",  &config.extruder_ctc[0].sensor_adc_channel,   TYPE_INT,     {.val_i = EXTRUDER_0_SENSOR_ADC_CHANNEL}},
+  { "heated_bed.temp_sensor",         &config.heated_bed_ctc.sensor_index,          TYPE_U8,     {.val_u8 = HEATED_BED_0_SENSOR_INDEX}},
 
-  // CTC #2 / Heated Bed
-  { "heated_bed.heater",              &config.heated_bed_ctc.pin_heater,            TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_HEATER_PIN}},
 //!  { "heated_bed.cooler",              &config.heated_bed_ctc.pin_cooler,            TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF}},
-  { "heated_bed.temp_sensor",         &config.heated_bed_ctc.sensor_index,          TYPE_INT,     {.val_i = HEATED_BED_0_SENSOR_INDEX}},
 
-//  { "heated_bed.temp_sensor",         &config.heated_bed_ctc.pin_temp_sensor,       TYPE_PIN_DEF, {.val_pin_def = HEATED_BED_0_ADC_PIN}},
-//  { "heated_bed.sensor_adc_channel",  &config.heated_bed_ctc.sensor_adc_channel,    TYPE_INT,     {.val_i = HEATED_BED_0_SENSOR_ADC_CHANNEL}},
+  // Extruder 0
+  { "extruder_0.heater",              &config.extruder_ctc[0].output.pin,            TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_HEATER_PIN}},
+  { "extruder_0.heater.pwm",          &config.extruder_ctc[0].output.pwm_method,     TYPE_U8,    {.val_u8 = EXTRUDER_0_HEATER_PWM}},
+  { "extruder_0.heater.channel",      &config.extruder_ctc[0].output.channel,        TYPE_U8,    {.val_u8 = EXTRUDER_0_HEATER_CHANNEL}},
+
+  { "extruder_0.temp_sensor",         &config.extruder_ctc[0].sensor_index,          TYPE_U8,    {.val_u8 = EXTRUDER_0_SENSOR_INDEX}},
+
+//!  { "extruder_0.cooler",              &config.extruder_ctc[0].pin_cooler,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_0_FAN_PIN}},
 
 #if ( CFG_MAX_EXTRUDERS > 1)  
   // Extruder 1
-  { "extruder_1.heater",              &config.extruder_ctc[1].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_1_HEATER_PIN}},
-  { "extruder_1.temp_sensor",         &config.extruder_ctc[1].sensor_index,      TYPE_PIN_DEF, {.val_i = EXTRUDER_1_SENSOR_INDEX}},
+  { "extruder_1.heater",              &config.extruder_ctc[1].output.pin,            TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_1_HEATER_PIN}},
+  { "extruder_1.heater.pwm",          &config.extruder_ctc[1].output.pwm_method,     TYPE_U8,    {.val_u8 = EXTRUDER_1_HEATER_PWM}},
+  { "extruder_1.heater.channel",      &config.extruder_ctc[1].output.channel,        TYPE_U8,    {.val_u8 = EXTRUDER_1_HEATER_CHANNEL}},
+
+  { "extruder_1.temp_sensor",         &config.extruder_ctc[1].sensor_index,          TYPE_U8,    {.val_u8 = EXTRUDER_1_SENSOR_INDEX}},
 #endif
 
 #if ( CFG_MAX_EXTRUDERS > 2)  
   // Extruder 2
-  { "extruder_2.heater",              &config.extruder_ctc[2].pin_heater,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_2_HEATER_PIN}},
-  { "extruder_2.temp_sensor",         &config.extruder_ctc[2].sensor_index,      TYPE_PIN_DEF, {.val_i = EXTRUDER_2_SENSOR_INDEX}},
+  { "extruder_2.heater",              &config.extruder_ctc[2].output.pin,           TYPE_PIN_DEF, {.val_pin_def = EXTRUDER_2_HEATER_PIN}},
+  { "extruder_2.heater.pwm",          &config.extruder_ctc[2].output.pwm_method,    TYPE_U8,    {.val_u8 = EXTRUDER_2_HEATER_PWM}},
+  { "extruder_2.heater.channel",      &config.extruder_ctc[2].output.channel,       TYPE_U8,    {.val_u8 = EXTRUDER_2_HEATER_CHANNEL}},
+
+  { "extruder_2.temp_sensor",         &config.extruder_ctc[2].sensor_index,         TYPE_U8,    {.val_u8 = EXTRUDER_2_SENSOR_INDEX}},
 #endif
 
-  { "sd.spi.ssel0",         &config.sd_spi_ssel,   TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SSEL  }},
-  { "sd.spi.sck",           &config.sd_spi_sck,   TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SCK  }},
-  { "sd.spi.mosi",          &config.sd_spi_mosi,    TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_MOSI  }},
-  { "sd.spi.miso",          &config.sd_spi_miso,    TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_MISO  }},
-  { "sd.spi.channel",       &config.sd_spi_channel,   TYPE_INT,     {.val_i = SD_SPI_CHANNEL}},
+  { "sd.spi.ssel0",         &config.sd_spi_ssel,        TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SSEL  }},
+  { "sd.spi.sck",           &config.sd_spi_sck,         TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_SCK  }},
+  { "sd.spi.mosi",          &config.sd_spi_mosi,        TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_MOSI  }},
+  { "sd.spi.miso",          &config.sd_spi_miso,        TYPE_PIN_DEF, {.val_pin_def =  SD_SPI_MISO  }},
+  { "sd.spi.channel",       &config.sd_spi_channel,     TYPE_INT,     {.val_i = SD_SPI_CHANNEL}},
 
-  { "buzzer",          &config.buzzer_pin,   TYPE_PIN_DEF, {.val_pin_def = PIN_DEF (BUZZER_PORT, BUZZER_PIN_NUMBER, 1)   }},
+  { "buzzer",          &config.buzzer_pin,              TYPE_PIN_DEF, {.val_pin_def = PIN_DEF (BUZZER_PORT, BUZZER_PIN_NUMBER, 1)   }},
 
   { "cp_lcd_data_0",   &config.interface_cp_lcd_pin_data[0],   TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF   }},
   { "cp_lcd_data_1",   &config.interface_cp_lcd_pin_data[1],   TYPE_PIN_DEF, {.val_pin_def = UNDEFINED_PIN_DEF   }},
@@ -372,7 +390,7 @@ void app_config_set_defaults(void)
   set_defaults (config_lookup_pindef, NUM_TOKENS(config_lookup_pindef));
 
   // set default axis map
-  config.num_axes = NUM_AXES;
+  config.num_axes = CFG_MAX_AXES;
 
   config.axis[0].letter_code = 'X';
   config.axis[0].is_configured = true;

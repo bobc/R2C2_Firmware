@@ -109,8 +109,8 @@ void app_SysTick(void)
 void aux_init (uint8_t index)
 {
     // set output pin
-    set_pin_mode (config.aux_output[index].pin_output, OUTPUT);
-    write_pin (config.aux_output[index].pin_output, DISABLE);
+    set_pin_mode (config.aux_output[index].pin, OUTPUT);
+    write_pin (config.aux_output[index].pin, DISABLE);
 }
 
 
@@ -147,30 +147,33 @@ static void machine_init(void)
   // Option
   if (config.have_digipot)
     motor_current_init ();  
-  
+
+  for (unsigned motor = 0; motor < CFG_MAX_MOTORS; motor++)
+  {
+    set_pin_mode (config.motor_driver [motor].pin_step, OUTPUT);
+    set_pin_mode (config.motor_driver [motor].pin_dir, OUTPUT);
+    set_pin_mode (config.motor_driver [motor].pin_enable, OUTPUT);
+
+    //TODO: is this right?
+    if (config.have_digipot)
+      motor_current_set (motor, 0.25);    // was axis
+  }
+
+  for (axis = 0; axis < CFG_MAX_MOTION_AXES; axis++)
+  {
+    set_pin_mode (config.motion_axis [axis].pin_min_limit, INPUT);
+    set_pin_mode (config.motion_axis [axis].pin_max_limit, INPUT);
+  }  
+
   for (axis = 0; axis < CFG_MAX_AXES; axis++)
   {
     if (config.axis [axis].is_configured)
     {
-      unsigned motor = config.axis [axis].motor_index;
-
-      if (motor != -1)
-      {
-        set_pin_mode (config.motor_driver [motor].pin_step, OUTPUT);
-        set_pin_mode (config.motor_driver [motor].pin_dir, OUTPUT);
-        set_pin_mode (config.motor_driver [motor].pin_enable, OUTPUT);
-      
-        set_pin_mode (config.axis [axis].pin_min_limit, INPUT);
-        set_pin_mode (config.axis [axis].pin_max_limit, INPUT);
-    
-        // could be shared?
-        axis_enable(axis);
-
-        if (config.have_digipot)
-          motor_current_set (axis, 0.25);
-      }
+      // could be shared?
+      axis_enable(axis);
     }
   }
+
 }
 
 

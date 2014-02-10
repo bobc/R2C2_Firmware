@@ -39,13 +39,13 @@
 
 tTarget startpoint;
 
-static block_t block_buffer[BLOCK_BUFFER_SIZE];  // A ring buffer for motion instructions
-static volatile uint8_t block_buffer_head;       // Index of the next block to process
-static volatile uint8_t block_buffer_tail;       // Index of the last block
+static block_t            block_buffer[BLOCK_BUFFER_SIZE];  // A ring buffer for motion instructions
+static volatile uint8_t   block_buffer_head;       // Index of the next block to process
+static volatile uint8_t   block_buffer_tail;       // Index of the last block
 
-static int32_t position[NUM_AXES];             // The current position of the tool in absolute steps
-static double previous_unit_vec[NUM_AXES];     // Unit vector of previous path line segment
-static double previous_nominal_speed;   // Nominal speed of previous path line segment
+static int32_t            position [CFG_MAX_AXES];             // The current position of the tool in absolute steps
+static double             previous_unit_vec [CFG_MAX_AXES];     // Unit vector of previous path line segment
+static double             previous_nominal_speed;   // Nominal speed of previous path line segment
 
 static uint8_t acceleration_manager_enabled;   // Acceleration management active?
 
@@ -405,10 +405,10 @@ void plan_buffer_line (tActionRequest *pAction)
   uint8_t invert_feed_rate;
   bool e_only = false;
   double speed_x, speed_y, speed_z, speed_e; // Nominal mm/minute for each axis
-  int32_t target[NUM_AXES];
+  int32_t target [CFG_MAX_AXES];
   uint8_t next_buffer_tail;
   block_t *block;
-  double delta_mm[NUM_AXES];
+  double delta_mm [CFG_MAX_AXES];
   double inverse_millimeters;
   double microseconds;
   double multiplier;
@@ -441,16 +441,18 @@ void plan_buffer_line (tActionRequest *pAction)
   block->action_type = AT_MOVE;
   
   // Compute direction bits for this block
-  block->direction_bits = 0;
-  if (target[X_AXIS] < position[X_AXIS]) { block->direction_bits |= _BV(X_AXIS); }
-  if (target[Y_AXIS] < position[Y_AXIS]) { block->direction_bits |= _BV(Y_AXIS); }
-  if (target[Z_AXIS] < position[Z_AXIS]) { block->direction_bits |= _BV(Z_AXIS); }
-  if (target[E_AXIS] < position[E_AXIS]) { block->direction_bits |= _BV(E_AXIS); }
+  block->axis_direction = 0;
+  if (target[X_AXIS] < position[X_AXIS]) { block->axis_direction |= _BV(X_AXIS); }
+  if (target[Y_AXIS] < position[Y_AXIS]) { block->axis_direction |= _BV(Y_AXIS); }
+  if (target[Z_AXIS] < position[Z_AXIS]) { block->axis_direction |= _BV(Z_AXIS); }
+
+  if (target[E_AXIS] < position[E_AXIS]) { block->axis_direction |= _BV(E_AXIS); }
   
   // Number of steps for each axis
   block->steps_x = labs(target[X_AXIS]-position[X_AXIS]);
   block->steps_y = labs(target[Y_AXIS]-position[Y_AXIS]);
   block->steps_z = labs(target[Z_AXIS]-position[Z_AXIS]);
+
   block->steps_e = labs(target[E_AXIS]-position[E_AXIS]);
   block->step_event_count = max(block->steps_x, max(block->steps_y, block->steps_z));
   block->step_event_count = max(block->step_event_count, block->steps_e);
@@ -569,7 +571,7 @@ void plan_buffer_line (tActionRequest *pAction)
   if (acceleration_manager_enabled /*&& !e_only*/ ) {  
   
     // Compute path unit vector                            
-    double unit_vec[NUM_AXES];
+  double unit_vec [CFG_MAX_AXES];
 	double vmax_junction;
 	double v_allowable;
 

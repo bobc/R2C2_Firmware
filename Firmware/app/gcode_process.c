@@ -67,6 +67,12 @@
 
 extern tGcodeInputMsg file_input_msg;
 
+typedef struct {
+  bool     enabled;
+
+  bool     selected;
+  uint16_t target_temp;
+} tExtruderData;
 
 #ifdef HAVE_FILESYSTEM
 
@@ -87,6 +93,10 @@ char      sd_file_name [21];
 
 uint8_t   extruders_on;
 double    extruder_0_speed;         // in RPM
+
+tExtruderData extruder_data [CFG_MAX_EXTRUDERS];
+uint16_t      current_tool;         // alias for current_extruder
+
 
 uint32_t  auto_prime_steps = 0;
 uint32_t  auto_reverse_steps = 0;
@@ -234,26 +244,26 @@ static void home_x(void)
   int dir;
   int max_travel;
 
-  if (config.axis[X_AXIS].home_direction < 0)
+  if (config.motion_axis[X_AXIS].home_direction < 0)
     dir = -1;
   else
     dir = 1;
-  max_travel = max (300, config.axis[X_AXIS].printing_vol);
+  max_travel = max (300, config.motion_axis[X_AXIS].max_travel);
 
   // move to endstop
-  SpecialMoveXY(startpoint.x + dir * max_travel, startpoint.y, config.axis[X_AXIS].homing_feedrate);
+  SpecialMoveXY(startpoint.x + dir * max_travel, startpoint.y, config.motion_axis[X_AXIS].homing_feedrate);
 //  synch_queue();
   
   // move forward a bit
-  SpecialMoveXY(startpoint.x - dir * 3, startpoint.y, config.axis[X_AXIS].search_feedrate);
+  SpecialMoveXY(startpoint.x - dir * 3, startpoint.y, config.motion_axis[X_AXIS].search_feedrate);
   // move back in to endstop slowly
-  SpecialMoveXY(startpoint.x + dir * 6, startpoint.y, config.axis[X_AXIS].search_feedrate);
+  SpecialMoveXY(startpoint.x + dir * 6, startpoint.y, config.motion_axis[X_AXIS].search_feedrate);
 
 //  synch_queue();
 
   // this is our home point
   tTarget new_pos = startpoint;
-  new_pos.x = config.axis[X_AXIS].home_pos;
+  new_pos.x = config.motion_axis[X_AXIS].home_pos;
   plan_set_current_position (&new_pos);
 }
 
@@ -262,26 +272,26 @@ static void home_y(void)
   int dir;
   int max_travel;
 
-  if (config.axis[Y_AXIS].home_direction < 0)
+  if (config.motion_axis[Y_AXIS].home_direction < 0)
     dir = -1;
   else
     dir = 1;
-  max_travel = max (300, config.axis[Y_AXIS].printing_vol);
+  max_travel = max (300, config.motion_axis[Y_AXIS].max_travel);
     
   // move to endstop
-  SpecialMoveXY(startpoint.x, startpoint.y + dir * max_travel, config.axis[Y_AXIS].homing_feedrate);
+  SpecialMoveXY(startpoint.x, startpoint.y + dir * max_travel, config.motion_axis[Y_AXIS].homing_feedrate);
 //  synch_queue();
   
   // move forward a bit
-  SpecialMoveXY(startpoint.x, startpoint.y - dir * 3, config.axis[Y_AXIS].search_feedrate);
+  SpecialMoveXY(startpoint.x, startpoint.y - dir * 3, config.motion_axis[Y_AXIS].search_feedrate);
   // move back in to endstop slowly
-  SpecialMoveXY(startpoint.x, startpoint.y + dir * 6, config.axis[Y_AXIS].search_feedrate);
+  SpecialMoveXY(startpoint.x, startpoint.y + dir * 6, config.motion_axis[Y_AXIS].search_feedrate);
 
 //  synch_queue();
 
   // this is our home point
   tTarget new_pos = startpoint;
-  new_pos.y = config.axis[Y_AXIS].home_pos;
+  new_pos.y = config.motion_axis[Y_AXIS].home_pos;
   plan_set_current_position (&new_pos);
 }
 
@@ -290,27 +300,27 @@ static void home_z(void)
   int dir;
   int max_travel;
 
-  if (config.axis[Z_AXIS].home_direction < 0)
+  if (config.motion_axis[Z_AXIS].home_direction < 0)
     dir = -1;
   else
     dir = 1;
-  max_travel = max (300, config.axis[Z_AXIS].printing_vol);
+  max_travel = max (300, config.motion_axis[Z_AXIS].max_travel);
 
   // move to endstop
-  SpecialMoveZ(startpoint.z + dir * max_travel, config.axis[Z_AXIS].homing_feedrate);  
+  SpecialMoveZ(startpoint.z + dir * max_travel, config.motion_axis[Z_AXIS].homing_feedrate);  
 //  synch_queue();
   
   // move forward a bit
-  SpecialMoveZ(startpoint.z - dir * 1, config.axis[Z_AXIS].search_feedrate);
+  SpecialMoveZ(startpoint.z - dir * 1, config.motion_axis[Z_AXIS].search_feedrate);
 //  synch_queue();
 
   // move back in to endstop slowly
-  SpecialMoveZ(startpoint.z + dir * 6, config.axis[Z_AXIS].search_feedrate);
+  SpecialMoveZ(startpoint.z + dir * 6, config.motion_axis[Z_AXIS].search_feedrate);
 //  synch_queue();
 
   // this is our home point
   tTarget new_pos = startpoint;
-  new_pos.z = config.axis[Z_AXIS].home_pos;
+  new_pos.z = config.motion_axis[Z_AXIS].home_pos;
   plan_set_current_position (&new_pos);
 }
 
@@ -620,7 +630,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
             // Rapman only?
             next_target = startpoint;
             next_target.z += 3;
-            next_target.feed_rate = config.axis[Z_AXIS].homing_feedrate;
+            next_target.feed_rate = config.motion_axis[Z_AXIS].homing_feedrate;
             enqueue_move(&next_target);
           }
                 
@@ -1003,14 +1013,15 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       // M115- report firmware version
       case 115:
         lw_fprintf(pGcodeInputMsg->out_file, "FIRMWARE_NAME:R2C2_bobc "
-			"FIRMWARE_URL:http%%3A//github.com/bobc/R2C2_Firmware " 
+            "FIRMWARE_URL:http%%3A//github.com/bobc/R2C2_Firmware " 
             "PROTOCOL_VERSION:1.0 "
-			"MACHINE_TYPE:Mendel "
-			"FEATURES:0/R2C2_BOOTLOAD"
-			"\r\n");
+            "MACHINE_TYPE:Mendel "
+            "FEATURES:0/R2C2_BOOTLOAD"
+            "\r\n");
       break;
 
       // M116 - Wait for all temperatures and other slowly-changing variables to arrive at their set values
+      // CAN BLOCK
       case 116:
           result = enqueue_wait_for_temperatures( _BV(WE_WAIT_TEMP_EXTRUDER_0) | _BV(WE_WAIT_TEMP_EXTRUDER_1) | _BV(WE_WAIT_TEMP_HEATED_BED));
 
@@ -1027,17 +1038,17 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
         int axis;
         char buf [10];
         
-        for (axis = 0; axis < config.num_axes; axis++)
+        for (axis = 0; axis < CFG_MAX_MOTION_AXES; axis++)
         {
           if (config.axis [axis].is_configured)
           {
             // min limit
-            if (config.axis[axis].pin_min_limit.port != 0xFF)
+            if (config.motion_axis[axis].pin_min_limit.port != 0xFF)
             {
               strcpy (buf, "?_min: ? ");
               buf [0] = tolower (config.axis[axis].letter_code);
               
-              if (read_pin (config.axis[axis].pin_min_limit))
+              if (read_pin (config.motion_axis[axis].pin_min_limit))
                 buf [7] = 'H';
               else
                 buf [7] = 'L';
@@ -1045,12 +1056,12 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
               lw_fputs (buf, pGcodeInputMsg->out_file);
             }
             // max limit?
-            if (config.axis[axis].pin_max_limit.port != 0xFF)
+            if (config.motion_axis[axis].pin_max_limit.port != 0xFF)
             {
               strcpy (buf, "?_max: ? ");
               buf [0] = tolower (config.axis[axis].letter_code);
               
-              if (read_pin (config.axis[axis].pin_max_limit))
+              if (read_pin (config.motion_axis[axis].pin_max_limit))
                 buf [7] = 'H';
               else
                 buf [7] = 'L';
@@ -1107,6 +1118,7 @@ eParseResult process_gcode_command (tGcodeInputMsg *pGcodeInputMsg, tGcodeInterp
       break;
 
       // M190: Wait for bed temperature to reach target temp 
+      // CAN BLOCK
       case 190:
         ctc_set_target_temp(CTC_HEATBED_0, gcode_command.S);
         result = enqueue_wait_for_temperatures(_BV(WE_WAIT_TEMP_HEATED_BED));

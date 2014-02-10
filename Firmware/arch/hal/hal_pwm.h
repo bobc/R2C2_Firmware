@@ -49,6 +49,11 @@
 
 #define NUM_PWM_CHANNELS    6
 
+//
+#define PWM_MAX_DUTY_CYCLE	255
+#define PWM_MIN_DUTY_CYCLE	0
+
+//
 #define DUTY_CYCLE(percent) ((percent) * 32768ul / 100)
 
 #define Q15_25_PERCENT  (0x2000)
@@ -59,6 +64,14 @@
 // --------------------------------------------------------------------------
 // Types
 // --------------------------------------------------------------------------
+
+typedef enum {
+  hal_pwm_none,
+  hal_pwm_bang_bang,
+  hal_pwm_hw_pwm,
+  hal_pwm_timer,
+  hal_pwm_soft
+  } tHalPwmMethod;
 
 // --------------------------------------------------------------------------
 // Public Variables

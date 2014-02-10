@@ -55,6 +55,8 @@ typedef struct
     int32_t   val_i;
     double    val_d;
     tPinDef   val_pin_def;
+    uint8_t   val_u8;
+    int8_t    val_s8;
     };
 } tParamVal;
 
@@ -201,6 +203,16 @@ static bool parse_parameter_value (uint8_t type, tParamVal *param_val)
         param_val->val_i = atoi (pToken);
         break;
       }
+      case TYPE_U8:
+      {
+        param_val->val_u8 = atoi (pToken);
+        break;
+      }
+      case TYPE_S8:
+      {
+        param_val->val_s8 = atoi (pToken);
+        break;
+      }
       case TYPE_DOUBLE:
       {
         param_val->val_d = atod (pToken);
@@ -256,6 +268,18 @@ void print_config_table (const tConfigItem lookup[], int num_tokens)
       case TYPE_INT:
       {
         int32_t *pVal = lookup[j].pValue;
+        lw_printf ("%s = %d\r\n", lookup[j].name, *pVal);
+        break;
+      }
+      case TYPE_U8:
+      {
+        uint8_t *pVal = lookup[j].pValue;
+        lw_printf ("%s = %d\r\n", lookup[j].name, *pVal);
+        break;
+      }
+      case TYPE_S8:
+      {
+        int8_t *pVal = lookup[j].pValue;
         lw_printf ("%s = %d\r\n", lookup[j].name, *pVal);
         break;
       }
@@ -379,6 +403,18 @@ unsigned read_config_file (char *filename, const tConfigItem lookup[], int num_t
                     *pVal = param_val.val_i;
                     break;
                   }
+                  case TYPE_U8:
+                  {
+                    uint8_t *pVal = lookup[j].pValue;
+                    *pVal = param_val.val_u8;
+                    break;
+                  }
+                  case TYPE_S8:
+                  {
+                    int8_t *pVal = lookup[j].pValue;
+                    *pVal = param_val.val_s8;
+                    break;
+                  }
                   case TYPE_DOUBLE:
                   {
                     double *pVal = lookup[j].pValue;
@@ -431,6 +467,18 @@ void set_defaults (const tConfigItem lookup[], int num_tokens)
       {
         int32_t *pVal = lookup[j].pValue;
         *pVal = lookup[j].val_i;
+        break;
+      }
+      case TYPE_U8:
+      {
+        uint8_t *pVal = lookup[j].pValue;
+        *pVal = lookup[j].val_u8;
+        break;
+      }
+      case TYPE_S8:
+      {
+        int8_t *pVal = lookup[j].pValue;
+        *pVal = lookup[j].val_s8;
         break;
       }
       case TYPE_DOUBLE:

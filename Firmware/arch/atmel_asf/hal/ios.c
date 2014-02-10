@@ -39,26 +39,22 @@
 
 #include "ios.h"
 
+#define NUM_PORTS 4
+
+static const Pio * port_map [NUM_PORTS] = 
+{
+  PIOA,
+  PIOB,
+  PIOC,
+  PIOD
+};
 
 static  Pio * GetPio (uint8_t port_num)
 {
-	switch (port_num)
-	{
-	case 0: 
-		return PIOA;
-		break;
-	case 1:
-		return PIOB;
-		break;
-	case 2:
-		return PIOC;
-		break;
-	case 3:
-		return PIOD;
-		break;
-	default:
+  if (port_num < NUM_PORTS)
+    return port_map [port_num];
+  else
 	   return NULL;
-	}
 }
 
 #if 1
@@ -83,11 +79,11 @@ void digital_write(uint8_t portNum, uint32_t bitMask, uint8_t state)
 {
     Pio *p_pio;
     
-    p_pio = GetPio (portNum);
-    if (p_pio != NULL)
+    if (portNum < NUM_PORTS)
     {
+        p_pio = port_map[portNum];
         if (state)
-    		pio_set (p_pio, bitMask);
+            pio_set (p_pio, bitMask);
         else
             pio_clear (p_pio, bitMask);
     }

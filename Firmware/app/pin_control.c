@@ -31,45 +31,72 @@
 #include "ios.h"
 #include "config.h"
 
+//#include "config_app.h"
+
 void axis_enable    (unsigned axis)
 {
-  unsigned motor = config.axis[axis].motor_index;
+  unsigned motors = config.axis[axis].motor_map;
+  unsigned j;
 
-  write_pin (config.motor_driver[motor].pin_enable, ENABLE); 
+  for (j=0; j < CFG_MAX_MOTORS; j++)
+  {
+    if (motors & _BV(j))
+      write_pin (config.motor_driver[j].pin_enable, ENABLE); 
+  }
 }
 
 void axis_disable   (unsigned axis)
 {
-  unsigned motor = config.axis[axis].motor_index;
+  unsigned motors = config.axis[axis].motor_map;
+  unsigned j;
 
-  write_pin (config.motor_driver[motor].pin_enable, DISABLE); 
+  for (j=0; j < CFG_MAX_MOTORS; j++)
+  {
+    if (motors & _BV(j))
+      write_pin (config.motor_driver[j].pin_enable, DISABLE); 
+  }
 }
 
 void axis_step      (unsigned axis)
 {
-  unsigned motor = config.axis[axis].motor_index;
+  unsigned motors = config.axis[axis].motor_map;
+  unsigned j;
 
-  write_pin (config.motor_driver[motor].pin_step, ACTIVE); 
+  for (j=0; j < CFG_MAX_MOTORS; j++)
+  {
+    if (motors & _BV(j))
+      write_pin (config.motor_driver[j].pin_step, ACTIVE); 
+  }
 }
 
 void axis_unstep    (unsigned axis)
 {
-  unsigned motor = config.axis[axis].motor_index;
+  unsigned motors = config.axis[axis].motor_map;
+  unsigned j;
 
-  write_pin (config.motor_driver[motor].pin_step, INACTIVE); 
+  for (j=0; j < CFG_MAX_MOTORS; j++)
+  {
+    if (motors & _BV(j))
+      write_pin (config.motor_driver[j].pin_step, INACTIVE); 
+  }
 }
 
 void axis_set_direction (unsigned axis, unsigned dir)
 {
-  unsigned motor = config.axis[axis].motor_index;
+  unsigned motors = config.axis[axis].motor_map;
+  unsigned j;
 
-  write_pin (config.motor_driver[motor].pin_dir, dir);  // may be inverted by pin definition
+  for (j=0; j < CFG_MAX_MOTORS; j++)
+  {
+    if (motors & _BV(j))
+      write_pin (config.motor_driver[j].pin_dir, dir);  // may be inverted by pin definition
+  }
 }
 
 bool axis_min (unsigned axis)
 {
   // NB The pin definition will handle active low/high
-  if (read_pin (config.axis [axis].pin_min_limit))
+  if (read_pin (config.motion_axis [axis].pin_min_limit))
     return true;
   else
     return false;  

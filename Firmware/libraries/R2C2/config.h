@@ -38,12 +38,16 @@
 #define TYPE_INT      0
 #define TYPE_DOUBLE   1
 #define TYPE_PIN_DEF  2
+#define TYPE_U8       3
+#define TYPE_S8       4
 
 typedef struct {
   char      *name;
   void      *pValue;
   uint8_t   type;
   union {
+    uint8_t   val_u8;
+    int8_t    val_s8;
     int32_t   val_i;
     double    val_d;
     tPinDef   val_pin_def;

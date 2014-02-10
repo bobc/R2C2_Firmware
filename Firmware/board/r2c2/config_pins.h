@@ -86,13 +86,22 @@
 //
 #define STEPPERS_RESET_PIN              PIN_DEF (0,22,ACTIVE_LOW)         /* P0.22 */
 
+//
+#define AUX_0_OUTPUT_PIN              PIN_DEF (2,3,ACTIVE_HIGH)       /* P2.3 */
+#define AUX_0_OUTPUT_PWM              hal_pwm_bang_bang
+#define AUX_0_OUTPUT_CHANNEL          0
+
 // CTC #1 / Extruder 0
 #define EXTRUDER_0_HEATER_PIN           PIN_DEF (2,4,ACTIVE_HIGH)       /* P2.4 */
-#define EXTRUDER_0_FAN_PIN              PIN_DEF (2,3,ACTIVE_HIGH)       /* P2.3 */
+#define EXTRUDER_0_HEATER_PWM           hal_pwm_bang_bang
+#define EXTRUDER_0_HEATER_CHANNEL       0
+//#define EXTRUDER_0_FAN_PIN              PIN_DEF (2,3,ACTIVE_HIGH)       /* P2.3 */
 #define EXTRUDER_0_SENSOR_INDEX         0
 
 // CTC #2 / Heated Bed
 #define HEATED_BED_0_HEATER_PIN         PIN_DEF (2,5,ACTIVE_HIGH)       /* P2.5 */
+#define HEATED_BED_0_HEATER_PWM         hal_pwm_bang_bang
+#define HEATED_BED_0_HEATER_CHANNEL     0
 #define HEATED_BED_0_SENSOR_INDEX       1
 
 // might be needed before config file is read?

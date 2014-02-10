@@ -38,6 +38,7 @@
 
 // hal
 #include "hal_adc.h"
+#include "hal_pwm.h"
 #include "ios.h"
 #include "timer.h"
 
@@ -58,20 +59,49 @@ static int          num_ctcs;
 static tCtcSettings *ctc_configs [NUMBER_OF_CTCS]; // max ctcs
 static uint16_t     target_temp  [NUMBER_OF_CTCS] = {0};
 
+static bool running;
 
 void ctcTimerCallback (tTimer *pTimer)
 {
-  /* Manage heaters using simple ON/OFF logic, no PID */
+  /* Manage heaters */
 
   for (int j=0; j < num_ctcs; j++)
   {
     if (ctc_get_current_temp(j) < target_temp[j])
     {
-      write_pin(ctc_configs[j]->pin_heater, ENABLE);
+      switch (ctc_configs[j]->output.pwm_method)
+      {
+        case hal_pwm_bang_bang:
+        default:
+        {
+            write_pin(ctc_configs[j]->output.pin, ENABLE);
+            break;
+        }
+
+        case hal_pwm_hw_pwm:
+        {
+          // Max duty
+          hal_pwm_chan_set_duty (ctc_configs[j]->output.channel, CFG_MAX_DUTY_CYCLE);
+        }
+      }
     }
     else
     {
-      write_pin(ctc_configs[j]->pin_heater, DISABLE);
+      switch (ctc_configs[j]->output.pwm_method)
+      {
+        case hal_pwm_bang_bang:
+        default:
+        {
+            write_pin(ctc_configs[j]->output.pin, DISABLE);
+            break;
+        }
+
+        case hal_pwm_hw_pwm:
+        {
+          hal_pwm_chan_set_duty (ctc_configs[j]->output.channel, 0);
+        }
+      }
+
     }
   }
 
@@ -91,8 +121,14 @@ void ctc_init_channel (tCtcSettings *ctc_config)
   ctc_configs [num_ctcs] = ctc_config;
 
   // heater output pin
-  set_pin_mode (ctc_config->pin_heater, OUTPUT);
-  write_pin (ctc_config->pin_heater, DISABLE);
+  set_pin_mode (ctc_config->output.pin, OUTPUT);
+  write_pin (ctc_config->output.pin, DISABLE);
+
+  if (ctc_config->output.pwm_method == hal_pwm_hw_pwm)
+  {
+    hal_pwm_chan_configure (ctc_config->output.channel, ctc_config->output.pin);
+    hal_pwm_chan_start (ctc_config->output.channel);
+  }
 
   num_ctcs++;
 }

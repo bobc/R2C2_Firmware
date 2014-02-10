@@ -65,23 +65,36 @@
 #define E_DIR_PIN     PIN_DEF (0, 22, ACTIVE_HIGH)
 #define E_ENABLE_PIN  PIN_DEF (0, 21, ACTIVE_LOW) 
 
+// sensors
+#define SENSOR_0_ADC_PIN          PIN_DEF_EX (0,23,ACTIVE_HIGH,1)
+#define SENSOR_0_ADC_CHANNEL      0
+#define SENSOR_0_TABLE_INDEX      0
+
+#define SENSOR_1_ADC_PIN          PIN_DEF_EX (0,24,ACTIVE_HIGH,1)
+#define SENSOR_1_ADC_CHANNEL      1
+#define SENSOR_1_TABLE_INDEX      1
 
 //
 #define STEPPERS_RESET_PIN              UNDEFINED_PIN_DEF
 
-// CTC #1 / Extruder 0
+//
+#define AUX_0_OUTPUT_PIN              UNDEFINED_PIN_DEF
+#define AUX_0_HEATER_PWM              hal_pwm_bang_bang
+#define AUX_0_HEATER_CHANNEL          0
+
+// Extruder 0
 #define EXTRUDER_0_HEATER_PIN           PIN_DEF (2,4,ACTIVE_HIGH)
-#define EXTRUDER_0_FAN_PIN              UNDEFINED_PIN_DEF
+#define EXTRUDER_0_HEATER_PWM           hal_pwm_bang_bang
+#define EXTRUDER_0_HEATER_CHANNEL       0
+//#define EXTRUDER_0_FAN_PIN              UNDEFINED_PIN_DEF
+#define EXTRUDER_0_SENSOR_INDEX         0
+                   
 
-#define EXTRUDER_0_SENSOR_ADC_PIN       PIN_DEF_EX (0,23,ACTIVE_HIGH,1)
-#define EXTRUDER_0_SENSOR_ADC_CHANNEL   0                        
-
-
-// CTC #2 / Heated Bed
+// Heated Bed
 #define HEATED_BED_0_HEATER_PIN         PIN_DEF (2,6,ACTIVE_HIGH)
-
-#define HEATED_BED_0_ADC_PIN            PIN_DEF_EX (0,24,ACTIVE_HIGH,1)
-#define HEATED_BED_0_SENSOR_ADC_CHANNEL 1                        
+#define HEATED_BED_0_HEATER_PWM         hal_pwm_bang_bang
+#define HEATED_BED_0_HEATER_CHANNEL     0
+#define HEATED_BED_0_SENSOR_INDEX       1                        
 
 // might be needed before config file is read?
 // No buzzer
